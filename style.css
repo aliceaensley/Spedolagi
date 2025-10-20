@@ -34,55 +34,53 @@ body {
    KOTAK DASHBOARD UTAMA (HUD)
    ======================================= */
 .dashboard-box {
-    width: 180px; /* Ukuran yang lebih ringkas seperti di gambar */
+    width: 180px; 
     height: 100px; 
     background-color: rgba(10, 10, 25, 0.9); 
-    border: 2px solid rgba(0, 255, 255, 0.2);
+    border: 2px solid rgba(0, 255, 255, 0.1);
     border-radius: 8px;
     padding: 8px; 
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5); 
     opacity: 1; 
     visibility: visible; 
     transition: opacity 0.3s;
 }
 
-.top-section {
+.top-row {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    flex-grow: 1;
+    height: 50%;
 }
 
-.bars-container {
-    display: flex;
-    gap: 5px;
+.status-bars {
+    display: grid;
+    grid-template-columns: auto 10px;
     align-items: flex-end;
-    margin-top: 5px;
-}
-
-.bar-pair {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    gap: 3px;
+    height: 100%;
+    margin-right: 10px;
 }
 
 .bar-indicator {
     font-size: 0.8em;
     font-weight: bold;
     color: white;
-    margin-bottom: 2px;
+    text-align: center;
+    line-height: 1;
+    height: 40px; 
+    display: flex;
+    align-items: flex-start;
 }
 
 .bar-column {
-    width: 8px; /* Lebih kecil */
-    height: 40px; /* Tinggi Bar */
+    width: 10px; 
+    height: 40px;
     background-color: #333;
     border-radius: 2px;
     overflow: hidden;
-    position: relative;
     display: flex;
     align-items: flex-end;
 }
@@ -94,15 +92,19 @@ body {
 .health-fill { background-color: #00ff00; }
 .fuel-fill { background-color: #ffaa00; }
 
-.speed-section {
+/* --- SPEED & GEAR --- */
+.speed-gear-display {
     display: flex;
-    align-items: baseline;
+    flex-direction: column;
+    align-items: flex-end;
     position: relative;
-    font-weight: 900;
+    flex-grow: 1;
+    margin-right: 5px;
 }
 
 .speed-value {
-    font-size: 3.5em; /* Ukuran yang lebih besar */
+    font-size: 3.2em; 
+    font-weight: 900;
     color: white;
     line-height: 1;
     text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
@@ -110,54 +112,51 @@ body {
 
 .gear-letter {
     position: absolute;
-    right: -15px; /* Posisi relatif terhadap speed value */
+    right: 0;
     top: 5px;
-    font-size: 1.2em;
+    font-size: 1.1em;
+    font-weight: bold;
     color: #ff0000;
     text-shadow: 0 0 4px rgba(255, 0, 0, 0.5);
 }
 
-/* --- BOTTOM SECTION --- */
-.bottom-section {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-}
-
-.percent-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.6em;
-    font-weight: bold;
-    padding: 0 5px;
-}
-
-#health-percent { color: #00ff00; }
-#fuel-percent { color: #ffaa00; }
-
 .unit-text {
+    font-size: 0.6em;
     color: #ccc;
     font-weight: normal;
+    margin-top: -3px;
 }
 
-.indicator-row {
+/* --- MIDDLE ROW (PERCENT & DOTS) --- */
+.middle-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 5px;
+    margin-top: 5px;
 }
+
+.bar-percents {
+    display: flex;
+    width: 60px; /* Lebar total H & F area */
+    justify-content: space-between;
+    font-size: 0.6em;
+    font-weight: bold;
+    color: white;
+}
+#health-percent { color: #00ff00; }
+#fuel-percent { color: #ffaa00; }
 
 .power-bar-dots {
     display: flex;
     gap: 5px;
     flex-grow: 1;
-    justify-content: center;
+    justify-content: flex-end;
+    padding-right: 5px;
 }
 
 .dot {
     width: 15px;
-    height: 3px; /* Lebih tipis */
+    height: 3px; 
     background-color: #444;
     border-radius: 1px;
 }
@@ -167,27 +166,36 @@ body {
     box-shadow: 0 0 3px rgba(255, 255, 255, 0.8);
 }
 
-.status-icon-row {
+/* --- BOTTOM ROW (ICONS) --- */
+.bottom-row {
     display: flex;
-    justify-content: center;
-    gap: 15px; /* Jarak antara ikon status */
+    justify-content: space-between;
+    align-items: center;
     padding-top: 5px;
+    margin-top: 5px;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* --- ICONS --- */
 .icon {
     font-size: 1.1em;
     color: #00ffff;
     opacity: 0.5;
     transition: opacity 0.2s, color 0.2s;
+    text-align: center;
+}
+
+/* Ikon Indikator dibuat lebih kecil dan transparan di tengah */
+.turn-icon {
+    font-size: 0.9em;
+    opacity: 0.3; 
+    color: #00ffff;
 }
 
 #turn-left-icon::before { content: '←'; }
 #turn-right-icon::before { content: '→'; }
 #engine-icon::before { content: '⚡'; }
 #headlights-icon::before { content: '💡'; }
-#abs-icon::before { content: '\1F4BA'; } /* Menggunakan kode box emoji untuk Seatbelts */
+#abs-icon::before { content: '\1F4BA'; } /* Seatbelt/ABS */
 
 .icon.active {
     opacity: 1;
@@ -195,6 +203,7 @@ body {
 }
 
 #turn-left-icon.active, #turn-right-icon.active {
+    opacity: 1; 
     color: #00ffff;
 }
 
@@ -203,11 +212,11 @@ body {
    KOTAK RADIO (BARU)
    ======================================= */
 .radio-box {
-    width: 180px; /* Dicocokkan dengan lebar dashboard */
+    width: 180px; 
     background-color: rgba(10, 10, 25, 0.9);
-    border: 2px solid rgba(0, 255, 255, 0.2);
+    border: 2px solid rgba(0, 255, 255, 0.1);
     border-radius: 8px;
-    padding: 10px;
+    padding: 8px;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
     display: flex;
     flex-direction: column;
