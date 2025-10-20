@@ -2,96 +2,194 @@
 body {
     margin: 0;
     padding: 0;
-    font-family: Arial, sans-serif;
+    font-family: 'Consolas', monospace; /* Font monospace untuk tampilan digital */
     color: white;
-    /* PENTING: Transparan untuk overlay */
     background-color: transparent; 
     overflow: hidden;
 }
 
 .game-background {
-    /* Hanya untuk demo, bisa dihapus jika diimplementasikan dalam game engine */
+    /* Hanya untuk menunjukkan transparansi */
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: white; /* Untuk menunjukkan transparansi elemen HUD */
+    background-color: transparent; 
     z-index: 1;
 }
 
-/* CONTAINER SPEEDOMETER */
-.minimal-speedometer-container {
+/* CONTAINER DASHBOARD */
+.digital-dashboard-container {
     position: fixed;
-    /* Posisikan di mana pun Anda ingin, di gambar terakhir berada di tengah bawah */
-    /* Kita asumsikan di kanan bawah untuk kemudahan */
-    bottom: 50px; 
-    right: 50px;
+    bottom: 20px;
+    right: 20px;
     z-index: 10;
 }
 
-.speedometer-box {
-    width: 100px; /* Lebar kotak disesuaikan */
-    height: 70px; /* Tinggi kotak disesuaikan */
-    background-color: #555555; /* Abu-abu gelap (Hex lebih spesifik) */
-    border-radius: 5px;
-    position: relative;
+.dashboard-box {
+    width: 250px;
+    height: 150px;
+    background-color: rgba(30, 30, 50, 0.7); /* Biru gelap transparan */
+    border-radius: 10px;
+    padding: 15px;
+    box-sizing: border-box;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4); /* Efek bayangan gelap */
+    gap: 15px;
+    /* Efek Glow */
+    box-shadow: 0 0 15px rgba(0, 150, 255, 0.3); 
+    border: 1px solid rgba(0, 150, 255, 0.5);
 }
 
-/* Garis Biru Vertikal di Kanan */
-.speedometer-box::after {
-    content: '';
+/* BAGIAN BAR KIRI (HEALTH/FUEL) */
+.bars-section {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    position: relative;
+    padding-bottom: 25px; /* Ruang untuk persentase */
+}
+
+.bar-label {
     position: absolute;
     top: 0;
-    right: 0;
-    width: 5px; /* Lebar garis biru */
-    height: 100%;
-    background-color: #0000ff; /* Biru Solid */
-    border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
+    font-size: 0.8em;
+    font-weight: bold;
+    color: #fff;
+}
+.bars-section > .bar-label:nth-child(1) { left: 0; }
+.bars-section > .bar-label:nth-child(3) { left: 24px; } /* Sesuaikan posisi label F */
+
+.bar-column {
+    width: 15px;
+    height: 80px;
+    background-color: #333;
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: flex-end;
 }
 
-/* Kecepatan Digital */
-.speed-display {
-    font-size: 3.5em;
-    font-weight: 900; 
+.bar-fill {
+    width: 100%;
+    transition: height 0.3s ease-out;
+}
+
+.health-fill { background-color: #00ff00; height: 100%; }
+.fuel-fill { background-color: #ffaa00; height: 87%; }
+
+/* DISPLAY TENGAH */
+.center-display-section {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.percentage-row {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    position: absolute;
+    bottom: 3px;
+    left: -3px;
+    font-size: 0.7em;
+    font-weight: bold;
+    color: #fff;
+    width: 70px; /* Lebar area bar */
+}
+#health-percent { color: #00ff00; }
+#fuel-percent { color: #ffaa00; }
+
+
+.speed-readout {
+    display: flex;
+    align-items: center;
+    margin-top: -5px;
+}
+
+#current-speed {
+    font-size: 4em;
+    font-weight: 900;
     color: white;
     line-height: 1;
+    /* Efek Glow Digital */
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
-/* Nomor Gear */
-.gear-number {
-    position: absolute;
-    bottom: -15px; /* Posisikan di bawah kotak */
-    left: -10px; /* Posisikan di kiri kotak */
-    font-size: 1.5em;
+.gear-letter {
+    font-size: 2em;
     font-weight: bold;
-    color: #0000ff; /* Biru Solid */
-    /* Tambahkan efek bayangan ringan agar terlihat */
-    text-shadow: 0 0 5px rgba(0, 0, 255, 0.5); 
+    color: #ff0000; /* Merah untuk Gear */
+    margin-left: 5px;
+    line-height: 1;
+    text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
 }
 
-/* Bar Hijau Horizontal */
-.bottom-green-bar-container {
+.unit-text {
+    font-size: 0.8em;
+    color: #ccc;
+    margin-top: -10px;
+    font-weight: bold;
+}
+
+/* Indikator Baris Bawah (RPM/Power Dots) */
+.power-bar-dots {
+    display: flex;
+    gap: 5px;
+    margin-top: 5px;
+}
+
+.dot {
+    width: 15px;
+    height: 5px;
+    background-color: #444;
+    border-radius: 1px;
+    border: 1px solid #555;
+}
+
+.dot.active {
+    background-color: white;
+    border-color: white;
+    /* Efek Cahaya pada Dot */
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+}
+
+/* IKON STATUS BAWAH */
+.status-icons-row {
     position: absolute;
-    /* Posisikan di bawah seluruh container */
-    bottom: 0px; 
+    bottom: 10px;
     left: 50%;
     transform: translateX(-50%);
-    width: 100px; 
-    height: 5px; 
-    background-color: transparent; /* Kontainer transparan */
-    z-index: 9;
+    width: 85%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 5px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.bottom-green-bar {
-    height: 100%;
-    width: 100%; /* Default 100% */
-    background-color: #00ff00; /* Hijau Solid */
-    border-radius: 2px;
-    transition: width 0.3s ease-out;
+.icon {
+    font-size: 1.2em;
+    padding: 0 2px;
 }
+
+.indicator-icon {
+    color: #00ffff; /* Biru Cyan untuk lampu sein */
+    text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+    opacity: 0.4;
+    transition: opacity 0.2s;
+}
+
+.status-icon {
+    color: #00ffff;
+    text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+}
+
+/* Aktif/Mati Ikon (Akan diatur oleh JS) */
+.indicator-icon.active { opacity: 1; }
+
+#engine-icon { color: #00ffff; }
+/* #lights-icon, #abs-icon, etc. */
