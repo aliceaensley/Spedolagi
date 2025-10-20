@@ -27,7 +27,7 @@ body {
 }
 
 /* =======================================
-   CONTAINER UTAMA DASHBOARD (HUD KUSTOM)
+   CONTAINER UTAMA DASHBOARD (HUD KUSTOM - KANAN BAWAH)
    ======================================= */
 .digital-dashboard-container {
     position: fixed;
@@ -86,4 +86,66 @@ body {
 .icon.active { opacity: 1; color: #66ccff; }
 #turn-left-icon.active, #turn-right-icon.active { color: #00ffff; }
 
-/* Semua gaya tombol Head Unit dihapus */
+
+/* =======================================
+   GAYA TOMBOL SHOW/HIDE HEAD UNIT (TENGAH BAWAH)
+   ======================================= */
+.toggle-hud-styled {
+    position: fixed;
+    bottom: 25px; 
+    left: 50%; 
+    transform: translateX(-50%); 
+    
+    background-color: rgba(10, 10, 20, 0.9); 
+    border: 2px solid #666; 
+    border-radius: 8px;
+    padding: 8px 15px;
+    
+    font-size: 0.9em;
+    font-weight: 700;
+    cursor: pointer;
+    z-index: 10;
+    
+    color: #aaaaaa; 
+    transition: all 0.2s ease-in-out; 
+    
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.hud-icon {
+    font-size: 1.2em;
+    line-height: 1;
+}
+
+.hud-label {
+    letter-spacing: 1px;
+}
+
+
+/* --- STATUS AKTIF (HEAD UNIT TERLIHAT) - GLOW BIRU (DEFAULT) --- */
+.toggle-hud-styled:not(.hidden) {
+    border-color: #00ffff;
+    color: #ffffff;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5), 0 0 5px rgba(0, 255, 255, 0.3);
+}
+
+/* --- STATUS TERSEMBUNYI (HEAD UNIT TERSEMBUNYI) - GLOW MERAH --- */
+.toggle-hud-styled.hidden {
+    border-color: #ff3333;
+    color: #ff9999;
+    box-shadow: 0 0 5px rgba(255, 51, 51, 0.3);
+}
+
+/* --- HOVER EFFECT --- */
+.toggle-hud-styled:not(.hidden):hover {
+    background-color: rgba(10, 10, 20, 1);
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.8), 0 0 8px rgba(0, 255, 255, 0.6);
+}
+
+.toggle-hud-styled.hidden:hover {
+    background-color: rgba(20, 10, 10, 0.9);
+    border-color: #ff0000;
+    color: #ffffff;
+}
