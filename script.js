@@ -11,13 +11,11 @@ const onOrOff = state => state ? 'On' : 'Off';
 // FUNGSI SETTER
 // =======================================================
 
-/** Mengupdate status mesin dan mengaktifkan ikon. */
 function setEngine(state) {
     document.getElementById('engine-icon').classList.toggle('active', state);
     elements.engine.innerText = onOrOff(state); 
 }
 
-/** Mengupdate kecepatan dan unit display. */
 function setSpeed(speed_ms) {
     let speedDisplay;
     switch(speedMode) {
@@ -37,45 +35,36 @@ function setSpeed(speed_ms) {
     });
 }
 
-/** Mengupdate RPM mentah (dipertahankan) */
 function setRPM(rpm) {
     elements.rpm.innerText = `${rpm.toFixed(4)} RPM`;
 }
 
-/** Mengupdate bar dan persentase bahan bakar. */
 function setFuel(fuel_01) {
     const fuel_100 = Math.max(0, Math.min(100, fuel_01 * 100));
     const fuelPercentElement = document.getElementById('fuel-percent');
 
-    // Memperbarui bar visual
     document.getElementById('fuel-fill').style.height = `${Math.round(fuel_100)}%`;
     
-    // Memperbarui nilai persentase di bagian atas
     if (fuelPercentElement) {
         fuelPercentElement.textContent = `${Math.round(fuel_100)}%`; 
     }
 
-    // Memperbarui nilai mentah di elemen tersembunyi
     elements.fuel.innerText = `${fuel_100.toFixed(1)}%`;
 }
 
-/** Mengupdate bar dan persentase kesehatan. */
 function setHealth(health_01) {
     const health_100 = Math.max(0, Math.min(100, health_01 * 100));
     const healthFill = document.getElementById('health-fill');
     const healthPercentElement = document.getElementById('health-percent');
     
-    // Memperbarui bar visual
     if (healthFill) {
         healthFill.style.height = `${Math.round(health_100)}%`;
     }
     
-    // Memperbarui nilai persentase di bagian atas
     if (healthPercentElement) {
         healthPercentElement.textContent = `${Math.round(health_100)}%`; 
     }
     
-    // Mengubah warna bar visual berdasarkan kesehatan
     if (healthFill) {
         if (health_100 < 30) {
             healthFill.style.backgroundColor = '#ff0000'; 
@@ -86,37 +75,28 @@ function setHealth(health_01) {
         }
     }
 
-    // Memperbarui nilai mentah di elemen tersembunyi
     elements.health.innerText = `${health_100.toFixed(1)}%`;
 }
 
-/** Mengupdate display gear. (FIXED) */
 function setGear(gear) {
-    // Memastikan elemen 'gear' visual telah ditemukan
     const gearElement = document.getElementById('gear');
     if (!gearElement) return;
 
     let displayGear = String(gear).toUpperCase();
     
-    // Logika untuk mengubah '0' menjadi 'N'
     if (displayGear === '0') {
         displayGear = 'N'; 
     } 
     
-    // Memperbarui display gear
     gearElement.innerText = displayGear;
     
-    // Mengubah warna: Merah untuk R/N, Putih untuk gigi maju
     gearElement.style.color = (displayGear === 'R' || displayGear === 'N') ? '#ff0000' : '#fff'; 
     
-    // Memperbarui nilai mentah (jika elemen tersembunyi ada)
     if (elements.gear) {
         elements.gear.innerText = displayGear;
     }
 }
 
-
-/** Mengupdate status Headlights dan ikon. */
 function setHeadlights(state) {
     let display = 'Off';
     if (state === 1 || state === 2) display = 'On';
@@ -156,26 +136,30 @@ function controlIndicators(state) {
     lastIndicatorState = state;
 }
 
-/** Mengupdate status Sein Kiri */
 function setLeftIndicator(state) {
     indicators = (indicators & 0b10) | (state ? 0b01 : 0b00);
     controlIndicators(indicators);
     elements.indicators.innerText = `${indicators & 0b01 ? 'On' : 'Off'} / ${indicators & 0b10 ? 'On' : 'Off'}`;
 }
 
-/** Mengupdate status Sein Kanan */
 function setRightIndicator(state) {
     indicators = (indicators & 0b01) | (state ? 0b10 : 0b00);
     controlIndicators(indicators);
     elements.indicators.innerText = `${indicators & 0b01 ? 'On' : 'Off'} / ${indicators & 0b10 ? 'On' : 'Off'}`;
 }
 
-/** Mengupdate status Seatbelts */
+/** Fungsi Seatbelts yang mengontrol ikon warning */
 function setSeatbelts(state) {
+    const seatbeltIcon = document.getElementById('abs-icon'); // Menggunakan ID abs-icon
+    
+    // Ikon aktif (warning) ketika state = false (belum terpasang)
+    if (seatbeltIcon) {
+        seatbeltIcon.classList.toggle('active', !state); 
+    }
+
     elements.seatbelts.innerText = onOrOff(state);
 }
 
-/** Mengupdate mode kecepatan (MPH/KMH/Knots) */
 function setSpeedMode(mode) {
     speedMode = mode;
     switch(mode) {
@@ -194,7 +178,7 @@ const updateUI = (data) => {
     const dashboardBox = document.getElementById('dashboard-box');
     let isVisible = dashboardBox.style.opacity === '1';
 
-    // 1. KONTROL VISIBILITAS TOTAL
+    // KONTROL VISIBILITAS TOTAL
     if (data.show !== undefined) {
         dashboardBox.style.opacity = data.show ? '1' : '0';
         dashboardBox.style.visibility = data.show ? 'visible' : 'hidden';
@@ -207,18 +191,18 @@ const updateUI = (data) => {
     }
     if (!isVisible) return; 
     
-    // 2. DATA UTAMA
+    // DATA UTAMA
     if (data.engine !== undefined) setEngine(data.engine);
     if (data.speed !== undefined) setSpeed(data.speed);
     if (data.rpm !== undefined) setRPM(data.rpm);
     if (data.fuel !== undefined) setFuel(data.fuel);
     if (data.health !== undefined) setHealth(data.health);
-    if (data.gear !== undefined) setGear(data.gear); // <--- PASTIKAN INI TERPANGGIL
+    if (data.gear !== undefined) setGear(data.gear);
     if (data.headlights !== undefined) setHeadlights(data.headlights);
     if (data.seatbelts !== undefined) setSeatbelts(data.seatbelts);
     if (data.speedMode !== undefined) setSpeedMode(data.speedMode);
 
-    // 3. INDICATORS
+    // INDICATORS
     if (data.leftIndicator !== undefined) setLeftIndicator(data.leftIndicator);
     if (data.rightIndicator !== undefined) setRightIndicator(data.rightIndicator);
 };
@@ -226,7 +210,7 @@ const updateUI = (data) => {
 
 // Wait for the DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', () => {
-    // PENTING: Inisialisasi 'elements' untuk semua elemen tersembunyi dan visual
+    // INISIALISASI ELEMENTS
     elements = {
         // ID TERSEMBUNYI
         engine: document.getElementById('engine'),
@@ -234,7 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
         rpm: document.getElementById('rpm'),
         fuel: document.getElementById('fuel'),
         health: document.getElementById('health'),
-        gear: document.getElementById('gear'), // GEAR UNTUK NILAI MENTAH (di div tersembunyi)
+        gear: document.getElementById('gear'),
         headlights: document.getElementById('headlights'),
         indicators: document.getElementById('indicators'),
         seatbelts: document.getElementById('seatbelts'),
@@ -258,7 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Panggil updateUI sekali untuk nilai awal (R)
+    // Panggil updateUI sekali untuk nilai awal (Default)
     updateUI({ 
         speed: 0, 
         health: 1, 
@@ -266,7 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
         gear: 'R', 
         headlights: 0,
         engine: false,
-        seatbelts: false,
+        seatbelts: false, // Default: FALSE (Icon Warning menyala)
         leftIndicator: false, 
         rightIndicator: false,
         speedMode: 1, 
