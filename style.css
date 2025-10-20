@@ -1,32 +1,62 @@
-/* GAYA UMUM */
+/* GAYA UMUM & LATAR BELAKANG */
 body {
     margin: 0;
     padding: 0;
-    font-family: 'Arial Black', Gadget, sans-serif;
+    font-family: 'Consolas', 'Arial Black', sans-serif;
     background-color: #000;
     color: white;
     overflow: hidden;
+    /* Ganti font ini jika Anda memiliki font kustom game */
 }
 
-/* Latar Belakang Game */
 .game-background {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    /* Ganti dengan URL/Gambar latar belakang game Anda */
-    background: #000; 
-    display: flex;
-    justify-content: flex-start;
-    align-items: flex-start;
-    padding: 50px;
-    font-size: 2em;
-    font-weight: 300;
+    background-color: #111; 
+    /* Simulasi latar belakang buram/garasi */
+    background-image: url('https://via.placeholder.com/1920x1080/333333/808080?text=LATAR+BELAKANG+GAME');
+    background-size: cover;
+    filter: brightness(0.4);
     z-index: 1;
 }
 
-/* SPEEDOMETER (Minimalis - Mirip Gambar 1) */
+/* UI di Sudut Kanan Atas (Untuk Konteks) */
+.top-right-ui {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 20px;
+    padding: 5px 15px;
+    z-index: 5;
+}
+
+.ready-text {
+    font-size: 0.8em;
+    color: #00ff99;
+    font-weight: bold;
+    margin: 0 10px;
+}
+
+.nav-btn {
+    background: none;
+    border: 2px solid #fff;
+    color: #fff;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+/* CONTAINER SPEEDOMETER */
 .speedometer-container {
     position: fixed;
     bottom: 20px;
@@ -34,336 +64,219 @@ body {
     z-index: 10;
 }
 
-.speedometer {
-    width: 200px;
-    height: 200px;
-    background: none;
-    border-radius: 50%;
-    border: 5px solid #00ff99; /* Garis Neon Hijau */
+.speedometer-rage {
+    width: 250px;
+    height: 250px;
+    position: relative;
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 0 30px rgba(0, 255, 153, 0.6);
-    position: relative;
-    box-sizing: border-box;
 }
 
-/* Indikator Atas */
-.top-indicators {
+/* LINGKARAN LUAR (Neon Cyan) */
+.outer-ring {
     position: absolute;
-    top: 35px;
-    display: flex;
-    gap: 10px;
-    font-size: 1.5em;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 5px solid #00ffff; /* Warna Cyan Neon */
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+    background-color: rgba(0, 0, 0, 0.4); /* Background semi-transparan */
     z-index: 2;
 }
 
-.indicator-light {
-    color: yellow; /* Kuning untuk peringatan */
-    text-shadow: 0 0 5px yellow;
-}
-
-/* Nilai Kecepatan */
-.speed-value {
-    font-size: 4em;
-    font-weight: bold;
-    color: yellow; /* Kuning terang */
-    line-height: 1;
-    text-align: center;
-    margin-top: -10px;
-    z-index: 2;
-}
-
-.speed-value .unit {
-    font-size: 0.3em;
-    display: block;
-    color: white;
-    font-weight: normal;
-    margin-top: -5px;
-}
-
-/* Gear */
-.gear-indicator {
-    font-size: 3em;
-    font-weight: bold;
-    color: white;
-    background-color: #ff0000; /* Merah Solid */
-    padding: 0 10px;
-    border-radius: 5px;
-    margin-top: 5px;
-    line-height: 1.5;
-    z-index: 2;
-}
-
-/* Tombol YouTube */
-.youtube-toggle-btn {
+/* ANGKA RPM/RAGE */
+.rpm-numbers {
     position: absolute;
-    bottom: -15px; /* Posisikan sedikit di luar lingkaran */
-    background-color: #ff0000;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    font-family: Arial, sans-serif;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    box-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
-    z-index: 12;
+    width: 100%;
+    height: 100%;
+    z-index: 3;
 }
 
-.youtube-icon {
-    font-size: 1.2em;
-}
-
-/* YOUTUBE HEADUNIT OVERLAY */
-.youtube-headunit-overlay {
-    position: fixed;
+.rpm-mark {
+    position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 450px; /* Ukuran menyerupai ponsel */
-    height: 700px; 
-    background-color: #2e2e2e; /* Abu-abu gelap untuk aplikasi */
-    border-radius: 20px;
-    box-shadow: 0 0 50px rgba(0, 0, 0, 0.7);
-    z-index: 20;
-    display: flex;
-    flex-direction: column;
-    transition: opacity 0.4s ease, transform 0.4s ease;
-    border: 3px solid #666; /* Sedikit outline */
-}
-
-.youtube-headunit-overlay.hidden {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.95);
-    pointer-events: none;
-}
-
-.youtube-app-interface {
-    padding: 10px 15px;
-    flex-grow: 1;
-    overflow-y: auto;
-}
-
-/* Header Headunit (Harmony & Status) */
-.app-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.9em;
-    color: #ccc;
-    margin-bottom: 10px;
-    padding: 0 5px;
-}
-
-.harmony-text {
-    font-weight: bold;
-    color: white;
-}
-
-/* Navigasi Utama */
-.nav-bar {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 20px;
-}
-
-.nav-btn {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 1.2em;
-    cursor: pointer;
-    padding: 5px;
-}
-
-.nav-title {
+    color: #00ff99; /* Warna Hijau Neon */
     font-size: 1.2em;
     font-weight: bold;
-    color: #ccc;
-    flex-grow: 1;
+    /* Efek Glow pada teks */
+    text-shadow: 0 0 5px rgba(0, 255, 153, 0.8);
 }
 
-.close-btn-large {
-    font-size: 1em;
-    font-weight: bold;
-    background-color: #444;
-    padding: 5px 15px;
-    border-radius: 5px;
-}
+/* Posisi Angka Menggunakan Transformasi CSS */
+.mark-0 { transform: translate(-50%, -50%) rotate(225deg) translateY(-110px) rotate(-225deg); }
+.mark-1 { transform: translate(-50%, -50%) rotate(250deg) translateY(-110px) rotate(-250deg); }
+.mark-2 { transform: translate(-50%, -50%) rotate(275deg) translateY(-110px) rotate(-275deg); }
+.mark-3 { transform: translate(-50%, -50%) rotate(300deg) translateY(-110px) rotate(-300deg); }
+.mark-4 { transform: translate(-50%, -50%) rotate(325deg) translateY(-110px) rotate(-325deg); }
+.mark-5 { transform: translate(-50%, -50%) rotate(350deg) translateY(-110px) rotate(-350deg); }
+.mark-6 { transform: translate(-50%, -50%) rotate(15deg) translateY(-110px) rotate(-15deg); }
+.mark-7 { transform: translate(-50%, -50%) rotate(40deg) translateY(-110px) rotate(-40deg); }
+.mark-8 { transform: translate(-50%, -50%) rotate(65deg) translateY(-110px) rotate(-65deg); }
+.mark-9 { transform: translate(-50%, -50%) rotate(90deg) translateY(-110px) rotate(-90deg); }
 
-/* Search Bar */
-.search-bar {
-    display: flex;
-    background-color: #1a1a1a; /* Lebih gelap dari background aplikasi */
-    border-radius: 10px;
-    padding: 5px;
-    margin-bottom: 20px;
-}
-
-.search-input {
-    flex-grow: 1;
-    padding: 10px;
-    border: none;
-    background: none;
-    color: white;
-    font-size: 1em;
-}
-
-.search-btn {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 1.2em;
-    cursor: pointer;
-    padding: 0 10px;
-}
-
-/* Daftar Video */
-.video-card {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 20px;
-    align-items: flex-start;
-}
-
-.thumbnail-placeholder {
-    width: 150px;
-    height: 85px;
-    background-color: #ff0000;
-    object-fit: cover;
-    border-radius: 5px;
-}
-
-.video-details {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-.video-title {
-    font-size: 1em;
-    font-weight: bold;
-    margin: 0 0 5px 0;
-    line-height: 1.3;
-}
-
-.video-info {
-    font-size: 0.8em;
-    color: #aaa;
-    margin-bottom: 5px;
-}
-
-.label {
-    background-color: #ff0000;
-    color: white;
-    font-size: 0.7em;
-    padding: 2px 5px;
-    border-radius: 3px;
-    width: fit-content;
-}
-
-/* MINI PLAYER (Player di Atas) */
-.mini-player {
+/* GARIS GAUGE (MENGGUNAKAN PSEUDO-ELEMENTS UNTUK ARCS) */
+.gauge-bars {
     position: absolute;
-    top: -200px; /* Posisikan di atas headunit utama */
-    left: 50%;
-    transform: translateX(-50%);
-    width: 400px; /* Lebar disesuaikan */
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+}
+
+/* Bar Merah (Redline - Statis) */
+.gauge-red {
+    position: absolute;
+    width: 200px; /* Ukuran arc */
     height: 200px;
-    background-color: rgba(0, 0, 0, 0.9);
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
-    border: 2px solid #ff0000;
-    padding: 10px;
-    box-sizing: border-box;
+    border: 15px solid transparent;
+    border-radius: 50%;
+    top: 20px;
+    left: 20px;
+    clip: rect(0, 200px, 100px, 100px); /* Batasi untuk 1/4 lingkaran atas kanan */
+    /* Warna */
+    border-color: rgba(255, 0, 0, 0.8) rgba(255, 0, 0, 0.8) transparent transparent;
+    transform: rotate(70deg); /* Atur posisi merah di ujung kanan atas */
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
+}
+
+/* Bar Kuning (Statik) */
+.gauge-yellow {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    border: 15px solid transparent;
+    border-radius: 50%;
+    top: 20px;
+    left: 20px;
+    clip: rect(0, 200px, 100px, 100px);
+    /* Warna */
+    border-color: rgba(255, 255, 0, 0.8) transparent transparent transparent;
+    transform: rotate(50deg); /* Posisikan kuning di sebelah merah */
+    box-shadow: 0 0 10px rgba(255, 255, 0, 0.8);
+}
+
+/* Bar Hijau (Progres - Menggunakan CSS Cone Gradient untuk arc yang mudah) */
+.gauge-green {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: conic-gradient(
+        #00ff99 0%, 
+        #00ff99 50%, 
+        transparent 50%
+    );
+    /* Transformasi agar gradient dimulai dari posisi jam 7:30 */
+    transform: rotate(-135deg); 
+    /* Masking untuk membuat arc */
+    mask: radial-gradient(closest-side, transparent 90px, black 95px);
+    -webkit-mask: radial-gradient(closest-side, transparent 90px, black 95px);
+    box-shadow: 0 0 20px rgba(0, 255, 153, 0.8);
+    /* Properti ini akan diubah dengan JS untuk simulasi RPM */
+    --progress-deg: 50%; /* Nilai default 50% */
+    background: conic-gradient(
+        #00ff99 0%, 
+        #00ff99 var(--progress-deg), 
+        transparent var(--progress-deg)
+    );
+}
+
+/* AREA TENGAH */
+.center-display {
+    position: relative;
+    z-index: 4;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-}
-
-.mini-video-area {
-    width: 100%;
-    height: 130px;
-    background: url('https://via.placeholder.com/400x130/ff0000/ffffff?text=Video+Stream') no-repeat center center/cover;
-    border-radius: 5px;
-    display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+/* Speed Digital (3 Kotak) */
+.digital-speed {
+    display: flex;
+    gap: 5px;
+    margin-top: -10px;
+}
+
+.digital-speed span {
+    font-size: 2.5em;
     font-weight: bold;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.9);
+    padding: 2px 8px;
+    line-height: 1;
+    border: 1px solid #333;
 }
 
-.mini-controls-bar {
-    padding: 5px 0 0 0;
-}
-
-.progress-bar-placeholder {
-    height: 3px;
-    background-color: #555;
+/* Avatar/Orang di Tengah */
+.avatar-placeholder {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: #333;
+    /* Simulasi kepala putih dan garis leher hitam seperti di gambar */
+    background-image: linear-gradient(to bottom, white 0% 50%, #333 50% 100%);
+    border: 2px solid #555;
+    margin-top: 5px;
+    /* Tambahkan detail baju/jaket */
     position: relative;
-    margin-bottom: 5px;
+    overflow: hidden;
 }
 
-.progress-bar-placeholder::after {
+.avatar-placeholder::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 60%; /* Simulasi progres video */
-    height: 100%;
-    background-color: #ff0000;
+    width: 100%;
+    height: 30%;
+    bottom: 0;
+    background-color: #ff0000; /* Garis merah di baju */
 }
 
-.controls-row {
+/* Indikator Tengah Bawah */
+.center-indicators {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 5px;
+}
+
+.icon {
+    font-size: 1.5em;
+}
+
+.engine-light {
+    color: #00ff99; /* Hijau Neon */
+}
+
+.headlight {
+    color: white;
+}
+
+.gear-indicator {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: white;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+}
+
+/* IKON BAWAH LUAR */
+.bottom-icons {
+    position: absolute;
+    bottom: 20px;
+    width: 90%;
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    padding: 0 10px;
+    z-index: 3;
 }
 
-.control-btn {
-    background: none;
-    border: none;
+.car-icon, .fuel-icon, .volume-icon {
+    font-size: 1.5em;
     color: white;
-    font-size: 1.2em;
-    cursor: pointer;
 }
-
-.volume-slider {
-    flex-grow: 1;
-    margin: 0 10px;
-    height: 5px;
-    -webkit-appearance: none;
-    background: #555;
-    border-radius: 5px;
-}
-
-.volume-slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 12px;
-    height: 12px;
-    background: #ff0000;
-    border-radius: 50%;
-    cursor: pointer;
-}
-
-/* Jika Anda ingin speedometer kompleks (RAGE) dari Gambar 2, gunakan ini sebagai ganti CSS .speedometer: */
-/* .speedometer { ... ganti dengan ... }
-.speedometer-rage {
-    background-image: url('https://via.placeholder.com/250/00ff99/000000?text=RAGE+GAUGE');
-    width: 250px;
-    height: 250px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-}
-.speedometer-rage .speed-value { color: #00ff99; }
-.speedometer-rage .gear-indicator { background: #00ff99; color: black; }
-*/
