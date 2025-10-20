@@ -1,148 +1,228 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // --- Elemen Dashboard ---
-    const currentSpeedElement = document.getElementById('current-speed');
-    const gearElement = document.getElementById('gear');
-    const healthFill = document.getElementById('health-fill');
-    const fuelFill = document.getElementById('fuel-fill');
-    const healthPercent = document.getElementById('health-percent');
-    const fuelPercent = document.getElementById('fuel-percent');
+// =======================================================
+// VARIABEL GLOBAL DARI KODE ASLI ANDA
+// =======================================================
+let elements = {};
+let speedMode = 1; // Default MPH
+let indicators = 0;
+
+const onOrOff = state => state ? 'On' : 'Off';
+
+// --- Fungsi Setter Asli Anda (Memodifikasi logika visualnya) ---
+
+/** Mengupdate status mesin dan mengaktifkan ikon. */
+function setEngine(state) {
+    // Memperbarui ikon mesin di HUD visual
+    document.getElementById('engine-icon').classList.toggle('active', state);
+    // Memperbarui nilai mentah di elemen tersembunyi (jika diperlukan oleh skrip game)
+    elements.engine.innerText = onOrOff(state); 
+}
+
+/** Mengupdate kecepatan dan unit display. */
+function setSpeed(speed_ms) {
+    let speedDisplay;
+    switch(speedMode) {
+        case 1: speedDisplay = Math.round(speed_ms * 2.236936); break; // MPH
+        case 2: speedDisplay = Math.round(speed_ms * 1.943844); break; // Knots
+        default: speedDisplay = Math.round(speed_ms * 3.6); // KMH
+    }
+    
+    // Memperbarui angka kecepatan (ID speed)
+    elements.speed.innerText = speedDisplay; 
+    
+    // Mengupdate Power Dots (RPM/Power Level) berdasarkan kecepatan
+    const maxDots = 4;
+    let scaleMax = speedMode === 1 ? 120 : 180; 
+    let powerLevel = Math.min(maxDots, Math.ceil(speedDisplay / (scaleMax / maxDots))); 
     const powerDots = document.querySelectorAll('.power-bar-dots .dot');
+    powerDots.forEach((dot, index) => {
+        dot.classList.toggle('active', index < powerLevel);
+    });
+}
+
+/** Mengupdate RPM mentah (tidak digunakan di visual kita, tapi dipertahankan) */
+function setRPM(rpm) {
+    elements.rpm.innerText = `${rpm.toFixed(4)} RPM`;
+}
+
+/** Mengupdate bar dan persentase bahan bakar. */
+function setFuel(fuel_01) {
+    const fuel_100 = Math.max(0, Math.min(100, fuel_01 * 100));
+
+    // Memperbarui bar visual
+    document.getElementById('fuel-fill').style.height = `${Math.round(fuel_100)}%`;
+    document.getElementById('fuel-percent').textContent = `${Math.round(fuel_100)}%`;
+
+    // Memperbarui nilai mentah di elemen tersembunyi
+    elements.fuel.innerText = `${fuel_100.toFixed(1)}%`;
+}
+
+/** Mengupdate bar dan persentase kesehatan. */
+function setHealth(health_01) {
+    const health_100 = Math.max(0, Math.min(100, health_01 * 100));
+    
+    // Memperbarui bar visual
+    const healthFill = document.getElementById('health-fill');
+    healthFill.style.height = `${Math.round(health_100)}%`;
+    document.getElementById('health-percent').textContent = `${Math.round(health_100)}%`;
+    
+    // Mengubah warna bar visual berdasarkan kesehatan
+    if (health_100 < 30) {
+        healthFill.style.backgroundColor = '#ff0000'; 
+    } else if (health_100 < 60) {
+        healthFill.style.backgroundColor = '#ffff00'; 
+    } else {
+        healthFill.style.backgroundColor = '#00ff00'; 
+    }
+
+    // Memperbarui nilai mentah di elemen tersembunyi
+    elements.health.innerText = `${health_100.toFixed(1)}%`;
+}
+
+/** Mengupdate display gear. */
+function setGear(gear) {
+    let displayGear = String(gear).toUpperCase();
+    if (displayGear === '0') displayGear = 'R'; 
+    
+    // Memperbarui display gear (ID gear)
+    elements.gear.innerText = displayGear;
+    elements.gear.style.color = (displayGear === 'R' || displayGear === 'N') ? '#ff0000' : '#fff'; 
+}
+
+/** Mengupdate status Headlights dan ikon. */
+function setHeadlights(state) {
+    let display = 'Off';
+    if (state === 1 || state === 2) display = 'On';
+
+    // Memperbarui ikon lampu visual
+    document.getElementById('headlights-icon').classList.toggle('active', display !== 'Off');
+
+    // Memperbarui nilai mentah di elemen tersembunyi
+    switch(state) {
+        case 1: elements.headlights.innerText = 'On'; break;
+        case 2: elements.headlights.innerText = 'High Beam'; break;
+        default: elements.headlights.innerText = 'Off';
+    }
+}
+
+// Global state untuk mengelola interval sein
+let blinkInterval;
+let lastIndicatorState = 0;
+
+function controlIndicators(state) {
     const turnLeft = document.querySelector('.turn-left');
     const turnRight = document.querySelector('.turn-right');
-    const dashboardBox = document.querySelector('.dashboard-box');
-    const unitTextElement = document.querySelector('.unit-text');
 
-    // --- State Internal ---
-    let blinkInterval;
-    let speedMode = 1; // Default ke MPH
-    let isVisible = true; 
+    if (state !== lastIndicatorState) {
+        clearInterval(blinkInterval);
+        turnLeft.classList.remove('active');
+        turnRight.classList.remove('active');
 
-    // Inisialisasi: Atur tampilan awal
-    currentSpeedElement.textContent = '0';
-    gearElement.textContent = 'R';
-    gearElement.style.color = '#ff0000'; 
-    setSpeedUnit(speedMode); 
-    
-    // =======================================================
-    // LOGIKA FUNGSIONALITAS (Diadaptasi dari kode referensi Anda)
-    // =======================================================
-
-    function setSpeedUnit(mode) {
-        speedMode = mode;
-        switch(mode) {
-            case 1: unitTextElement.innerText = 'MPH'; break;
-            case 2: unitTextElement.innerText = 'Knots'; break;
-            default: unitTextElement.innerText = 'KMH';
+        if (state === 1) { // Kiri
+            blinkInterval = setInterval(() => { turnLeft.classList.toggle('active'); }, 250);
+        } else if (state === 2) { // Kanan
+            blinkInterval = setInterval(() => { turnRight.classList.toggle('active'); }, 250);
+        } else if (state === 3) { // Hazard
+             blinkInterval = setInterval(() => { 
+                turnLeft.classList.toggle('active');
+                turnRight.classList.toggle('active');
+             }, 250);
         }
     }
+    lastIndicatorState = state;
+}
 
-    function setSpeed(speed_ms) {
-        let speedDisplay;
-        switch(speedMode) {
-            case 1: speedDisplay = Math.round(speed_ms * 2.236936); break; 
-            case 2: speedDisplay = Math.round(speed_ms * 1.943844); break; 
-            default: speedDisplay = Math.round(speed_ms * 3.6); 
-        }
-        currentSpeedElement.textContent = speedDisplay;
-        
-        const maxDots = 4;
-        let scaleMax = speedMode === 1 ? 120 : 180; // Skala maksimal untuk RPM
-        let powerLevel = Math.min(maxDots, Math.ceil(speedDisplay / (scaleMax / maxDots))); 
-        
-        powerDots.forEach((dot, index) => {
-            dot.classList.toggle('active', index < powerLevel);
-        });
+/** Mengupdate status Sein Kiri */
+function setLeftIndicator(state) {
+    indicators = (indicators & 0b10) | (state ? 0b01 : 0b00);
+    // Memperbarui ikon visual
+    controlIndicators(indicators);
+    // Memperbarui nilai mentah di elemen tersembunyi
+    elements.indicators.innerText = `${indicators & 0b01 ? 'On' : 'Off'} / ${indicators & 0b10 ? 'On' : 'Off'}`;
+}
+
+/** Mengupdate status Sein Kanan */
+function setRightIndicator(state) {
+    indicators = (indicators & 0b01) | (state ? 0b10 : 0b00);
+    // Memperbarui ikon visual
+    controlIndicators(indicators);
+    // Memperbarui nilai mentah di elemen tersembunyi
+    elements.indicators.innerText = `${indicators & 0b01 ? 'On' : 'Off'} / ${indicators & 0b10 ? 'On' : 'Off'}`;
+}
+
+/** Mengupdate status Seatbelts */
+function setSeatbelts(state) {
+    // Seatbelts tidak memiliki ikon di visual kita, hanya update nilai mentah
+    elements.seatbelts.innerText = onOrOff(state);
+}
+
+/** Mengupdate mode kecepatan (MPH/KMH/Knots) */
+function setSpeedMode(mode) {
+    speedMode = mode;
+    // Memperbarui display unit (ID speed-mode)
+    switch(mode) {
+        case 1: elements.speedMode.innerText = 'MPH'; break;
+        case 2: elements.speedMode.innerText = 'Knots'; break;
+        default: elements.speedMode.innerText = 'KMH';
     }
+}
 
-    function setHealth(health_01) {
-        const health_100 = Math.max(0, Math.min(100, health_01 * 100));
 
-        healthFill.style.height = `${Math.round(health_100)}%`;
-        healthPercent.textContent = `${Math.round(health_100)}%`;
-        
-        if (health_100 < 30) {
-            healthFill.style.backgroundColor = '#ff0000'; 
-        } else if (health_100 < 60) {
-            healthFill.style.backgroundColor = '#ffff00'; 
-        } else {
-            healthFill.style.backgroundColor = '#00ff00'; 
-        }
-    }
+// =======================================================
+// FUNGSI UTAMA PENGHUBUNG (NUI LISTENER)
+// =======================================================
 
-    function setFuel(fuel_01) {
-        const fuel_100 = Math.max(0, Math.min(100, fuel_01 * 100));
+const updateUI = (data) => {
+    const dashboardBox = document.getElementById('dashboard-box');
+    let isVisible = dashboardBox.style.opacity === '1';
 
-        fuelFill.style.height = `${Math.round(fuel_100)}%`;
-        fuelPercent.textContent = `${Math.round(fuel_100)}%`;
-    }
-
-    function setGear(gear) {
-        let displayGear = String(gear || 'R').toUpperCase();
-        if (displayGear === '0') displayGear = 'R'; 
-        
-        gearElement.textContent = displayGear;
-        gearElement.style.color = (displayGear === 'R' || displayGear === 'N') ? '#ff0000' : '#fff'; 
-    }
-
-    function setIndicators(leftState, rightState) {
-        let state = 0;
-        if (leftState) state = 1;
-        if (rightState) state = 2;
-        if (leftState && rightState) state = 3; 
-
-        if (state !== setIndicators.lastState) {
+    // 1. KONTROL VISIBILITAS TOTAL
+    if (data.show !== undefined) {
+        dashboardBox.style.opacity = data.show ? '1' : '0';
+        dashboardBox.style.visibility = data.show ? 'visible' : 'hidden';
+        isVisible = data.show;
+        if (!isVisible) {
             clearInterval(blinkInterval);
-            turnLeft.classList.remove('active');
-            turnRight.classList.remove('active');
-
-            if (state === 1) { blinkInterval = setInterval(() => { turnLeft.classList.toggle('active'); }, 250); } 
-            else if (state === 2) { blinkInterval = setInterval(() => { turnRight.classList.toggle('active'); }, 250); } 
-            else if (state === 3) { blinkInterval = setInterval(() => { turnLeft.classList.toggle('active'); turnRight.classList.toggle('active'); }, 250); }
+            lastIndicatorState = 0;
+            return;
         }
-        setIndicators.lastState = state;
     }
-    setIndicators.lastState = 0; 
-
-    // =======================================================
-    // PENGHUBUNG NUI (Hanya mendengarkan data dari Game)
-    // =======================================================
+    if (!isVisible) return; 
     
-    const updateUI = (data) => {
-        // 1. KONTROL VISIBILITAS TOTAL
-        if (data.show !== undefined) {
-            dashboardBox.style.opacity = data.show ? '1' : '0';
-            dashboardBox.style.visibility = data.show ? 'visible' : 'hidden';
-            isVisible = data.show;
-            if (!isVisible) {
-                clearInterval(blinkInterval);
-                turnLeft.classList.remove('active');
-                turnRight.classList.remove('active');
-                return;
-            }
-        }
-        if (!isVisible) return; 
-        
-        // 2. DATA UTAMA
-        if (data.speed !== undefined) setSpeed(data.speed);
-        if (data.gear !== undefined) setGear(data.gear);
-        if (data.health !== undefined) setHealth(data.health);
-        if (data.fuel !== undefined) setFuel(data.fuel);
-        
-        // 3. INDICATORS
-        // Menerima data dari client script
-        if (data.leftIndicator !== undefined || data.rightIndicator !== undefined) {
-            setIndicators(data.leftIndicator || false, data.rightIndicator || false);
-        }
+    // 2. DATA UTAMA (Memanggil fungsi setter asli Anda)
+    if (data.engine !== undefined) setEngine(data.engine);
+    if (data.speed !== undefined) setSpeed(data.speed);
+    if (data.rpm !== undefined) setRPM(data.rpm);
+    if (data.fuel !== undefined) setFuel(data.fuel);
+    if (data.health !== undefined) setHealth(data.health);
+    if (data.gear !== undefined) setGear(data.gear);
+    if (data.headlights !== undefined) setHeadlights(data.headlights);
+    if (data.seatbelts !== undefined) setSeatbelts(data.seatbelts);
+    if (data.speedMode !== undefined) setSpeedMode(data.speedMode);
 
-        // 4. SPEED MODE
-        if (data.speedMode !== undefined) setSpeedUnit(data.speedMode);
+    // 3. INDICATORS (Memanggil setter Sein Kiri/Kanan asli Anda)
+    if (data.leftIndicator !== undefined) setLeftIndicator(data.leftIndicator);
+    if (data.rightIndicator !== undefined) setRightIndicator(data.rightIndicator);
+};
 
-        // 5. IKON STATUS
-        const engineIcon = document.getElementById('engine-icon');
-        if (data.engineActive !== undefined) {
-             engineIcon.classList.toggle('active', data.engineActive);
-        }
-        // ... Tambahkan ikon lain di sini jika data dikirim oleh game.
+
+// Wait for the DOM to be fully loaded
+document.addEventListener('DOMContentLoaded', () => {
+    // Inisialisasi 'elements' agar semua fungsi setter asli Anda bekerja
+    elements = {
+        engine: document.getElementById('engine'),
+        speed: document.getElementById('speed'),
+        rpm: document.getElementById('rpm'),
+        fuel: document.getElementById('fuel'),
+        health: document.getElementById('health'),
+        gear: document.getElementById('gear'),
+        headlights: document.getElementById('headlights'),
+        indicators: document.getElementById('indicators'),
+        seatbelts: document.getElementById('seatbelts'),
+        speedMode: document.getElementById('speed-mode'),
+        // Tambahkan elemen visual yang digunakan di fungsi setter
+        'dashboard-box': document.getElementById('dashboard-box'),
+        'health-fill': document.getElementById('health-fill'),
+        'fuel-fill': document.getElementById('fuel-fill'),
     };
 
     // Menerima pesan dari game client
@@ -158,11 +238,14 @@ document.addEventListener('DOMContentLoaded', () => {
     updateUI({ 
         speed: 0, 
         health: 1, 
-        fuel: 0.87, 
+        fuel: 0.87, // 87%
         gear: 'R', 
+        headlights: 0,
+        engine: false,
+        seatbelts: false,
         leftIndicator: false, 
         rightIndicator: false,
-        engineActive: false,
+        speedMode: 1, // MPH
         show: true
     });
 });
