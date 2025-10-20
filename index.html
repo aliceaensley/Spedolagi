@@ -32,62 +32,60 @@
         </div>
                 <div class="dashboard-box" id="dashboard-box">
             
-            <div class="bars-section">
-                <div class="bar-labels-top">
-                    <span class="bar-label" id="health-percent">100%</span>
-                    <span class="bar-label" id="fuel-percent">87%</span>
-                </div>
-                
-                <div class="label-indicators">
-                    <span class="indicator-text">H</span>
-                    <span class="indicator-text">F</span>
-                </div>
+            <div class="top-section">
+                <div class="bars-container">
+                    <div class="bar-pair">
+                        <span class="bar-indicator">H</span>
+                        <div class="bar-column"><div class="bar-fill health-fill" id="health-fill"></div></div>
+                    </div>
+                    <div class="bar-pair">
+                        <span class="bar-indicator">F</span>
+                        <div class="bar-column"><div class="bar-fill fuel-fill" id="fuel-fill"></div></div>
+                    </div>
+                </div>
 
-                <div class="bar-columns">
-                    <div class="bar-column">
-                        <div class="bar-fill health-fill" id="health-fill"></div>
-                    </div>
-                    <div class="bar-column">
-                        <div class="bar-fill fuel-fill" id="fuel-fill"></div>
-                    </div>
-                </div>
-            </div>
+                <div class="speed-section">
+                    <span id="speed" class="speed-value">0</span>
+                    <span class="gear-letter" id="gear">R</span>
+                </div>
+            </div>
 
-            <div class="center-display-section">
-                
-                <div class="speed-readout">
-                    <span id="speed" class="speed-value">0</span> 
-                    <span class="gear-letter" id="gear">R</span>
-                </div>
-                <div class="unit-text" id="speed-mode">MPH</div> 
+            <div class="bottom-section">
+                <div class="percent-row">
+                    <span id="health-percent">100%</span>
+                    <span class="unit-text" id="speed-mode">MPH</span>
+                    <span id="fuel-percent">87%</span>
+                </div>
+                
+                <div class="indicator-row">
+                    <i class="icon indicator-icon" id="turn-left-icon"></i>
+                    <div class="power-bar-dots" id="rpm-dots">
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                    </div>
+                    <i class="icon indicator-icon" id="turn-right-icon"></i>
+                </div>
 
-                <div class="power-bar-dots" id="rpm-dots">
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                </div>
-            </div>
-
-            <div class="status-icons-row">
-                <i class="icon indicator-icon" id="turn-left-icon"></i> 
-                <i class="icon status-icon" id="engine-icon"></i> 
-                <i class="icon status-icon" id="headlights-icon"></i>
-                <i class="icon status-icon" id="abs-icon"></i> 
-                <i class="icon indicator-icon" id="turn-right-icon"></i>
-
-                
-<div style="display:none;">
-                    <span id="indicators"></span>
-                    <span id="engine"></span>
-                    <span id="headlights"></span>
-                    <span id="rpm"></span>
-                    <span id="health"></span>
-                    <span id="fuel"></span>
-                    <span id="seatbelts"></span>
-                </div>
-            </div>
+                <div class="status-icon-row">
+                    <i class="icon status-icon" id="engine-icon"></i> 
+                    <i class="icon status-icon" id="headlights-icon"></i>
+                    <i class="icon status-icon" id="abs-icon"></i> 
+                </div>
+                
+            </div>
         </div>
+            </div>
+
+    <div style="display:none;">
+        <span id="indicators"></span>
+        <span id="engine"></span>
+        <span id="headlights"></span>
+        <span id="rpm"></span>
+        <span id="health"></span>
+        <span id="fuel"></span>
+        <span id="seatbelts"></span>
     </div>
 
     <script src="script.js"></script>
