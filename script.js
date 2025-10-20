@@ -42,7 +42,6 @@ async function loadYoutubeResults(query = "Musik Populer Indonesia") {
         const results = await response.json();
         
         if (!response.ok || !Array.isArray(results) || results.length === 0) {
-            // Ini akan terpicu jika API Key salah, resource_name salah, atau tidak ada hasil
             console.error("NUI fetch gagal atau hasil kosong. Memeriksa API Key/Backend.");
             throw new Error("Gagal memuat hasil nyata dari server.");
         }
@@ -145,9 +144,155 @@ function searchYoutube() {
 }
 
 
-// --- FUNGSI SETTER DASHBOARD (setEngine, setSpeed, setFuel, dll.) TIDAK BERUBAH DAN DIHILANGKAN DARI SINI UNTUK KERINGKASAN ---
+// =======================================================
+// FUNGSI KONTROL DASHBOARD & HEAD UNIT (SETTER) - LENGKAP
+// =======================================================
 
-// (Semua fungsi setter dashboard yang ada di respons sebelumnya HARUS tetap ada di script.js Anda)
+function setEngine(state) {
+    const engineIcon = document.getElementById('engine-icon');
+    if (engineIcon) engineIcon.classList.toggle('active', state);
+}
+
+function setSpeed(speed_ms) {
+    let speedDisplay;
+    switch(speedMode) {
+        case 1: speedDisplay = Math.round(speed_ms * 2.236936); break; 
+        case 2: speedDisplay = Math.round(speed_ms * 1.943844); break; 
+        default: speedDisplay = Math.round(speed_ms * 3.6); 
+    }
+    if (elements.speed) elements.speed.innerText = speedDisplay; 
+    
+    const maxDots = 4;
+    let scaleMax = speedMode === 1 ? 120 : 180; 
+    let powerLevel = Math.min(maxDots, Math.ceil(speedDisplay / (scaleMax / maxDots))); 
+    const powerDots = document.querySelectorAll('.power-bar-dots .dot');
+    powerDots.forEach((dot, index) => {
+        dot.classList.toggle('active', index < powerLevel);
+    });
+}
+
+function setRPM(rpm) { /* ... */ }
+
+function setFuel(fuel_01) {
+    const fuel_100 = Math.max(0, Math.min(100, fuel_01 * 100));
+    const fuelPercentElement = document.getElementById('fuel-percent');
+    const fuelFill = document.getElementById('fuel-fill');
+    if (fuelFill) fuelFill.style.height = `${Math.round(fuel_100)}%`;
+    if (fuelPercentElement) fuelPercentElement.textContent = `${Math.round(fuel_100)}%`; 
+}
+
+function setHealth(health_01) {
+    const health_100 = Math.max(0, Math.min(100, health_01 * 100));
+    const healthFill = document.getElementById('health-fill');
+    const healthPercentElement = document.getElementById('health-percent');
+    if (healthFill) {
+        healthFill.style.height = `${Math.round(health_100)}%`;
+        healthFill.style.backgroundColor = health_100 < 30 ? '#ff0000' : (health_100 < 60 ? '#ffff00' : '#00ff00'); 
+    }
+    if (healthPercentElement) healthPercentElement.textContent = `${Math.round(health_100)}%`; 
+}
+
+function setGear(gear) {
+    const gearElement = document.getElementById('gear');
+    if (!gearElement) return;
+    let displayGear = String(gear).toUpperCase();
+    if (displayGear === '0') displayGear = 'N'; 
+    if (displayGear.length > 1 && displayGear.match(/[A-Z]/i)) { 
+        displayGear = displayGear[0];
+    }
+    gearElement.innerText = displayGear;
+    gearElement.style.color = (displayGear === 'R' || displayGear === 'N') ? '#ff0000' : '#fff'; 
+}
+
+function setHeadlights(state) {
+    const headlightsIcon = document.getElementById('headlights-icon');
+    let displayOn = state === 1 || state === 2; 
+    if (headlightsIcon) headlightsIcon.classList.toggle('active', displayOn);
+}
+
+function controlIndicators(state) {
+    const turnLeft = document.getElementById('turn-left-icon'); 
+    const turnRight = document.getElementById('turn-right-icon'); 
+    if (state !== lastIndicatorState) {
+        clearInterval(blinkInterval);
+        if (turnLeft) turnLeft.classList.remove('active');
+        if (turnRight) turnRight.classList.remove('active');
+        if (state === 1) { 
+            blinkInterval = setInterval(() => { if(turnLeft) turnLeft.classList.toggle('active'); }, 250);
+        } else if (state === 2) { 
+            blinkInterval = setInterval(() => { if(turnRight) turnRight.classList.toggle('active'); }, 250);
+        } else if (state === 3) { 
+             blinkInterval = setInterval(() => { 
+                if(turnLeft) turnLeft.classList.toggle('active');
+                if(turnRight) turnRight.classList.toggle('active');
+             }, 250);
+        }
+    }
+    lastIndicatorState = state;
+}
+
+function setLeftIndicator(state) {
+    indicators = (indicators & 0b10) | (state ? 0b01 : 0b00); 
+    controlIndicators(indicators);
+}
+
+function setRightIndicator(state) {
+    indicators = (indicators & 0b01) | (state ? 0b10 : 0b00); 
+    controlIndicators(indicators);
+}
+
+function setSeatbelts(state) {
+    const seatbeltIcon = document.getElementById('abs-icon');
+    if (seatbeltIcon) seatbeltIcon.classList.toggle('active', state); 
+}
+
+function setSpeedMode(mode) {
+    speedMode = mode;
+    const speedModeElement = document.getElementById('speed-mode');
+    if (!speedModeElement) return;
+    speedModeElement.innerText = (mode === 1) ? 'MPH' : ((mode === 2) ? 'Knots' : 'KMH');
+}
+
+function toggleHeadUnitVisibility() {
+    const button = document.getElementById('toggle-game-hud-button');
+    const headUnitContainer = document.getElementById('custom-headunit-container'); 
+    if (!headUnitContainer) return;
+
+    isCustomHeadUnitVisible = !isCustomHeadUnitVisible;
+    
+    if (isCustomHeadUnitVisible) {
+        button.classList.remove('hidden');
+        headUnitContainer.style.display = 'flex'; 
+    } else {
+        button.classList.add('hidden');
+        headUnitContainer.style.display = 'none'; 
+        closeYoutubeApp(); 
+    }
+}
+
+
+// =======================================================
+// FUNGSI UTAMA PENGHUBUNG (NUI LISTENER)
+// =======================================================
+
+const updateUI = (data) => {
+    const dashboardBox = document.getElementById('dashboard-box');
+    dashboardBox.style.opacity = '1'; 
+    dashboardBox.style.visibility = 'visible'; 
+
+    if (data.engine !== undefined) setEngine(data.engine);
+    if (data.speed !== undefined) setSpeed(data.speed);
+    if (data.rpm !== undefined) setRPM(data.rpm);
+    if (data.fuel !== undefined) setFuel(data.fuel);
+    if (data.health !== undefined) setHealth(data.health);
+    if (data.gear !== undefined) setGear(data.gear);
+    if (data.headlights !== undefined) setHeadlights(data.headlights); 
+    if (data.seatbelts !== undefined) setSeatbelts(data.seatbelts); 
+    if (data.speedMode !== undefined) setSpeedMode(data.speedMode);
+    if (data.leftIndicator !== undefined) setLeftIndicator(data.leftIndicator);
+    if (data.rightIndicator !== undefined) setRightIndicator(data.rightIndicator);
+};
+
 
 document.addEventListener('DOMContentLoaded', () => {
     // INISIALISASI ELEMENTS
@@ -193,6 +338,9 @@ document.addEventListener('DOMContentLoaded', () => {
         toggleGameHudButton.classList.add('hidden');
     }
 
-    // Panggil updateUI sekali untuk nilai awal
-    -- updateUI({...}); --
+    // Panggil updateUI sekali untuk nilai awal (Demo)
+    updateUI({ 
+        speed: 0, health: 1, fuel: 0.87, gear: 'R', headlights: 0, engine: false, seatbelts: true, 
+        leftIndicator: false, rightIndicator: false, speedMode: 1
+    });
 });
