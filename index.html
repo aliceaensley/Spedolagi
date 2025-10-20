@@ -14,56 +14,70 @@
 
     <div class="speedometer-container">
         <div class="speedometer">
-            <div class="gauge">
-                <div class="speed-value">
-                    <span id="current-speed">120</span>
-                    <span class="unit">KM/H</span>
-                </div>
-                <div class="gear-indicator" id="gear">N</div>
+            <div class="top-indicators">
+                <i class="icon indicator-light caution">⚠️</i>
+                <i class="icon indicator-light car-icon">🚗</i>
             </div>
-            <div class="info-indicators">
-                <i class="icon fuel">⛽</i>
-                <i class="icon engine">⚠️</i>
+            
+            <div class="speed-value">
+                <span id="current-speed">126</span>
+                <span class="unit">KM/H</span>
             </div>
-            <button id="toggle-youtube-btn" class="youtube-toggle-btn">▶️ YouTube</button>
+            
+            <div class="gear-indicator" id="gear">4</div>
+            
+            <button id="toggle-youtube-btn" class="youtube-toggle-btn">
+                <i class="youtube-icon">▶️</i> YouTube
+            </button>
         </div>
     </div>
 
     <div class="youtube-headunit-overlay hidden" id="youtube-headunit">
+        
+        <div class="mini-player">
+            <div class="mini-video-area">
+                <div class="video-placeholder">Video Sedang Diputar...</div>
+            </div>
+            <div class="mini-controls-bar">
+                <div class="progress-bar-placeholder"></div>
+                <div class="controls-row">
+                    <button class="control-btn"><i class="icon volume">🔊</i></button>
+                    <button class="control-btn"><i class="icon rewind">⏮</i></button>
+                    <input type="range" class="volume-slider" min="0" max="100" value="70">
+                    <button class="control-btn"><i class="icon maximize">⇱</i></button>
+                    <button class="control-btn"><i class="icon close">X</i></button>
+                </div>
+            </div>
+        </div>
+
         <div class="youtube-app-interface">
             <div class="app-header">
-                <button class="back-btn">←</button>
-                <span class="app-title">YouTube</span>
-                <button id="hide-youtube-btn" class="close-btn">Tutup</button>
-                <input type="text" placeholder="Cari..." class="search-input">
+                <span class="harmony-text">Harmony</span>
+                <span class="status-icons">📶 5G 23:32</span>
+            </div>
+            
+            <div class="nav-bar">
+                <button class="nav-btn back-btn">←</button>
+                <span class="nav-title">YouTube</span>
+                <button id="hide-youtube-btn" class="nav-btn close-btn-large">Tutup</button>
+                <button class="nav-btn search-icon">🔍</button>
+            </div>
+            
+            <div class="search-bar">
+                <input type="text" placeholder="dangdut" class="search-input">
+                <button class="search-btn">🔍</button>
             </div>
 
-            <div class="video-section">
-                <h3 class="section-title">Rekomendasi Video</h3>
+            <div class="video-list">
                 <div class="video-card">
-                    <img src="video-thumbnail.jpg" alt="Video Thumbnail" class="thumbnail-placeholder">
-                    <p class="video-title">JUDUL VIDEO DANGDUT POPULER</p>
-                    <span class="video-views">1.2M ditonton</span>
-                </div>
-                <div class="video-card">
-                    <img src="video-thumbnail.jpg" alt="Video Thumbnail" class="thumbnail-placeholder">
-                    <p class="video-title">VIDEO LAINNYA</p>
-                    <span class="video-views">500K ditonton</span>
-                </div>
-            </div>
-
-            <div class="mini-player">
-                <img src="mini-thumbnail.jpg" alt="Mini Thumbnail" class="mini-thumbnail-placeholder">
-                <div class="mini-controls">
-                    <p class="mini-title">🎶 Sedang Diputar...</p>
-                    <div class="controls-row">
-                        <button>⏮️</button>
-                        <button class="play-pause">⏸️</button>
-                        <button>⏭️</button>
+                    <img src="https://via.placeholder.com/150x85/FF0000/FFFFFF?text=RINDU" alt="Thumbnail" class="thumbnail-placeholder">
+                    <div class="video-details">
+                        <p class="video-title">DR TREMONDO - RINDUNYA HATIKU</p>
+                        <span class="video-info">1.5M views • 2 hari lalu</span>
+                        <span class="label">VIDEO</span>
                     </div>
                 </div>
-                <button class="maximize-btn">⇱</button>
-            </div>
+                </div>
         </div>
     </div>
 
