@@ -4,14 +4,96 @@
 let elements = {};
 let speedMode = 1; 
 let indicators = 0;
-let isCustomHeadUnitVisible = false; // Status Head Unit Tambahan: DEFAULT KE FALSE (TERSEMBUNYI)
+let isCustomHeadUnitVisible = false; // Head Unit DEFAULT TERSEMBUNYI
 let blinkInterval;
 let lastIndicatorState = 0;
 
-const onOrOff = state => state ? 'On' : 'Off';
+// Data Contoh Video YouTube (untuk simulasi hasil pencarian)
+const MOCK_YOUTUBE_RESULTS = [
+    { title: "KUMPULAN LAGU HITS SPOTIFY TIKTOK VIRAL 2025", channel_name: "StarHits Music", external_video_id: "FWn30lNyVhc" },
+    { title: "KUMPULAN LAGU POP GALAU AKUSTIK TERBAIK 2025", channel_name: "Agus Riansyah74", external_video_id: "O-dRQtArLgs" },
+    { title: "LAGU TERBARU VIRAL SPOTIFY TIKTOK HITS BANGET 2025", channel_name: "StarHits Music", external_video_id: "nCHym52WpoY" },
+    { title: "TOP BEST LAGU POP 2000-AN INDONESIA AKUSTIK HITS", channel_name: "Tereza Karaoke & Playlists", external_video_id: "uYg9bhcLS0k" },
+    { title: "LAGU VIRAL SPOTIFY TIKTOK HITS TERBARU 2025", channel_name: "StarHits Music", external_video_id: "MALvlI0RaG8" }
+];
+
 
 // =======================================================
-// FUNGSI SETTER (DASHBOARD KUSTOM - SEMUA FUNGSI DIKEMBALIKAN)
+// FUNGSI UTILITY YOUTUBE
+// =======================================================
+
+/**
+ * Menampilkan layar Head Unit aplikasi YouTube
+ */
+function openYoutubeApp() {
+    document.getElementById('app-home-screen').style.display = 'none';
+    document.getElementById('youtube-screen').style.display = 'flex';
+    document.getElementById('headunit-status-bar').style.display = 'none'; 
+    
+    // Tampilkan hasil pencarian awal (menggunakan mock data)
+    displayYoutubeResults(MOCK_YOUTUBE_RESULTS); 
+}
+
+/**
+ * Menutup layar aplikasi YouTube dan kembali ke Home Screen
+ */
+function closeYoutubeApp() {
+    document.getElementById('youtube-screen').style.display = 'none';
+    document.getElementById('app-home-screen').style.display = 'grid';
+    document.getElementById('headunit-status-bar').style.display = 'flex'; 
+    
+    // Reset konten YouTube ke pesan awal
+    document.getElementById('youtube-content').innerHTML = '<p style="text-align: center; color: #aaa; margin-top: 50px;">Cari sesuatu untuk mulai memutar video...</p>';
+}
+
+/**
+ * Menghasilkan HTML untuk daftar hasil video.
+ */
+function displayYoutubeResults(results) {
+    const contentDiv = document.getElementById('youtube-content');
+    contentDiv.innerHTML = ''; 
+
+    if (results.length === 0) {
+        contentDiv.innerHTML = '<p style="text-align: center; color: #aaa; margin-top: 50px;">Tidak ada hasil ditemukan.</p>';
+        return;
+    }
+
+    results.forEach(video => {
+        const item = document.createElement('div');
+        item.classList.add('video-item');
+        const videoId = video.external_video_id; 
+        
+        item.innerHTML = `
+            <img src="https://img.youtube.com/vi/${videoId}/default.jpg" class="video-thumb" alt="Thumbnail">
+            <div class="video-details">
+                <div class="video-title">${video.title}</div>
+                <div class="video-channel">${video.channel_name}</div>
+            </div>
+        `;
+        
+        item.addEventListener('click', () => playVideo(videoId));
+        contentDiv.appendChild(item);
+    });
+}
+
+/**
+ * Memutar video yang dipilih dalam iframe
+ */
+function playVideo(videoId) {
+    const contentDiv = document.getElementById('youtube-content');
+    contentDiv.innerHTML = `
+        <iframe 
+            class="video-player-iframe" 
+            src="https://www.youtube.com/embed/${videoId}?autoplay=1" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen
+        ></iframe>
+    `;
+}
+
+// =======================================================
+// FUNGSI KONTROL DASHBOARD & HEAD UNIT (SETTER)
 // =======================================================
 
 function setEngine(state) {
@@ -22,15 +104,14 @@ function setEngine(state) {
 function setSpeed(speed_ms) {
     let speedDisplay;
     switch(speedMode) {
-        case 1: speedDisplay = Math.round(speed_ms * 2.236936); break; // MPH
-        case 2: speedDisplay = Math.round(speed_ms * 1.943844); break; // Knots
-        default: speedDisplay = Math.round(speed_ms * 3.6); // KMH
+        case 1: speedDisplay = Math.round(speed_ms * 2.236936); break; 
+        case 2: speedDisplay = Math.round(speed_ms * 1.943844); break; 
+        default: speedDisplay = Math.round(speed_ms * 3.6); 
     }
     if (elements.speed) elements.speed.innerText = speedDisplay; 
     
-    // Logika RPM dots (digunakan sebagai Power Indicator)
     const maxDots = 4;
-    let scaleMax = speedMode === 1 ? 120 : 180; // Asumsi batas kecepatan untuk scaling visual
+    let scaleMax = speedMode === 1 ? 120 : 180; 
     let powerLevel = Math.min(maxDots, Math.ceil(speedDisplay / (scaleMax / maxDots))); 
     const powerDots = document.querySelectorAll('.power-bar-dots .dot');
     powerDots.forEach((dot, index) => {
@@ -38,9 +119,7 @@ function setSpeed(speed_ms) {
     });
 }
 
-function setRPM(rpm) {
-    // Fungsi ini dikembalikan jika Anda ingin menggunakannya
-}
+function setRPM(rpm) { /* ... */ }
 
 function setFuel(fuel_01) {
     const fuel_100 = Math.max(0, Math.min(100, fuel_01 * 100));
@@ -56,7 +135,6 @@ function setHealth(health_01) {
     const healthPercentElement = document.getElementById('health-percent');
     if (healthFill) {
         healthFill.style.height = `${Math.round(health_100)}%`;
-        // Mengubah warna bar kesehatan
         healthFill.style.backgroundColor = health_100 < 30 ? '#ff0000' : (health_100 < 60 ? '#ffff00' : '#00ff00'); 
     }
     if (healthPercentElement) healthPercentElement.textContent = `${Math.round(health_100)}%`; 
@@ -67,35 +145,31 @@ function setGear(gear) {
     if (!gearElement) return;
     let displayGear = String(gear).toUpperCase();
     if (displayGear === '0') displayGear = 'N'; 
-    if (displayGear.length > 1 && displayGear.match(/[A-Z]/i)) { // Contoh: 1P, 2D, dll.
+    if (displayGear.length > 1 && displayGear.match(/[A-Z]/i)) { 
         displayGear = displayGear[0];
     }
     gearElement.innerText = displayGear;
-    // Warna gear: Merah untuk R dan N, Putih untuk angka/D
     gearElement.style.color = (displayGear === 'R' || displayGear === 'N') ? '#ff0000' : '#fff'; 
 }
 
 function setHeadlights(state) {
     const headlightsIcon = document.getElementById('headlights-icon');
-    let displayOn = state === 1 || state === 2; // 1=low, 2=high
+    let displayOn = state === 1 || state === 2; 
     if (headlightsIcon) headlightsIcon.classList.toggle('active', displayOn);
 }
 
-// LOGIKA SEIN/INDIKATOR
 function controlIndicators(state) {
     const turnLeft = document.getElementById('turn-left-icon'); 
     const turnRight = document.getElementById('turn-right-icon'); 
-
     if (state !== lastIndicatorState) {
         clearInterval(blinkInterval);
         if (turnLeft) turnLeft.classList.remove('active');
         if (turnRight) turnRight.classList.remove('active');
-
-        if (state === 1) { // Kiri
+        if (state === 1) { 
             blinkInterval = setInterval(() => { if(turnLeft) turnLeft.classList.toggle('active'); }, 250);
-        } else if (state === 2) { // Kanan
+        } else if (state === 2) { 
             blinkInterval = setInterval(() => { if(turnRight) turnRight.classList.toggle('active'); }, 250);
-        } else if (state === 3) { // Hazard
+        } else if (state === 3) { 
              blinkInterval = setInterval(() => { 
                 if(turnLeft) turnLeft.classList.toggle('active');
                 if(turnRight) turnRight.classList.toggle('active');
@@ -106,14 +180,12 @@ function controlIndicators(state) {
 }
 
 function setLeftIndicator(state) {
-    // state (boolean): true = on, false = off
-    indicators = (indicators & 0b10) | (state ? 0b01 : 0b00); // 0b01 = Kiri
+    indicators = (indicators & 0b10) | (state ? 0b01 : 0b00); 
     controlIndicators(indicators);
 }
 
 function setRightIndicator(state) {
-    // state (boolean): true = on, false = off
-    indicators = (indicators & 0b01) | (state ? 0b10 : 0b00); // 0b10 = Kanan
+    indicators = (indicators & 0b01) | (state ? 0b10 : 0b00); 
     controlIndicators(indicators);
 }
 
@@ -129,24 +201,24 @@ function setSpeedMode(mode) {
     speedModeElement.innerText = (mode === 1) ? 'MPH' : ((mode === 2) ? 'Knots' : 'KMH');
 }
 
-// =======================================================
-// FUNGSI KONTROL HEAD UNIT TAMBAHAN
-// =======================================================
-
+/**
+ * Toggle visibility of the custom head unit.
+ */
 function toggleHeadUnitVisibility() {
     const button = document.getElementById('toggle-game-hud-button');
     const headUnitContainer = document.getElementById('custom-headunit-container'); 
-
     if (!headUnitContainer) return;
 
     isCustomHeadUnitVisible = !isCustomHeadUnitVisible;
     
     if (isCustomHeadUnitVisible) {
         button.classList.remove('hidden');
-        headUnitContainer.style.display = 'flex'; // TAMPILKAN
+        headUnitContainer.style.display = 'flex'; 
     } else {
         button.classList.add('hidden');
-        headUnitContainer.style.display = 'none'; // SEMBUNYIKAN
+        headUnitContainer.style.display = 'none'; 
+        // Tutup aplikasi YouTube jika Head Unit ditutup
+        closeYoutubeApp(); 
     }
 }
 
@@ -156,12 +228,10 @@ function toggleHeadUnitVisibility() {
 // =======================================================
 
 const updateUI = (data) => {
-    // Memastikan dashboard selalu terlihat
     const dashboardBox = document.getElementById('dashboard-box');
     dashboardBox.style.opacity = '1'; 
     dashboardBox.style.visibility = 'visible'; 
 
-    // Panggil SEMUA fungsi setter
     if (data.engine !== undefined) setEngine(data.engine);
     if (data.speed !== undefined) setSpeed(data.speed);
     if (data.rpm !== undefined) setRPM(data.rpm);
@@ -171,7 +241,6 @@ const updateUI = (data) => {
     if (data.headlights !== undefined) setHeadlights(data.headlights); 
     if (data.seatbelts !== undefined) setSeatbelts(data.seatbelts); 
     if (data.speedMode !== undefined) setSpeedMode(data.speedMode);
-
     if (data.leftIndicator !== undefined) setLeftIndicator(data.leftIndicator);
     if (data.rightIndicator !== undefined) setRightIndicator(data.rightIndicator);
 };
@@ -189,23 +258,38 @@ document.addEventListener('DOMContentLoaded', () => {
         toggleGameHudButton.addEventListener('click', toggleHeadUnitVisibility); 
     }
     
+    // INISIALISASI EVENT LISTENER YOUTUBE
+    const youtubeAppIcon = document.getElementById('youtube-app-icon');
+    const youtubeCloseBtn = document.getElementById('youtube-close-btn');
+    const youtubeSearchBtn = document.getElementById('youtube-search-btn');
+
+    if (youtubeAppIcon) {
+        youtubeAppIcon.addEventListener('click', openYoutubeApp);
+    }
+    if (youtubeCloseBtn) {
+        youtubeCloseBtn.addEventListener('click', closeYoutubeApp);
+    }
+    if (youtubeSearchBtn) {
+        youtubeSearchBtn.addEventListener('click', () => {
+            const query = document.getElementById('youtube-search-input').value;
+            console.log("Mencari YouTube untuk:", query);
+            // DI SINI TEMPAT ANDA MEMANGGIL API BACKEND NUI (LUA) ANDA
+            
+            // Untuk demo, kita menggunakan mock data:
+            alert("Simulasi pencarian untuk: " + query + ". Menampilkan hasil mock.");
+            displayYoutubeResults(MOCK_YOUTUBE_RESULTS); 
+        });
+    }
+
+
     // INISIALISASI STATUS AWAL HEAD UNIT TAMBAHAN (SEMBUNYI)
     const headUnitContainer = document.getElementById('custom-headunit-container');
     if (headUnitContainer) {
-        // isCustomHeadUnitVisible = false, jadi display: 'none'
         headUnitContainer.style.display = 'none'; 
     }
     if (toggleGameHudButton) {
-        // Tombol harus di-set ke status 'hidden' (merah)
         toggleGameHudButton.classList.add('hidden');
     }
-
-    window.addEventListener('message', (event) => {
-        const data = event.data;
-        if (data.type === 'speedoUpdate' || data.type === 'UPDATE_HUD_DATA') {
-            updateUI(data.payload || data); 
-        }
-    });
 
     // Panggil updateUI sekali untuk nilai awal
     updateUI({ 
