@@ -9,13 +9,23 @@ let blinkInterval;
 let lastIndicatorState = 0;
 
 // Data Contoh Video YouTube (untuk simulasi hasil pencarian)
-const MOCK_YOUTUBE_RESULTS = [
-    { title: "KUMPULAN LAGU HITS SPOTIFY TIKTOK VIRAL 2025", channel_name: "StarHits Music", external_video_id: "FWn30lNyVhc" },
-    { title: "KUMPULAN LAGU POP GALAU AKUSTIK TERBAIK 2025", channel_name: "Agus Riansyah74", external_video_id: "O-dRQtArLgs" },
-    { title: "LAGU TERBARU VIRAL SPOTIFY TIKTOK HITS BANGET 2025", channel_name: "StarHits Music", external_video_id: "nCHym52WpoY" },
-    { title: "TOP BEST LAGU POP 2000-AN INDONESIA AKUSTIK HITS", channel_name: "Tereza Karaoke & Playlists", external_video_id: "uYg9bhcLS0k" },
-    { title: "LAGU VIRAL SPOTIFY TIKTOK HITS TERBARU 2025", channel_name: "StarHits Music", external_video_id: "MALvlI0RaG8" }
-];
+const MOCK_YOUTUBE_RESULTS = {
+    // Hasil DEFAULT (saat aplikasi dibuka)
+    "default": [
+        { title: "KUMPULAN LAGU HITS SPOTIFY TIKTOK VIRAL 2025", channel_name: "StarHits Music", external_video_id: "FWn30lNyVhc" },
+        { title: "KUMPULAN LAGU POP GALAU AKUSTIK TERBAIK 2025", channel_name: "Agus Riansyah74", external_video_id: "O-dRQtArLgs" },
+        { title: "LAGU TERBARU VIRAL SPOTIFY TIKTOK HITS BANGET 2025", channel_name: "StarHits Music", external_video_id: "nCHym52WpoY" }
+    ],
+    // Hasil SIMULASI PENCARIAN
+    "mobil": [
+        { title: "Review Mobil Sport Terbaru 2025", channel_name: "Otomotif Channel", external_video_id: "jL-G6eE2Fss" },
+        { title: "Balapan Mobil Klasik Terbaik Dunia", channel_name: "Racing Legends", external_video_id: "L1H-K1A4uGg" }
+    ],
+    "berita": [
+        { title: "Berita Utama Hari Ini | Pagi Penuh Harapan", channel_name: "News Update", external_video_id: "Q2R8Z9G7XpQ" },
+        { title: "Analisis Pasar Global 2025", channel_name: "Economy Insight", external_video_id: "h7M-P6C0wYf" }
+    ]
+};
 
 
 // =======================================================
@@ -30,8 +40,8 @@ function openYoutubeApp() {
     document.getElementById('youtube-screen').style.display = 'flex';
     document.getElementById('headunit-status-bar').style.display = 'none'; 
     
-    // Tampilkan hasil pencarian awal (menggunakan mock data)
-    displayYoutubeResults(MOCK_YOUTUBE_RESULTS); 
+    // Tampilkan hasil pencarian awal (default)
+    displayYoutubeResults(MOCK_YOUTUBE_RESULTS["default"]); 
 }
 
 /**
@@ -53,7 +63,7 @@ function displayYoutubeResults(results) {
     const contentDiv = document.getElementById('youtube-content');
     contentDiv.innerHTML = ''; 
 
-    if (results.length === 0) {
+    if (!results || results.length === 0) {
         contentDiv.innerHTML = '<p style="text-align: center; color: #aaa; margin-top: 50px;">Tidak ada hasil ditemukan.</p>';
         return;
     }
@@ -71,7 +81,7 @@ function displayYoutubeResults(results) {
             </div>
         `;
         
-        // --- INI ADALAH LOGIKA YANG MEMASTIKAN PEMUTARAN VIDEO ---
+        // Memastikan pemutaran video saat diklik
         item.addEventListener('click', () => {
             playVideo(videoId);
         });
@@ -85,7 +95,6 @@ function displayYoutubeResults(results) {
  */
 function playVideo(videoId) {
     const contentDiv = document.getElementById('youtube-content');
-    // Memasukkan iframe ke dalam div konten YouTube
     contentDiv.innerHTML = `
         <iframe 
             class="video-player-iframe" 
@@ -95,13 +104,56 @@ function playVideo(videoId) {
             allowfullscreen
         ></iframe>
     `;
-    // Catatan: Parameter "autoplay=1" memungkinkan pemutaran otomatis,
-    // namun browser modern seringkali memblokir ini kecuali pengguna telah berinteraksi dengan halaman.
 }
+
+// =======================================================
+// FUNGSI PENCARIAN YOUTUBE (INTI PERUBAHAN)
+// =======================================================
+function searchYoutube() {
+    const inputElement = document.getElementById('youtube-search-input');
+    const query = inputElement.value.trim().toLowerCase();
+    
+    if (query.length < 3) {
+        alert("Masukkan minimal 3 karakter untuk mencari.");
+        return;
+    }
+
+    // --- LOGIKA SIMULASI PENCARIAN (DEPAN) ---
+    // Jika query-nya cocok dengan kunci di MOCK_YOUTUBE_RESULTS, gunakan data itu.
+    let results = MOCK_YOUTUBE_RESULTS[query];
+
+    if (!results) {
+        // Jika tidak ada mock data yang cocok, tampilkan default atau kosong
+        results = MOCK_YOUTUBE_RESULTS["default"]; 
+    }
+    
+    displayYoutubeResults(results);
+    alert(`Simulasi: Menampilkan hasil untuk "${query}"`);
+    // ------------------------------------------
+
+    /* // GANTI DENGAN NUI CALLBACK UNTUK API ASLI
+    // Jika Anda menggunakan FiveM, Anda akan melakukan ini:
+    fetch(`https://resource_name/youtubeSearch`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: query })
+    }).then(response => response.json())
+      .then(data => {
+          // data harus berisi array objek video
+          displayYoutubeResults(data.videos);
+      })
+      .catch(error => {
+          console.error('Error fetching YouTube results:', error);
+          alert('Gagal mengambil data YouTube.');
+      });
+    */
+}
+
 
 // =======================================================
 // FUNGSI KONTROL DASHBOARD & HEAD UNIT (SETTER)
 // =======================================================
+// (Fungsi setter speedometer dan indicator tetap sama seperti sebelumnya)
 
 function setEngine(state) {
     const engineIcon = document.getElementById('engine-icon');
@@ -125,8 +177,6 @@ function setSpeed(speed_ms) {
         dot.classList.toggle('active', index < powerLevel);
     });
 }
-
-function setRPM(rpm) { /* ... */ }
 
 function setFuel(fuel_01) {
     const fuel_100 = Math.max(0, Math.min(100, fuel_01 * 100));
@@ -208,9 +258,6 @@ function setSpeedMode(mode) {
     speedModeElement.innerText = (mode === 1) ? 'MPH' : ((mode === 2) ? 'Knots' : 'KMH');
 }
 
-/**
- * Toggle visibility of the custom head unit.
- */
 function toggleHeadUnitVisibility() {
     const button = document.getElementById('toggle-game-hud-button');
     const headUnitContainer = document.getElementById('custom-headunit-container'); 
@@ -224,7 +271,6 @@ function toggleHeadUnitVisibility() {
     } else {
         button.classList.add('hidden');
         headUnitContainer.style.display = 'none'; 
-        // Tutup aplikasi YouTube jika Head Unit ditutup
         closeYoutubeApp(); 
     }
 }
@@ -269,6 +315,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const youtubeAppIcon = document.getElementById('youtube-app-icon');
     const youtubeCloseBtn = document.getElementById('youtube-close-btn');
     const youtubeSearchBtn = document.getElementById('youtube-search-btn');
+    const youtubeSearchInput = document.getElementById('youtube-search-input');
 
     if (youtubeAppIcon) {
         youtubeAppIcon.addEventListener('click', openYoutubeApp);
@@ -277,16 +324,17 @@ document.addEventListener('DOMContentLoaded', () => {
         youtubeCloseBtn.addEventListener('click', closeYoutubeApp);
     }
     if (youtubeSearchBtn) {
-        youtubeSearchBtn.addEventListener('click', () => {
-            const query = document.getElementById('youtube-search-input').value;
-            console.log("Mencari YouTube untuk:", query);
-            
-            // LAKUKAN PENCARIAN DI SINI (SIMULASI)
-            alert("Simulasi pencarian untuk: " + query + ". Menampilkan hasil mock.");
-            displayYoutubeResults(MOCK_YOUTUBE_RESULTS); 
+        // Pemicu fungsi pencarian
+        youtubeSearchBtn.addEventListener('click', searchYoutube);
+    }
+    if (youtubeSearchInput) {
+        // Pemicu pencarian saat menekan ENTER
+        youtubeSearchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                searchYoutube();
+            }
         });
     }
-
 
     // INISIALISASI STATUS AWAL HEAD UNIT TAMBAHAN (SEMBUNYI)
     const headUnitContainer = document.getElementById('custom-headunit-container');
