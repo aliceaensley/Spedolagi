@@ -4,19 +4,127 @@
 let elements = {};
 let speedMode = 1; 
 let indicators = 0;
+let currentStationIndex = 0;
 
 const onOrOff = state => state ? 'On' : 'Off';
 
-// MENGGUNAKAN NAMA FILE LOKAL karena sudah satu folder
-const YAMETE_AUDIO_URL = 'yamete.mp3'; 
+// --- DAFTAR RADIO STREAMING INDONESIA (Contoh) ---
+// Ganti URL ini dengan URL streaming langsung jika stasiun di atas tidak berfungsi.
+const RADIO_STATIONS = [
+    { name: "Global Radio Jakarta", url: "https://stream.globalsuara.com/globalradiojakarta" },
+    { name: "Prambors Jakarta", url: "https://stream.globalsuara.com/pramborsjakarta" },
+    { name: "Hard Rock FM", url: "https://stream.globalsuara.com/hardrockfmjakarta" },
+    { name: "Delta FM", url: "https://stream.globalsuara.com/deltafmjakarta" },
+    { name: "Vibe Indo (EDM)", url: "https://stream.globalsuara.com/deltafmjakarta" }
+];
 
-// Membuat objek Audio satu kali
+// MENGGUNAKAN NAMA FILE LOKAL (yamete.mp3)
+const YAMETE_AUDIO_URL = 'yamete.mp3'; 
 const yameteAudio = new Audio(YAMETE_AUDIO_URL);
-yameteAudio.volume = 0.5; // Atur volume (opsional, 0.0 hingga 1.0)
+yameteAudio.volume = 0.5;
+
+// Objek Audio untuk Radio Online
+const radioAudio = new Audio();
+radioAudio.volume = 0.3; 
+let isRadioPlaying = false;
 
 
 // =======================================================
-// FUNGSI SETTER (Bagian ini tidak berubah dari kode Anda, kecuali setSeatbelts)
+// FUNGSI RADIO MANDIRI
+// =======================================================
+
+function updateRadioDisplay() {
+    const radioStatusElement = document.getElementById('radio-status');
+    const playPauseButton = document.getElementById('play-pause-radio');
+    const stationLabel = document.querySelector('.radio-box .station-label');
+    const radioBoxHeader = document.querySelector('.radio-box .radio-header');
+    
+    // Tentukan nama stasiun yang sedang ditampilkan
+    const stationName = isRadioPlaying ? RADIO_STATIONS[currentStationIndex].name : 'OFF';
+
+    // Update Status
+    if (radioStatusElement) {
+        radioStatusElement.innerText = stationName.toUpperCase();
+        radioStatusElement.style.color = isRadioPlaying ? '#00ffff' : '#ffaa00';
+    }
+
+    // Update Play/Pause Icon (Pause jika ON, Play jika OFF)
+    if (playPauseButton) {
+        const iconPath = isRadioPlaying 
+            ? '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>' 
+            : '<path d="M8 5v14l11-7z"/>'; 
+        playPauseButton.innerHTML = `<svg viewBox="0 0 24 24" fill="white">${iconPath}</svg>`;
+    }
+
+    // Update Header Color
+    if (radioBoxHeader) {
+        radioBoxHeader.style.color = isRadioPlaying ? '#66ccff' : '#00ffff';
+    }
+
+    // Update Label 'Station'
+    if (stationLabel) {
+        stationLabel.innerText = isRadioPlaying ? 'STATION' : 'SELECT STATION';
+    }
+}
+
+function startRadio() {
+    if (isRadioPlaying && radioAudio.src === RADIO_STATIONS[currentStationIndex].url) {
+        return; // Sudah bermain di stasiun yang sama
+    }
+    
+    // Hentikan stasiun sebelumnya
+    radioAudio.pause();
+    
+    // Muat dan mainkan stasiun baru
+    radioAudio.src = RADIO_STATIONS[currentStationIndex].url;
+    radioAudio.load();
+    radioAudio.play().then(() => {
+        isRadioPlaying = true;
+        updateRadioDisplay();
+        console.log(`Playing Radio: ${RADIO_STATIONS[currentStationIndex].name}`);
+    }).catch(e => {
+        isRadioPlaying = false;
+        updateRadioDisplay();
+        console.error("Error playing radio (stream):", e);
+        document.getElementById('radio-status').innerText = 'ERROR';
+        document.getElementById('radio-status').style.color = '#ff0000';
+    });
+}
+
+function stopRadio() {
+    radioAudio.pause();
+    radioAudio.src = ""; // Kosongkan src untuk memastikan tidak ada buffering
+    isRadioPlaying = false;
+    updateRadioDisplay();
+}
+
+function togglePlayPause() {
+    if (isRadioPlaying) {
+        stopRadio();
+    } else {
+        startRadio();
+    }
+}
+
+function changeStation(direction) {
+    // Pastikan radio off sebelum berpindah (agar tidak ada suara bertumpuk)
+    stopRadio();
+    
+    currentStationIndex += direction;
+    
+    // Logic melingkar (Looping stasiun)
+    if (currentStationIndex >= RADIO_STATIONS.length) {
+        currentStationIndex = 0;
+    } else if (currentStationIndex < 0) {
+        currentStationIndex = RADIO_STATIONS.length - 1;
+    }
+    
+    // Otomatis putar stasiun baru
+    startRadio();
+}
+
+// =======================================================
+// FUNGSI SETTER (Dashboard) - Tidak diubah
 // =======================================================
 
 function setEngine(state) {
@@ -27,9 +135,9 @@ function setEngine(state) {
 function setSpeed(speed_ms) {
     let speedDisplay;
     switch(speedMode) {
-        case 1: speedDisplay = Math.round(speed_ms * 2.236936); break; // MPH
-        case 2: speedDisplay = Math.round(speed_ms * 1.943844); break; // Knots
-        default: speedDisplay = Math.round(speed_ms * 3.6); // KMH
+        case 1: speedDisplay = Math.round(speed_ms * 2.236936); break; 
+        case 2: speedDisplay = Math.round(speed_ms * 1.943844); break; 
+        default: speedDisplay = Math.round(speed_ms * 3.6); 
     }
     elements.speed.innerText = speedDisplay; 
     
@@ -129,11 +237,11 @@ function controlIndicators(state) {
         turnLeft.classList.remove('active');
         turnRight.classList.remove('active');
 
-        if (state === 1) { // Kiri
+        if (state === 1) { 
             blinkInterval = setInterval(() => { turnLeft.classList.toggle('active'); }, 250);
-        } else if (state === 2) { // Kanan
+        } else if (state === 2) { 
             blinkInterval = setInterval(() => { turnRight.classList.toggle('active'); }, 250);
-        } else if (state === 3) { // Hazard
+        } else if (state === 3) { 
              blinkInterval = setInterval(() => { 
                 turnLeft.classList.toggle('active');
                 turnRight.classList.toggle('active');
@@ -155,24 +263,17 @@ function setRightIndicator(state) {
     elements.indicators.innerText = `${indicators & 0b01 ? 'On' : 'Off'} / ${indicators & 0b10 ? 'On' : 'Off'}`;
 }
 
-/** * Fungsi Seatbelts.
- * Memutar yamete.mp3 ketika state = true (sabuk terpasang).
+/** * Fungsi Seatbelts. Memutar yamete.mp3
  */
 function setSeatbelts(state) {
     const seatbeltIcon = document.getElementById('abs-icon');
     
-    // LOGIKA AUDIO
     if (state === true) {
-        // Putar audio dari awal
         yameteAudio.pause();
         yameteAudio.currentTime = 0; 
-        yameteAudio.play().catch(e => console.error("Error playing audio:", e));
-    } else {
-        // OPSIONAL: Jika ingin audio berhenti saat sabuk dilepas, uncomment baris ini:
-        // yameteAudio.pause(); 
-    }
+        yameteAudio.play().catch(e => console.error("Error playing audio (yamete):", e));
+    } 
 
-    // LOGIKA VISUAL
     if (seatbeltIcon) {
         seatbeltIcon.classList.toggle('active', state); 
     }
@@ -197,21 +298,25 @@ function setSpeedMode(mode) {
 const updateUI = (data) => {
     const dashboardBox = document.getElementById('dashboard-box');
     let isVisible = dashboardBox.style.opacity === '1';
+    const radioBox = document.getElementById('radio-box'); 
 
     // KONTROL VISIBILITAS TOTAL
     if (data.show !== undefined) {
         dashboardBox.style.opacity = data.show ? '1' : '0';
+        if (radioBox) radioBox.style.opacity = data.show ? '1' : '0';
         dashboardBox.style.visibility = data.show ? 'visible' : 'hidden';
+        if (radioBox) radioBox.style.visibility = data.show ? 'visible' : 'hidden';
         isVisible = data.show;
         if (!isVisible) {
             clearInterval(blinkInterval);
             lastIndicatorState = 0;
+            stopRadio(); // Stop radio saat HUD tidak terlihat
             return;
         }
     }
     if (!isVisible) return; 
     
-    // DATA UTAMA
+    // DATA UTAMA (Dari Game/Lua)
     if (data.engine !== undefined) setEngine(data.engine);
     if (data.speed !== undefined) setSpeed(data.speed);
     if (data.rpm !== undefined) setRPM(data.rpm);
@@ -219,7 +324,6 @@ const updateUI = (data) => {
     if (data.health !== undefined) setHealth(data.health);
     if (data.gear !== undefined) setGear(data.gear);
     if (data.headlights !== undefined) setHeadlights(data.headlights);
-    // setSeatbelts harus dipanggil
     if (data.seatbelts !== undefined) setSeatbelts(data.seatbelts); 
     if (data.speedMode !== undefined) setSpeedMode(data.speedMode);
 
@@ -231,7 +335,7 @@ const updateUI = (data) => {
 
 // Wait for the DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', () => {
-    // INISIALISASI ELEMENTS (Dipertahankan dari kode Anda)
+    // INISIALISASI ELEMENTS
     elements = {
         engine: document.getElementById('engine'),
         speed: document.getElementById('speed'),
@@ -246,6 +350,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // ID VISUAL
         'dashboard-box': document.getElementById('dashboard-box'),
+        'radio-box': document.getElementById('radio-box'), 
         'health-fill': document.getElementById('health-fill'),
         'fuel-fill': document.getElementById('fuel-fill'),
         'health-percent': document.getElementById('health-percent'),
@@ -254,7 +359,17 @@ document.addEventListener('DOMContentLoaded', () => {
         'turn-right-icon': document.getElementById('turn-right-icon'),
     };
 
-    // Menerima pesan dari game client (Dipertahankan dari kode Anda)
+    // Set nilai awal Radio
+    updateRadioDisplay();
+
+    // ===========================================
+    // EVENT LISTENERS RADIO MANDIRI
+    // ===========================================
+    document.getElementById('play-pause-radio').addEventListener('click', togglePlayPause);
+    document.getElementById('next-station').addEventListener('click', () => changeStation(1));
+    document.getElementById('prev-station').addEventListener('click', () => changeStation(-1));
+
+    // Menerima pesan dari game client (NUI Listener)
     window.addEventListener('message', (event) => {
         const data = event.data;
         if (data.type === 'speedoUpdate' || data.type === 'UPDATE_HUD_DATA') {
@@ -262,7 +377,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Panggil updateUI sekali untuk nilai awal (Dipertahankan dari kode Anda)
+    // Panggil updateUI sekali untuk nilai awal
     updateUI({ 
         speed: 0, 
         health: 1, 
@@ -270,7 +385,7 @@ document.addEventListener('DOMContentLoaded', () => {
         gear: 'R', 
         headlights: 0,
         engine: false,
-        seatbelts: false, // Set default ke false, agar audio tidak langsung main
+        seatbelts: false, 
         leftIndicator: false, 
         rightIndicator: false,
         speedMode: 1, 
