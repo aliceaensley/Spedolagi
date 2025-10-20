@@ -1,0 +1,259 @@
+/* Gaya Dasar */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #111;
+    color: white;
+    overflow: hidden; /* Penting untuk tampilan overlay game */
+}
+
+/* Latar Belakang Game (Simulasi) */
+.game-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('https://via.placeholder.com/1920x1080/000000/808080?text=Latar+Belakang+Game') no-repeat center center/cover;
+    filter: brightness(0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em;
+    z-index: 1;
+}
+
+/* Speedometer */
+.speedometer-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 10;
+}
+
+.speedometer {
+    width: 200px;
+    height: 200px;
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 50%;
+    border: 5px solid #00ff99; /* Warna hijau neon */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 30px rgba(0, 255, 153, 0.5);
+    position: relative;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.speed-value {
+    font-size: 3em;
+    font-weight: bold;
+    color: #ffcc00; /* Kuning */
+    text-shadow: 0 0 10px rgba(255, 204, 0, 0.8);
+    line-height: 1;
+    text-align: center;
+}
+
+.speed-value .unit {
+    font-size: 0.3em;
+    display: block;
+    margin-top: -5px;
+    color: #00ff99;
+}
+
+.gear-indicator {
+    font-size: 2.5em;
+    font-weight: bold;
+    color: white;
+    background-color: rgba(255, 0, 0, 0.8);
+    padding: 5px 10px;
+    border-radius: 5px;
+    margin-top: 5px;
+    border: 2px solid white;
+}
+
+.info-indicators {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 15px;
+    font-size: 1.5em;
+}
+
+/* Tombol YouTube */
+.youtube-toggle-btn {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #ff0000;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    z-index: 11;
+}
+
+/* YouTube Headunit Overlay */
+.youtube-headunit-overlay {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    height: 650px;
+    background-color: rgba(20, 20, 20, 0.95);
+    border-radius: 20px;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    transition: opacity 0.3s, transform 0.3s;
+    border: 5px solid #444;
+}
+
+.youtube-headunit-overlay.hidden {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+    pointer-events: none; /* Penting agar tidak mengganggu klik di belakangnya */
+}
+
+.youtube-app-interface {
+    padding: 15px;
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+/* Header Aplikasi YouTube */
+.app-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.back-btn, .close-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.2em;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.app-title {
+    font-size: 1.2em;
+    font-weight: bold;
+    flex-grow: 1;
+}
+
+.search-input {
+    padding: 8px;
+    border: none;
+    border-radius: 5px;
+    background-color: #333;
+    color: white;
+    width: 120px;
+}
+
+/* Bagian Video */
+.section-title {
+    font-size: 1em;
+    color: #aaa;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.video-card {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    background-color: #222;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.thumbnail-placeholder {
+    width: 100px;
+    height: 60px;
+    background-color: #ff0000;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.video-title {
+    font-size: 0.9em;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.video-views {
+    font-size: 0.7em;
+    color: #aaa;
+}
+
+/* Mini Player (Di Atas Interface Utama) */
+.mini-player {
+    position: absolute;
+    top: -120px; /* Posisikan di atas headunit utama */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+    height: 150px;
+    background-color: rgba(0, 0, 0, 0.9);
+    border-radius: 10px;
+    padding: 10px;
+    box-sizing: border-box;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    border: 3px solid #ff0000;
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+}
+
+.mini-thumbnail-placeholder {
+    width: 100px;
+    height: 80px;
+    background-color: #ff0000;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.mini-controls {
+    flex-grow: 1;
+}
+
+.mini-title {
+    font-size: 0.9em;
+    margin: 0 0 5px 0;
+    color: #fff;
+}
+
+.controls-row button {
+    background: #333;
+    color: white;
+    border: none;
+    padding: 5px 8px;
+    margin-right: 5px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.maximize-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5em;
+    cursor: pointer;
+}
