@@ -1,14 +1,19 @@
-/* GAYA UMUM & LATAR BELAKANG */
+/* =======================================
+   GAYA UMUM & LATAR BELAKANG (TRANSPARAN)
+   ======================================= */
 body {
     margin: 0;
     padding: 0;
-    font-family: 'Consolas', monospace; /* Font monospace terbaik untuk digital look */
+    /* Font monospace untuk tampilan digital */
+    font-family: 'Consolas', monospace; 
     color: white;
+    /* PENTING: LATAR BELAKANG TOTAL TRANSPARAN */
     background-color: transparent; 
     overflow: hidden;
 }
 
 .game-background {
+    /* Area ini tetap transparan, hanya ada jika dibutuhkan di HTML */
     background: transparent; 
     position: fixed;
     top: 0;
@@ -18,7 +23,9 @@ body {
     z-index: 1;
 }
 
-/* CONTAINER DASHBOARD */
+/* =======================================
+   CONTAINER UTAMA DASHBOARD
+   ======================================= */
 .digital-dashboard-container {
     position: fixed;
     bottom: 20px;
@@ -29,23 +36,31 @@ body {
 .dashboard-box {
     width: 250px;
     height: 150px;
-    /* Warna box lebih gelap sesuai gambar */
+    /* Warna box abu-abu gelap transparan (seperti gambar) */
     background-color: rgba(30, 30, 45, 0.9); 
     border-radius: 10px;
-    padding: 10px 15px; /* Padding sedikit diubah untuk merapikan */
+    padding: 10px 15px;
     box-sizing: border-box;
     display: flex;
     gap: 15px;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4); 
+    
+    /* PENTING: Pengaturan visibility dan opacity untuk fungsionalitas game */
+    opacity: 0; 
+    visibility: hidden;
+    transition: opacity 0.3s;
 }
 
-/* BAR INDIKATOR KIRI (HEALTH/FUEL) */
+/* =======================================
+   BAGIAN BAR INDIKATOR KIRI (H/F)
+   ======================================= */
 .bars-section {
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 50px; 
-    justify-content: space-between; /* Untuk penempatan vertikal yang rapi */
+    /* Meratakan konten: label, bar, persentase */
+    justify-content: space-between; 
 }
 
 .bar-labels-top {
@@ -65,18 +80,21 @@ body {
 .bar-columns {
     display: flex;
     gap: 8px;
-    height: 70px; /* Tinggi bar */
+    height: 70px; 
     flex-shrink: 0;
 }
 
 .bar-column {
     width: 15px;
-    background-color: #333;
+    /* Warna track bar (hitam) */
+    background-color: #333; 
     border-radius: 3px;
     overflow: hidden;
     position: relative;
     display: flex;
     align-items: flex-end;
+    /* Border hitam tipis di atas bar seperti di gambar */
+    border-top: 1px solid #444; 
 }
 
 .bar-fill {
@@ -100,14 +118,15 @@ body {
 #health-percent { color: #00ff00; }
 #fuel-percent { color: #ffaa00; }
 
-
-/* DISPLAY KECEPATAN TENGAH */
+/* =======================================
+   DISPLAY KECEPATAN & INDIKATOR TENGAH
+   ======================================= */
 .center-display-section {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start; /* Konten di atas */
+    justify-content: flex-start;
     padding-top: 5px;
 }
 
@@ -115,8 +134,6 @@ body {
     display: flex;
     align-items: baseline; 
     position: relative;
-    /* PENTING: Penyesuaian agar angka terlihat seperti 7-segment display */
-    font-family: 'Digital Display', 'Consolas', monospace; 
 }
 
 #current-speed {
@@ -124,6 +141,7 @@ body {
     font-weight: 900;
     color: white;
     line-height: 1;
+    /* Efek glow digital */
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
@@ -150,24 +168,29 @@ body {
 .power-bar-dots {
     display: flex;
     gap: 5px;
-    margin-top: 10px; /* Beri jarak dari unit teks */
+    margin-top: 10px;
     flex-shrink: 0;
 }
 
 .dot {
     width: 15px;
     height: 5px;
-    background-color: #444;
+    /* Warna off-state */
+    background-color: #444; 
     border-radius: 1px;
 }
 
 .dot.active {
+    /* Warna on-state */
     background-color: white;
     box-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
 }
 
-/* IKON STATUS BAWAH */
+/* =======================================
+   IKON STATUS BAWAH
+   ======================================= */
 .status-icons-row {
+    /* Posisikan di bawah box dan rata kiri-kanan */
     position: absolute;
     bottom: 10px;
     left: 15px; 
@@ -178,26 +201,27 @@ body {
     align-items: center;
     padding-top: 5px;
     border-top: 1px solid rgba(255, 255, 255, 0.2);
-    /* Untuk menempatkan ikon di bawah semua konten */
     margin-top: auto; 
 }
 
 .icon {
     font-size: 1.5em; 
     color: #00ffff; 
+    /* Efek neon cyan */
     text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+    /* Default redup/mati */
     opacity: 0.5; 
     transition: opacity 0.2s;
-    /* PENTING: Gunakan font Material Icons atau Font Awesome jika di production, 
-       tapi di sini kita pakai content property untuk kemiripan */
 }
 
-/* Simbol Ikon (Menggunakan Content Property untuk Rapi) */
+/* Simbol Ikon (Menggunakan Content Property) */
 .turn-left::before { content: '◂'; } 
 .turn-right::before { content: '▸'; }
-.engine-icon::before { content: '⛭'; } /* Gear atau Engine */
-.lights-icon::before { content: '⛤'; } /* Headlight */
-.abs-icon::before { content: '⇋'; } /* Indikator rem/ABS */
+.engine-icon::before { content: '⛭'; } 
+.lights-icon::before { content: '⛤'; } 
+.abs-icon::before { content: '⇋'; } 
 
-
-.indicator-icon.active, .status-icon.active { opacity: 1; }
+/* Status Aktif */
+.indicator-icon.active, .status-icon.active { 
+    opacity: 1; 
+}
