@@ -8,10 +8,10 @@ let isCustomHeadUnitVisible = false;
 let blinkInterval;
 let lastIndicatorState = 0;
 
-// ⚠️ GANTI INI DENGAN NAMA FOLDER RESOURCE FIVEM ANDA
+// ⚠️ GANTI 'resource_name' DENGAN NAMA FOLDER RESOURCE FIVEM ANDA
 const NUI_RESOURCE_NAME = 'resource_name'; 
 
-// Data hasil pencarian awal (HANYA DIGUNAKAN UNTUK FALLBACK DEMO)
+// Data hasil pencarian awal (HANYA DIGUNAKAN UNTUK FALLBACK DEMO jika API gagal)
 const INITIAL_YOUTUBE_RESULTS = [
     { title: "KUMPULAN LAGU HITS SPOTIFY TIKTOK VIRAL", channel_name: "StarHits Music", external_video_id: "FWn30lNyVhc" },
     { title: "LAGU POP GALAU AKUSTIK TERBAIK", channel_name: "Agus Riansyah74", external_video_id: "O-dRQtArLgs" },
@@ -32,7 +32,7 @@ async function loadYoutubeResults(query = "Musik Populer Indonesia") {
     contentDiv.innerHTML = `<p style="text-align: center; color: #00ffff; margin-top: 50px;">⏳ Mencari video nyata untuk: ${query}...</p>`;
 
     try {
-        // Panggilan fetch ke endpoint NUI
+        // Panggilan fetch ke endpoint NUI yang ditangani oleh file Lua (backend)
         const response = await fetch(`https://${NUI_RESOURCE_NAME}/youtubeSearch`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -145,7 +145,7 @@ function searchYoutube() {
 
 
 // =======================================================
-// FUNGSI KONTROL DASHBOARD & HEAD UNIT (SETTER) - LENGKAP
+// FUNGSI KONTROL DASHBOARD & HEAD UNIT (SETTER)
 // =======================================================
 
 function setEngine(state) {
