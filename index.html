@@ -3,81 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Speedometer & YouTube Headunit</title>
+    <title>RAGE Speedometer</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div class="game-background">
-        <p>Simulasi Latar Belakang Game</p>
+        <div class="top-right-ui">
+            <button class="nav-btn">◀</button>
+            <span class="ready-text">READY</span>
+            <button class="nav-btn">▶</button>
+        </div>
     </div>
 
     <div class="speedometer-container">
-        <div class="speedometer">
-            <div class="top-indicators">
-                <i class="icon indicator-light caution">⚠️</i>
-                <i class="icon indicator-light car-icon">🚗</i>
-            </div>
+        <div class="speedometer-rage">
             
-            <div class="speed-value">
-                <span id="current-speed">126</span>
-                <span class="unit">KM/H</span>
-            </div>
-            
-            <div class="gear-indicator" id="gear">4</div>
-            
-            <button id="toggle-youtube-btn" class="youtube-toggle-btn">
-                <i class="youtube-icon">▶️</i> YouTube
-            </button>
-        </div>
-    </div>
+            <div class="outer-ring"></div>
 
-    <div class="youtube-headunit-overlay hidden" id="youtube-headunit">
-        
-        <div class="mini-player">
-            <div class="mini-video-area">
-                <div class="video-placeholder">Video Sedang Diputar...</div>
-            </div>
-            <div class="mini-controls-bar">
-                <div class="progress-bar-placeholder"></div>
-                <div class="controls-row">
-                    <button class="control-btn"><i class="icon volume">🔊</i></button>
-                    <button class="control-btn"><i class="icon rewind">⏮</i></button>
-                    <input type="range" class="volume-slider" min="0" max="100" value="70">
-                    <button class="control-btn"><i class="icon maximize">⇱</i></button>
-                    <button class="control-btn"><i class="icon close">X</i></button>
-                </div>
-            </div>
-        </div>
-
-        <div class="youtube-app-interface">
-            <div class="app-header">
-                <span class="harmony-text">Harmony</span>
-                <span class="status-icons">📶 5G 23:32</span>
-            </div>
-            
-            <div class="nav-bar">
-                <button class="nav-btn back-btn">←</button>
-                <span class="nav-title">YouTube</span>
-                <button id="hide-youtube-btn" class="nav-btn close-btn-large">Tutup</button>
-                <button class="nav-btn search-icon">🔍</button>
-            </div>
-            
-            <div class="search-bar">
-                <input type="text" placeholder="dangdut" class="search-input">
-                <button class="search-btn">🔍</button>
+            <div class="rpm-numbers">
+                <span class="rpm-mark mark-0">0</span>
+                <span class="rpm-mark mark-1">1</span>
+                <span class="rpm-mark mark-2">2</span>
+                <span class="rpm-mark mark-3">3</span>
+                <span class="rpm-mark mark-4">4</span>
+                <span class="rpm-mark mark-5">5</span>
+                <span class="rpm-mark mark-6">6</span>
+                <span class="rpm-mark mark-7">7</span>
+                <span class="rpm-mark mark-8">8</span>
+                <span class="rpm-mark mark-9">9</span>
             </div>
 
-            <div class="video-list">
-                <div class="video-card">
-                    <img src="https://via.placeholder.com/150x85/FF0000/FFFFFF?text=RINDU" alt="Thumbnail" class="thumbnail-placeholder">
-                    <div class="video-details">
-                        <p class="video-title">DR TREMONDO - RINDUNYA HATIKU</p>
-                        <span class="video-info">1.5M views • 2 hari lalu</span>
-                        <span class="label">VIDEO</span>
-                    </div>
+            <div class="gauge-bars">
+                <div class="gauge-green" id="gauge-green"></div>
+                <div class="gauge-yellow"></div>
+                <div class="gauge-red"></div>
+            </div>
+
+            <div class="center-display">
+                
+                <div class="digital-speed" id="digital-speed">
+                    <span>█</span>
+                    <span>█</span>
+                    <span>█</span>
                 </div>
+                
+                <div class="avatar-placeholder"></div>
+
+                <div class="center-indicators">
+                    <i class="icon engine-light">⚙️</i>
+                    <span class="gear-indicator" id="gear">N</span>
+                    <i class="icon headlight">💡</i>
                 </div>
+            </div>
+
+            <div class="bottom-icons">
+                <i class="icon car-icon">🚗</i>
+                <i class="icon fuel-icon">⛽</i>
+                <i class="icon volume-icon">🔊</i>
+            </div>
+
         </div>
     </div>
 
