@@ -13,7 +13,6 @@
 
     <div class="digital-dashboard-container">
         <div class="dashboard-box" id="dashboard-box">
-            
             <div class="bars-section">
                 <div class="bar-labels-top">
                     <span class="bar-label" id="health-percent">100%</span>
@@ -40,10 +39,8 @@
                 </div>
                 <div class="unit-text" id="speed-mode">MPH</div> 
                 <div class="power-bar-dots" id="rpm-dots">
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                    <span class="dot"></span>
+                    <span class="dot"></span><span class="dot"></span>
+                    <span class="dot"></span><span class="dot"></span>
                 </div>
             </div>
 
@@ -64,7 +61,7 @@
     
     
     <div id="custom-headunit-container" class="custom-headunit-style">
-        <div class="headunit-status-bar">
+        <div class="headunit-status-bar" id="headunit-status-bar">
             <span>Harmony</span>
             <div>
                 <i class="fas fa-signal"></i> 5G 
@@ -72,7 +69,7 @@
             </div>
         </div>
 
-        <div class="app-grid">
+        <div class="app-grid" id="app-home-screen">
             <div class="app-icon"><i class="fas fa-music"></i> <span class="app-label">Music</span></div>
             <div class="app-icon"><i class="fas fa-map-marked-alt"></i> <span class="app-label">Maps</span></div>
             <div class="app-icon"><i class="fas fa-calculator"></i> <span class="app-label">Calculator</span></div>
@@ -80,8 +77,22 @@
             
             <div class="app-icon"><i class="fas fa-cloud-sun"></i> <span class="app-label">Weather</span></div>
             <div class="app-icon"><i class="fas fa-globe"></i> <span class="app-label">Harmony</span></div>
-            <div class="app-icon"><i class="fab fa-youtube"></i> <span class="app-label">YouTube</span></div>
+            <div class="app-icon" id="youtube-app-icon">
+                <i class="fab fa-youtube"></i> 
+                <span class="app-label">YouTube</span>
+            </div>
             <div class="app-icon"><i class="fas fa-broadcast-tower"></i> <span class="app-label">Radio</span></div>
+        </div>
+        
+        <div class="youtube-screen" id="youtube-screen" style="display: none;">
+            <div class="youtube-header">
+                <i class="fas fa-times close-btn" id="youtube-close-btn"></i>
+                <input type="text" id="youtube-search-input" placeholder="Cari video di YouTube...">
+                <button id="youtube-search-btn"><i class="fas fa-search"></i></button>
+            </div>
+            <div class="youtube-content" id="youtube-content">
+                <p>Cari sesuatu untuk mulai memutar video...</p>
+            </div>
         </div>
         
     </div>
