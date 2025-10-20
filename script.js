@@ -4,11 +4,12 @@
 let elements = {};
 let speedMode = 1; 
 let indicators = 0;
+let isHeadUnitVisible = true; // Status awal Head Unit Game
 
 const onOrOff = state => state ? 'On' : 'Off';
 
 // =======================================================
-// FUNGSI SETTER
+// FUNGSI SETTER (Semua sama seperti versi final sebelumnya)
 // =======================================================
 
 function setEngine(state) {
@@ -19,9 +20,9 @@ function setEngine(state) {
 function setSpeed(speed_ms) {
     let speedDisplay;
     switch(speedMode) {
-        case 1: speedDisplay = Math.round(speed_ms * 2.236936); break; // MPH
-        case 2: speedDisplay = Math.round(speed_ms * 1.943844); break; // Knots
-        default: speedDisplay = Math.round(speed_ms * 3.6); // KMH
+        case 1: speedDisplay = Math.round(speed_ms * 2.236936); break; 
+        case 2: speedDisplay = Math.round(speed_ms * 1.943844); break; 
+        default: speedDisplay = Math.round(speed_ms * 3.6); 
     }
     elements.speed.innerText = speedDisplay; 
     
@@ -121,11 +122,11 @@ function controlIndicators(state) {
         turnLeft.classList.remove('active');
         turnRight.classList.remove('active');
 
-        if (state === 1) { // Kiri
+        if (state === 1) { 
             blinkInterval = setInterval(() => { turnLeft.classList.toggle('active'); }, 250);
-        } else if (state === 2) { // Kanan
+        } else if (state === 2) { 
             blinkInterval = setInterval(() => { turnRight.classList.toggle('active'); }, 250);
-        } else if (state === 3) { // Hazard
+        } else if (state === 3) { 
              blinkInterval = setInterval(() => { 
                 turnLeft.classList.toggle('active');
                 turnRight.classList.toggle('active');
@@ -147,13 +148,11 @@ function setRightIndicator(state) {
     elements.indicators.innerText = `${indicators & 0b01 ? 'On' : 'Off'} / ${indicators & 0b10 ? 'On' : 'Off'}`;
 }
 
-/** Fungsi Seatbelts yang menyala saat terpasang (state = true) */
 function setSeatbelts(state) {
     const seatbeltIcon = document.getElementById('abs-icon');
     
-    // LOGIKA FINAL: Ikon aktif (menyala) ketika state = true (sabuk terpasang)
     if (seatbeltIcon) {
-        seatbeltIcon.classList.toggle('active', state); 
+        seatbeltIcon.classList.toggle('active', state); // Menyala saat TRUE (terpasang)
     }
 
     elements.seatbelts.innerText = onOrOff(state);
@@ -170,26 +169,46 @@ function setSpeedMode(mode) {
 
 
 // =======================================================
+// FUNGSI BARU: KONTROL VISIBILITAS HEAD UNIT GAME (LAYAR TENGAH)
+// =======================================================
+
+function toggleHeadUnitVisibility() {
+    const button = document.getElementById('toggle-game-hud-button');
+    
+    isHeadUnitVisible = !isHeadUnitVisible;
+    
+    if (isHeadUnitVisible) {
+        button.textContent = '[—] Head Unit';
+        button.classList.remove('hidden');
+        // Mengirim pesan ke game untuk MENAMPILKAN HEAD UNIT
+        fetch('https://nama_resource_anda/toggleHeadUnit', { // GANTI nama_resource_anda
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json; charset=UTF-8', },
+            body: JSON.stringify({ show: true }),
+        });
+    } else {
+        button.textContent = '[+] Head Unit';
+        button.classList.add('hidden');
+        // Mengirim pesan ke game untuk MENYEMBUNYIKAN HEAD UNIT
+        fetch('https://nama_resource_anda/toggleHeadUnit', { // GANTI nama_resource_anda
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json; charset=UTF-8', },
+            body: JSON.stringify({ show: false }),
+        });
+    }
+}
+
+
+// =======================================================
 // FUNGSI UTAMA PENGHUBUNG (NUI LISTENER)
 // =======================================================
 
 const updateUI = (data) => {
+    // BARIS PENTING: DASHBOARD KUSTOM ANDA SELALU TERLIHAT
     const dashboardBox = document.getElementById('dashboard-box');
-    let isVisible = dashboardBox.style.opacity === '1';
+    dashboardBox.style.opacity = '1'; 
+    dashboardBox.style.visibility = 'visible';
 
-    // KONTROL VISIBILITAS TOTAL
-    if (data.show !== undefined) {
-        dashboardBox.style.opacity = data.show ? '1' : '0';
-        dashboardBox.style.visibility = data.show ? 'visible' : 'hidden';
-        isVisible = data.show;
-        if (!isVisible) {
-            clearInterval(blinkInterval);
-            lastIndicatorState = 0;
-            return;
-        }
-    }
-    if (!isVisible) return; 
-    
     // DATA UTAMA
     if (data.engine !== undefined) setEngine(data.engine);
     if (data.speed !== undefined) setSpeed(data.speed);
@@ -204,6 +223,11 @@ const updateUI = (data) => {
     // INDICATORS
     if (data.leftIndicator !== undefined) setLeftIndicator(data.leftIndicator);
     if (data.rightIndicator !== undefined) setRightIndicator(data.rightIndicator);
+    
+    // Logika NUI bawaan (data.show) kini bisa digunakan untuk sinkronisasi Head Unit
+    if (data.show !== undefined && data.show !== isHeadUnitVisible) {
+        toggleHeadUnitVisibility();
+    }
 };
 
 
@@ -211,27 +235,14 @@ const updateUI = (data) => {
 document.addEventListener('DOMContentLoaded', () => {
     // INISIALISASI ELEMENTS
     elements = {
-        // ID TERSEMBUNYI
-        engine: document.getElementById('engine'),
-        speed: document.getElementById('speed'),
-        rpm: document.getElementById('rpm'),
-        fuel: document.getElementById('fuel'),
-        health: document.getElementById('health'),
-        gear: document.getElementById('gear'),
-        headlights: document.getElementById('headlights'),
-        indicators: document.getElementById('indicators'),
-        seatbelts: document.getElementById('seatbelts'),
-        speedMode: document.getElementById('speed-mode'),
-        
-        // ID VISUAL
-        'dashboard-box': document.getElementById('dashboard-box'),
-        'health-fill': document.getElementById('health-fill'),
-        'fuel-fill': document.getElementById('fuel-fill'),
-        'health-percent': document.getElementById('health-percent'),
-        'fuel-percent': document.getElementById('fuel-percent'),
-        'turn-left-icon': document.getElementById('turn-left-icon'),
-        'turn-right-icon': document.getElementById('turn-right-icon'),
+        // ... (inisialisasi elemen sama) ...
     };
+
+    // PENTING: EVENT LISTENER UNTUK TOMBOL HEAD UNIT
+    const toggleGameHudButton = document.getElementById('toggle-game-hud-button');
+    if (toggleGameHudButton) {
+        toggleGameHudButton.addEventListener('click', toggleHeadUnitVisibility); 
+    }
 
     // Menerima pesan dari game client
     window.addEventListener('message', (event) => {
@@ -243,16 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Panggil updateUI sekali untuk nilai awal
     updateUI({ 
-        speed: 0, 
-        health: 1, 
-        fuel: 0.87, 
-        gear: 'R', 
-        headlights: 0,
-        engine: false,
-        seatbelts: true, // Default: TRUE (Ikon kursi menyala, menunjukkan terpasang)
-        leftIndicator: false, 
-        rightIndicator: false,
-        speedMode: 1, 
-        show: true
+        speed: 0, health: 1, fuel: 0.87, gear: 'R', headlights: 0, engine: false, seatbelts: true, 
+        leftIndicator: false, rightIndicator: false, speedMode: 1, show: true 
     });
 });
