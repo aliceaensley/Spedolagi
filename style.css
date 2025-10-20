@@ -1,13 +1,19 @@
 /* =======================================
    GAYA UMUM & LATAR BELAKANG (TRANSPARAN)
    ======================================= */
+* {
+    /* Dari kode Anda */
+    user-select: none;
+    user-drag: none;
+}
 body {
     margin: 0;
     padding: 0;
+    /* Font digital */
     font-family: 'Consolas', monospace; 
     color: white;
-    /* PENTING: LATAR BELAKANG TRANSPARAN UNTUK HUD GAME */
-    background-color: transparent; 
+    /* PENTING: LATAR BELAKANG TRANSPARAN */
+    background-color: transparent !important; 
     overflow: hidden;
 }
 
@@ -34,6 +40,7 @@ body {
 .dashboard-box {
     width: 250px;
     height: 150px;
+    /* Warna box abu-abu gelap transparan */
     background-color: rgba(30, 30, 45, 0.9); 
     border-radius: 10px;
     padding: 10px 15px;
@@ -42,7 +49,7 @@ body {
     gap: 15px;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4); 
     
-    /* VISIBILITAS AWAL: TERLIHAT (untuk debugging browser) */
+    /* VISIBILITAS AWAL: TERLIHAT */
     opacity: 1; 
     visibility: visible; 
     transition: opacity 0.3s;
@@ -95,8 +102,9 @@ body {
     width: 100%;
     transition: height 0.3s ease-out, background-color 0.3s;
 }
+.health-fill { background-color: #00ff00; }
+.fuel-fill { background-color: #ffaa00; }
 
-/* Persentase di bawah bar */
 .percentage-row {
     display: flex;
     justify-content: space-between;
@@ -130,7 +138,8 @@ body {
     position: relative;
 }
 
-#current-speed {
+.speed-value {
+    /* Menggunakan speed-value karena ID speed digunakan oleh JS Anda untuk innerText */
     font-size: 5em; 
     font-weight: 900;
     color: white;
