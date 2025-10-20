@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Digital Dashboard HUD Final</title>
     <link rel="stylesheet" href="style.css">
-    </head>
+</head>
 <body>
 
     <div class="game-background"></div>
@@ -15,8 +15,13 @@
             
             <div class="bars-section">
                 <div class="bar-labels-top">
-                    <span class="bar-label">H</span>
-                    <span class="bar-label">F</span>
+                    <span class="bar-label" id="health-percent">100%</span>
+                    <span class="bar-label" id="fuel-percent">87%</span>
+                </div>
+                
+                <div class="label-indicators">
+                    <span class="indicator-text">H</span>
+                    <span class="indicator-text">F</span>
                 </div>
 
                 <div class="bar-columns">
@@ -28,11 +33,7 @@
                     </div>
                 </div>
 
-                <div class="percentage-row">
-                    <span id="health-percent">100%</span>
-                    <span id="fuel-percent">87%</span>
                 </div>
-            </div>
 
             <div class="center-display-section">
                 
@@ -51,15 +52,10 @@
             </div>
 
             <div class="status-icons-row">
-                
                 <i class="icon indicator-icon" id="turn-left-icon"></i> 
-                
                 <i class="icon status-icon" id="engine-icon"></i> 
-                
                 <i class="icon status-icon" id="headlights-icon"></i>
-                
                 <i class="icon status-icon" id="abs-icon"></i> 
-                
                 <i class="icon indicator-icon" id="turn-right-icon"></i>
 
                 
