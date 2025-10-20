@@ -25,7 +25,6 @@ function setSpeed(speed_ms) {
     }
     elements.speed.innerText = speedDisplay; 
     
-    // Logic Power Dots/RPM visual
     const maxDots = 4;
     let scaleMax = speedMode === 1 ? 120 : 180; 
     let powerLevel = Math.min(maxDots, Math.ceil(speedDisplay / (scaleMax / maxDots))); 
@@ -148,13 +147,13 @@ function setRightIndicator(state) {
     elements.indicators.innerText = `${indicators & 0b01 ? 'On' : 'Off'} / ${indicators & 0b10 ? 'On' : 'Off'}`;
 }
 
-/** Fungsi Seatbelts yang mengontrol ikon warning */
+/** Fungsi Seatbelts yang menyala saat terpasang (state = true) */
 function setSeatbelts(state) {
-    const seatbeltIcon = document.getElementById('abs-icon'); // Menggunakan ID abs-icon
+    const seatbeltIcon = document.getElementById('abs-icon');
     
-    // Ikon aktif (warning) ketika state = false (belum terpasang)
+    // LOGIKA FINAL: Ikon aktif (menyala) ketika state = true (sabuk terpasang)
     if (seatbeltIcon) {
-        seatbeltIcon.classList.toggle('active', !state); 
+        seatbeltIcon.classList.toggle('active', state); 
     }
 
     elements.seatbelts.innerText = onOrOff(state);
@@ -242,7 +241,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Panggil updateUI sekali untuk nilai awal (Default)
+    // Panggil updateUI sekali untuk nilai awal
     updateUI({ 
         speed: 0, 
         health: 1, 
@@ -250,7 +249,7 @@ document.addEventListener('DOMContentLoaded', () => {
         gear: 'R', 
         headlights: 0,
         engine: false,
-        seatbelts: false, // Default: FALSE (Icon Warning menyala)
+        seatbelts: true, // Default: TRUE (Ikon kursi menyala, menunjukkan terpasang)
         leftIndicator: false, 
         rightIndicator: false,
         speedMode: 1, 
