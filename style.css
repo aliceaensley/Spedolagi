@@ -2,17 +2,14 @@
    GAYA UMUM & LATAR BELAKANG (TRANSPARAN)
    ======================================= */
 * {
-    /* Dari kode Anda */
     user-select: none;
     user-drag: none;
 }
 body {
     margin: 0;
     padding: 0;
-    /* Font digital */
     font-family: 'Consolas', monospace; 
     color: white;
-    /* PENTING: LATAR BELAKANG TRANSPARAN */
     background-color: transparent !important; 
     overflow: hidden;
 }
@@ -40,7 +37,6 @@ body {
 .dashboard-box {
     width: 250px;
     height: 150px;
-    /* Warna box abu-abu gelap transparan */
     background-color: rgba(30, 30, 45, 0.9); 
     border-radius: 10px;
     padding: 10px 15px;
@@ -49,7 +45,6 @@ body {
     gap: 15px;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4); 
     
-    /* VISIBILITAS AWAL: TERLIHAT */
     opacity: 1; 
     visibility: visible; 
     transition: opacity 0.3s;
@@ -70,6 +65,7 @@ body {
     display: flex;
     justify-content: space-between;
     width: 100%;
+    margin-bottom: 5px; /* Sedikit spasi di atas bar */
 }
 
 .bar-label {
@@ -85,6 +81,7 @@ body {
     gap: 8px;
     height: 70px; 
     flex-shrink: 0;
+    align-items: flex-end; /* Memastikan bar dimulai dari bawah */
 }
 
 .bar-column {
@@ -112,6 +109,7 @@ body {
     font-size: 0.7em;
     font-weight: bold;
     flex-shrink: 0;
+    margin-top: 5px; /* Spasi di bawah bar */
 }
 .percentage-row span {
     width: 15px;
@@ -129,7 +127,7 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    padding-top: 5px;
+    padding-top: 5px; /* Sedikit padding atas */
 }
 
 .speed-readout {
@@ -139,7 +137,6 @@ body {
 }
 
 .speed-value {
-    /* Menggunakan speed-value karena ID speed digunakan oleh JS Anda untuk innerText */
     font-size: 5em; 
     font-weight: 900;
     color: white;
@@ -161,7 +158,7 @@ body {
 .unit-text {
     font-size: 0.8em;
     color: #ccc;
-    margin-top: -10px;
+    margin-top: -10px; /* Mendekatkan ke angka kecepatan */
     font-weight: bold;
     flex-shrink: 0;
 }
@@ -170,7 +167,7 @@ body {
 .power-bar-dots {
     display: flex;
     gap: 5px;
-    margin-top: 10px;
+    margin-top: 10px; 
     flex-shrink: 0;
 }
 
@@ -187,7 +184,7 @@ body {
 }
 
 /* =======================================
-   IKON STATUS BAWAH
+   IKON STATUS BAWAH (Fokus Penyesuaian)
    ======================================= */
 .status-icons-row {
     position: absolute;
@@ -196,29 +193,35 @@ body {
     right: 15px; 
     width: auto;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; /* Untuk menyebarkan ikon secara merata */
     align-items: center;
     padding-top: 5px;
     border-top: 1px solid rgba(255, 255, 255, 0.2);
-    margin-top: auto; 
 }
 
 .icon {
-    font-size: 1.5em; 
-    color: #00ffff; 
+    font-size: 1.3em; /* Ukuran ikon sedikit lebih kecil */
+    color: #00ffff; /* Warna default biru muda untuk ikon */
     text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
     opacity: 0.5; 
-    transition: opacity 0.2s;
+    transition: opacity 0.2s, color 0.2s; /* Tambahkan transisi warna */
 }
 
-/* Simbol Ikon (Menggunakan Content Property) */
-.turn-left::before { content: '◂'; } 
-.turn-right::before { content: '▸'; }
-.engine-icon::before { content: '⛭'; } 
-.lights-icon::before { content: '⛤'; } 
-.abs-icon::before { content: '⇋'; } 
+/* Simbol Ikon Kustom (Menggunakan Content Property) */
+.turn-left::before { content: '←'; } /* Panah kiri */
+.turn-right::before { content: '→'; } /* Panah kanan */
+.engine-icon::before { content: '⛭'; } /* Sama seperti sebelumnya */
+.lights-icon::before { content: '&#128262;'; } /* Ikon bohlam (ganti jika ada yang lebih baik) */
+.abs-icon::before { content: '𝔄'; } /* Ikon ABS yang lebih mirip (dari gambar) */
 
-/* Status Aktif */
+
+/* Status Aktif - Ikon ini terlihat sedikit lebih terang di gambar */
 .indicator-icon.active, .status-icon.active { 
     opacity: 1; 
+    color: #66ccff; /* Warna biru lebih terang saat aktif */
+}
+
+/* Override untuk indikator sein (agar lebih terang seperti di gambar) */
+.indicator-icon.active {
+    color: #00ffff; /* Warna biru muda yang lebih khas untuk sein aktif */
 }
