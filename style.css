@@ -4,15 +4,17 @@
 * {
     user-select: none;
     user-drag: none;
-    box-sizing: border-box; /* Pastikan box-sizing konsisten */
+    box-sizing: border-box; 
+    /* Menggunakan font digital atau fallback yang jelas */
+    font-family: 'Consolas', monospace, 'Digital-7', sans-serif;
 }
 body {
     margin: 0;
     padding: 0;
-    font-family: 'Consolas', monospace; 
     color: white;
     background-color: transparent !important; 
     overflow: hidden;
+    font-size: 14px; /* Default font size yang lebih jelas */
 }
 
 .game-background {
@@ -38,9 +40,9 @@ body {
 .dashboard-box {
     width: 250px;
     height: 150px;
-    background-color: rgba(30, 30, 45, 0.9); 
+    background-color: rgba(30, 30, 45, 0.95); /* Sedikit lebih pekat */
     border-radius: 10px;
-    padding: 10px 15px;
+    padding: 12px 15px; /* Tambah sedikit padding */
     box-sizing: border-box;
     display: flex;
     gap: 15px;
@@ -52,16 +54,14 @@ body {
 }
 
 /* =======================================
-   BAGIAN BAR INDIKATOR KIRI (H/F)
+   BAGIAN BAR INDIKATOR KIRI (H/F) - FIX TATA LETAK
    ======================================= */
 .bars-section {
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 50px; 
-    justify-content: space-between; 
-    padding-top: 5px; /* Sesuaikan padding */
-    padding-bottom: 5px;
+    flex-shrink: 0;
 }
 
 .bar-labels-top {
@@ -69,10 +69,10 @@ body {
     justify-content: space-between;
     width: 100%;
     margin-bottom: 5px; 
+    font-size: 0.9em;
 }
 
 .bar-label {
-    font-size: 0.8em;
     font-weight: bold;
     color: #fff;
     width: 15px; 
@@ -82,7 +82,7 @@ body {
 .bar-columns {
     display: flex;
     gap: 8px;
-    height: 70px; 
+    height: 80px; /* Menambah tinggi bar */
     flex-shrink: 0;
     align-items: flex-end; 
 }
@@ -109,7 +109,7 @@ body {
     display: flex;
     justify-content: space-between;
     width: 100%;
-    font-size: 0.7em;
+    font-size: 0.65em; /* Ukuran persentase lebih kecil */
     font-weight: bold;
     flex-shrink: 0;
     margin-top: 5px; 
@@ -137,10 +137,11 @@ body {
     display: flex;
     align-items: baseline; 
     position: relative;
+    height: 50px; /* Memperbaiki tinggi agar angka 0 besar tidak memotong */
 }
 
 .speed-value {
-    font-size: 5em; 
+    font-size: 4em; /* Sedikit lebih kecil agar lebih proporsional */
     font-weight: 900;
     color: white;
     line-height: 1;
@@ -151,7 +152,7 @@ body {
     position: absolute;
     right: -10px; 
     top: 0;
-    font-size: 2em;
+    font-size: 1.5em; /* Gear lebih kecil */
     font-weight: bold;
     color: #ff0000; 
     line-height: 1;
@@ -159,9 +160,9 @@ body {
 }
 
 .unit-text {
-    font-size: 0.8em;
+    font-size: 0.7em;
     color: #ccc;
-    margin-top: -10px; 
+    margin-top: -5px; 
     font-weight: bold;
     flex-shrink: 0;
 }
@@ -170,7 +171,7 @@ body {
 .power-bar-dots {
     display: flex;
     gap: 5px;
-    margin-top: 10px; 
+    margin-top: 5px; /* Mendekatkan ke Unit MPH */
     flex-shrink: 0;
 }
 
@@ -187,7 +188,7 @@ body {
 }
 
 /* =======================================
-   IKON STATUS BAWAH
+   IKON STATUS BAWAH - FIX TATA LETAK
    ======================================= */
 .status-icons-row {
     position: absolute;
@@ -198,34 +199,39 @@ body {
     display: flex;
     justify-content: space-between; 
     align-items: center;
-    padding-top: 5px;
+    padding-top: 8px; /* Lebih banyak padding di atas garis */
     border-top: 1px solid rgba(255, 255, 255, 0.2);
+    /* Mengalihkan flex-grow dari center-display ke sini */
+    flex-grow: 1; 
+    margin-top: auto; 
 }
 
 .icon {
-    font-size: 1.3em; /* Ukuran ikon */
-    color: #00ffff; /* Warna default biru muda untuk ikon */
-    text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+    font-size: 1.4em; /* Ukuran ikon */
+    color: #00ffff; 
+    text-shadow: 0 0 3px rgba(0, 255, 255, 0.5);
     opacity: 0.5; 
     transition: opacity 0.2s, color 0.2s; 
 }
 
-/* Hapus `::before` content yang menyebabkan masalah teks ikon */
-.turn-left::before, 
-.turn-right::before,
-.engine-icon::before, 
-.lights-icon::before, 
-.abs-icon::before {
-    content: none; 
-}
+/* Simbol Ikon Kustom (Menggunakan Entitas Unicode Umum) */
+#turn-left-icon::before { content: '←'; } 
+#turn-right-icon::before { content: '→'; }
+#engine-icon::before { content: '⚡'; } /* Ikon petir/mesin yang lebih umum */
+#headlights-icon::before { content: '💡'; } /* Ikon Bohlam */
+#abs-icon::before { content: '⇋'; } /* Simbol zig-zag */
 
-/* Status Aktif - Ikon ini terlihat sedikit lebih terang di gambar */
-.indicator-icon.active, .status-icon.active { 
+/* Status Aktif */
+.icon.active { 
     opacity: 1; 
-    color: #66ccff; /* Warna biru lebih terang saat aktif */
+    color: #66ccff;
 }
 
-/* Override untuk indikator sein (agar lebih terang seperti di gambar) */
-.indicator-icon.active {
-    color: #00ffff; /* Warna biru muda yang lebih khas untuk sein aktif */
+/* Override Sein Aktif (Warna khas biru muda) */
+#turn-left-icon.active, #turn-right-icon.active {
+    color: #00ffff;
 }
+
+/* Overide warna bar Health/Fuel di persentase agar sama dengan gambar */
+#health-percent { color: #00ff00; }
+#fuel-percent { color: #ffaa00; }
