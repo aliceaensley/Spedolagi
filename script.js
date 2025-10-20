@@ -4,7 +4,7 @@
 let elements = {};
 let speedMode = 1; 
 let indicators = 0;
-let isCustomHeadUnitVisible = true; // Mengontrol Head Unit Tambahan
+let isCustomHeadUnitVisible = true; 
 let blinkInterval;
 let lastIndicatorState = 0;
 
@@ -15,8 +15,10 @@ const onOrOff = state => state ? 'On' : 'Off';
 // =======================================================
 
 function setEngine(state) {
-    document.getElementById('engine-icon').classList.toggle('active', state);
-    elements.engine.innerText = onOrOff(state); 
+    const engineIcon = document.getElementById('engine-icon');
+    if (engineIcon) {
+        engineIcon.classList.toggle('active', state);
+    }
 }
 
 function setSpeed(speed_ms) {
@@ -37,8 +39,50 @@ function setSpeed(speed_ms) {
     });
 }
 
-// ... (setRPM, setFuel, setHealth, setGear, setSpeedMode SAMA) ...
-// (Fungsi-fungsi di atas dihilangkan untuk keringkasan, tetapi diasumsikan ada dan berfungsi)
+function setRPM(rpm) {
+    // Implementasi setter RPM jika diperlukan
+}
+
+function setFuel(fuel_01) {
+    const fuel_100 = Math.max(0, Math.min(100, fuel_01 * 100));
+    const fuelPercentElement = document.getElementById('fuel-percent');
+    document.getElementById('fuel-fill').style.height = `${Math.round(fuel_100)}%`;
+    if (fuelPercentElement) {
+        fuelPercentElement.textContent = `${Math.round(fuel_100)}%`; 
+    }
+}
+
+function setHealth(health_01) {
+    const health_100 = Math.max(0, Math.min(100, health_01 * 100));
+    const healthFill = document.getElementById('health-fill');
+    const healthPercentElement = document.getElementById('health-percent');
+    if (healthFill) {
+        healthFill.style.height = `${Math.round(health_100)}%`;
+        if (health_100 < 30) {
+            healthFill.style.backgroundColor = '#ff0000'; 
+        } else if (health_100 < 60) {
+            healthFill.style.backgroundColor = '#ffff00'; 
+        } else {
+            healthFill.style.backgroundColor = '#00ff00'; 
+        }
+    }
+    if (healthPercentElement) {
+        healthPercentElement.textContent = `${Math.round(health_100)}%`; 
+    }
+}
+
+function setGear(gear) {
+    const gearElement = document.getElementById('gear');
+    if (!gearElement) return;
+
+    let displayGear = String(gear).toUpperCase();
+    if (displayGear === '0') {
+        displayGear = 'N'; 
+    } 
+    gearElement.innerText = displayGear;
+    gearElement.style.color = (displayGear === 'R' || displayGear === 'N') ? '#ff0000' : '#fff'; 
+}
+
 
 function setHeadlights(state) {
     const headlightsIcon = document.getElementById('headlights-icon');
@@ -58,15 +102,14 @@ function controlIndicators(state) {
     if (state !== lastIndicatorState) {
         clearInterval(blinkInterval);
         
-        // Memastikan ikon dinonaktifkan
         if (turnLeft) turnLeft.classList.remove('active');
         if (turnRight) turnRight.classList.remove('active');
 
-        if (state === 1) { // Kiri
+        if (state === 1) { 
             blinkInterval = setInterval(() => { if(turnLeft) turnLeft.classList.toggle('active'); }, 250);
-        } else if (state === 2) { // Kanan
+        } else if (state === 2) { 
             blinkInterval = setInterval(() => { if(turnRight) turnRight.classList.toggle('active'); }, 250);
-        } else if (state === 3) { // Hazard (1 + 2)
+        } else if (state === 3) { 
              blinkInterval = setInterval(() => { 
                 if(turnLeft) turnLeft.classList.toggle('active');
                 if(turnRight) turnRight.classList.toggle('active');
@@ -94,8 +137,20 @@ function setSeatbelts(state) {
     }
 }
 
+function setSpeedMode(mode) {
+    speedMode = mode;
+    const speedModeElement = document.getElementById('speed-mode');
+    if (!speedModeElement) return;
+
+    switch(mode) {
+        case 1: speedModeElement.innerText = 'MPH'; break;
+        case 2: speedModeElement.innerText = 'Knots'; break;
+        default: speedModeElement.innerText = 'KMH';
+    }
+}
+
 // =======================================================
-// FUNGSI KONTROL HEAD UNIT TAMBAHAN (DARI HTML/JS)
+// FUNGSI KONTROL HEAD UNIT TAMBAHAN
 // =======================================================
 
 function toggleHeadUnitVisibility() {
@@ -103,7 +158,6 @@ function toggleHeadUnitVisibility() {
     const headUnitContainer = document.getElementById('custom-headunit-container'); 
 
     if (!headUnitContainer) {
-        // console.error("Elemen 'custom-headunit-container' tidak ditemukan!");
         return;
     }
 
@@ -111,15 +165,11 @@ function toggleHeadUnitVisibility() {
     
     if (isCustomHeadUnitVisible) {
         button.classList.remove('hidden');
-        // MENAMPILKAN Head Unit Tambahan Anda
         headUnitContainer.style.display = 'block'; 
     } else {
         button.classList.add('hidden');
-        // MENYEMBUNYIKAN Head Unit Tambahan Anda
         headUnitContainer.style.display = 'none'; 
     }
-    
-    // TIDAK ADA FETCH NUI LAGI
 }
 
 
@@ -128,19 +178,21 @@ function toggleHeadUnitVisibility() {
 // =======================================================
 
 const updateUI = (data) => {
-    // MEMASTIKAN DASHBOARD KUSTOM SELALU TERLIHAT
+    // DASHBOARD KUSTOM SELALU TERLIHAT
     const dashboardBox = document.getElementById('dashboard-box');
     dashboardBox.style.opacity = '1'; 
     dashboardBox.style.visibility = 'visible'; 
 
-    // DATA UTAMA
     if (data.engine !== undefined) setEngine(data.engine);
     if (data.speed !== undefined) setSpeed(data.speed);
-    // ... (pemanggilan setter data lain) ...
+    if (data.rpm !== undefined) setRPM(data.rpm);
+    if (data.fuel !== undefined) setFuel(data.fuel);
+    if (data.health !== undefined) setHealth(data.health);
+    if (data.gear !== undefined) setGear(data.gear);
     if (data.headlights !== undefined) setHeadlights(data.headlights); 
     if (data.seatbelts !== undefined) setSeatbelts(data.seatbelts); 
+    if (data.speedMode !== undefined) setSpeedMode(data.speedMode);
 
-    // INDIKATOR
     if (data.leftIndicator !== undefined) setLeftIndicator(data.leftIndicator);
     if (data.rightIndicator !== undefined) setRightIndicator(data.rightIndicator);
 };
@@ -148,22 +200,23 @@ const updateUI = (data) => {
 
 document.addEventListener('DOMContentLoaded', () => {
     // INISIALISASI ELEMENTS
-    // (Inisialisasi di sini)
-    
-    // EVENT LISTENER UNTUK TOMBOL HEAD UNIT
+    elements = {
+        speed: document.getElementById('speed'), 
+        gear: document.getElementById('gear'),
+        speedMode: document.getElementById('speed-mode'),
+    };
+
     const toggleGameHudButton = document.getElementById('toggle-game-hud-button');
     if (toggleGameHudButton) {
         toggleGameHudButton.addEventListener('click', toggleHeadUnitVisibility); 
     }
     
     // INISIALISASI STATUS AWAL HEAD UNIT TAMBAHAN
-    // Agar status awal 'isCustomHeadUnitVisible = true' terimplementasi
     const headUnitContainer = document.getElementById('custom-headunit-container');
     if (headUnitContainer) {
         headUnitContainer.style.display = 'block'; 
     }
 
-    // Menerima pesan dari game client
     window.addEventListener('message', (event) => {
         const data = event.data;
         if (data.type === 'speedoUpdate' || data.type === 'UPDATE_HUD_DATA') {
