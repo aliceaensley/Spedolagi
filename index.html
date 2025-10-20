@@ -1,76 +1,95 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital Dashboard HUD Final</title>
-    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Dashboard HUD Final</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="game-background"></div>
+    <div class="game-background"></div>
 
-    <div class="digital-dashboard-container">
-        <div class="dashboard-box" id="dashboard-box">
-            
-            <div class="bars-section">
-                <div class="bar-labels-top">
-                    <span class="bar-label" id="health-percent">100%</span>
-                    <span class="bar-label" id="fuel-percent">87%</span>
-                </div>
-                
-                <div class="label-indicators">
-                    <span class="indicator-text">H</span>
-                    <span class="indicator-text">F</span>
-                </div>
-
-                <div class="bar-columns">
-                    <div class="bar-column">
-                        <div class="bar-fill health-fill" id="health-fill"></div>
+    <div class="digital-dashboard-container">
+        
+        <div class="radio-box" id="radio-box">
+            <div class="radio-header">Radio</div>
+            <div class="radio-controls">
+                <span class="station-label">Select Station</span>
+                <div class="station-buttons">
+                    <div class="radio-button" id="prev-station">
+                        <svg viewBox="0 0 24 24" fill="white"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
                     </div>
-                    <div class="bar-column">
-                        <div class="bar-fill fuel-fill" id="fuel-fill"></div>
+                    <div class="radio-button play-pause" id="play-pause-radio">
+                        <svg viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
+                    </div>
+                    <div class="radio-button" id="next-station">
+                        <svg viewBox="0 0 24 24" fill="white"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
                     </div>
                 </div>
-            </div>
-
-            <div class="center-display-section">
-                
-                <div class="speed-readout">
-                    <span id="speed" class="speed-value">0</span> 
-                    <span class="gear-letter" id="gear">R</span>
-                </div>
-                <div class="unit-text" id="speed-mode">MPH</div> 
-
-                <div class="power-bar-dots" id="rpm-dots">
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                </div>
-            </div>
-
-            <div class="status-icons-row">
-                <i class="icon indicator-icon" id="turn-left-icon"></i> 
-                <i class="icon status-icon" id="engine-icon"></i> 
-                <i class="icon status-icon" id="headlights-icon"></i>
-                <i class="icon status-icon" id="abs-icon"></i> 
-                <i class="icon indicator-icon" id="turn-right-icon"></i>
-
-                
-<div style="display:none;">
-                    <span id="indicators"></span>
-                    <span id="engine"></span>
-                    <span id="headlights"></span>
-                    <span id="rpm"></span>
-                    <span id="health"></span>
-                    <span id="fuel"></span>
-                    <span id="seatbelts"></span>
-                </div>
+                <div class="radio-status" id="radio-status">OFF</div>
             </div>
         </div>
-    </div>
+                <div class="dashboard-box" id="dashboard-box">
+            
+            <div class="bars-section">
+                <div class="bar-labels-top">
+                    <span class="bar-label" id="health-percent">100%</span>
+                    <span class="bar-label" id="fuel-percent">87%</span>
+                </div>
+                
+                <div class="label-indicators">
+                    <span class="indicator-text">H</span>
+                    <span class="indicator-text">F</span>
+                </div>
 
-    <script src="script.js"></script>
+                <div class="bar-columns">
+                    <div class="bar-column">
+                        <div class="bar-fill health-fill" id="health-fill"></div>
+                    </div>
+                    <div class="bar-column">
+                        <div class="bar-fill fuel-fill" id="fuel-fill"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="center-display-section">
+                
+                <div class="speed-readout">
+                    <span id="speed" class="speed-value">0</span> 
+                    <span class="gear-letter" id="gear">R</span>
+                </div>
+                <div class="unit-text" id="speed-mode">MPH</div> 
+
+                <div class="power-bar-dots" id="rpm-dots">
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </div>
+            </div>
+
+            <div class="status-icons-row">
+                <i class="icon indicator-icon" id="turn-left-icon"></i> 
+                <i class="icon status-icon" id="engine-icon"></i> 
+                <i class="icon status-icon" id="headlights-icon"></i>
+                <i class="icon status-icon" id="abs-icon"></i> 
+                <i class="icon indicator-icon" id="turn-right-icon"></i>
+
+                
+<div style="display:none;">
+                    <span id="indicators"></span>
+                    <span id="engine"></span>
+                    <span id="headlights"></span>
+                    <span id="rpm"></span>
+                    <span id="health"></span>
+                    <span id="fuel"></span>
+                    <span id="seatbelts"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
