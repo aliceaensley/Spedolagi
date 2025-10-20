@@ -52,7 +52,7 @@ body {
     transition: opacity 0.3s;
 }
 
-/* --- (Gaya Bar Indikator) --- */
+/* --- Bar Indikator --- */
 .bars-section { display: flex; flex-direction: column; align-items: center; width: 50px; flex-shrink: 0; height: 100%; }
 .bar-labels-top { display: flex; justify-content: space-between; width: 100%; margin-bottom: 3px; font-size: 0.65em; font-weight: bold; color: #fff; }
 #health-percent { color: #00ff00; }
@@ -65,7 +65,7 @@ body {
 .health-fill { background-color: #00ff00; }
 .fuel-fill { background-color: #ffaa00; }
 
-/* --- (Gaya Speedometer Tengah) --- */
+/* --- Speedometer Tengah --- */
 .center-display-section { flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 5px; }
 .speed-readout { display: flex; align-items: baseline; position: relative; height: 50px; }
 .speed-value { font-size: 4em; font-weight: 900; color: white; line-height: 1; text-shadow: 0 0 10px rgba(255, 255, 255, 0.5); }
@@ -75,21 +75,19 @@ body {
 .dot { width: 15px; height: 5px; background-color: #444; border-radius: 1px; }
 .dot.active { background-color: white; box-shadow: 0 0 5px rgba(255, 255, 255, 0.8); }
 
-/* --- (Gaya Ikon Status Bawah) --- */
+/* --- Ikon Status Bawah (Perbaikan Logo Dobel) --- */
 .status-icons-row { position: absolute; bottom: 10px; left: 15px; right: 15px; width: auto; display: flex; justify-content: space-between; align-items: center; padding-top: 8px; border-top: 1px solid rgba(255, 255, 255, 0.2); height: 35px; }
 .icon { font-size: 1.4em; color: #00ffff; text-shadow: 0 0 3px rgba(0, 255, 255, 0.5); opacity: 0.5; transition: opacity 0.2s, color 0.2s; }
-/* Ikon Sein */
+
+/* Definisi Ikon menggunakan ::before */
 #turn-left-icon::before { content: '←'; } 
 #turn-right-icon::before { content: '→'; }
-/* Ikon Mesin */
 #engine-icon::before { content: '⚡'; } 
-/* Ikon Lampu */
 #headlights-icon::before { content: '💡'; } 
-/* Ikon Seatbelt */
-#abs-icon::before { content: '\1F4BA'; } 
-/* Ikon Aktif */
+#abs-icon::before { content: '💺'; } 
+
+/* Status Aktif */
 .icon.active { opacity: 1; color: #66ccff; }
-/* Sein Aktif (Warna khusus) */
 #turn-left-icon.active, #turn-right-icon.active { color: #00ffff; }
 
 
@@ -129,22 +127,21 @@ body {
     letter-spacing: 1px;
 }
 
-
-/* --- STATUS AKTIF (HEAD UNIT TERLIHAT) - GLOW BIRU (DEFAULT) --- */
+/* --- Status Glow Biru (Terlihat) --- */
 .toggle-hud-styled:not(.hidden) {
     border-color: #00ffff;
     color: #ffffff;
     box-shadow: 0 0 10px rgba(0, 255, 255, 0.5), 0 0 5px rgba(0, 255, 255, 0.3);
 }
 
-/* --- STATUS TERSEMBUNYI (HEAD UNIT TERSEMBUNYI) - GLOW MERAH --- */
+/* --- Status Glow Merah (Tersembunyi) --- */
 .toggle-hud-styled.hidden {
     border-color: #ff3333;
     color: #ff9999;
     box-shadow: 0 0 5px rgba(255, 51, 51, 0.3);
 }
 
-/* --- HOVER EFFECT --- */
+/* --- Hover Effect --- */
 .toggle-hud-styled:not(.hidden):hover {
     background-color: rgba(10, 10, 20, 1);
     box-shadow: 0 0 15px rgba(0, 255, 255, 0.8), 0 0 8px rgba(0, 255, 255, 0.6);
