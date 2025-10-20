@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- Elemen Dashboard yang Kita Gunakan ---
+    // --- Elemen Dashboard ---
     const currentSpeedElement = document.getElementById('current-speed');
     const gearElement = document.getElementById('gear');
     const healthFill = document.getElementById('health-fill');
@@ -10,23 +10,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const turnLeft = document.querySelector('.turn-left');
     const turnRight = document.querySelector('.turn-right');
     const dashboardBox = document.querySelector('.dashboard-box');
-    const unitTextElement = document.querySelector('.unit-text'); // Elemen untuk unit MPH/KMH
+    const unitTextElement = document.querySelector('.unit-text');
 
-    // --- State Internal Berdasarkan Kode Referensi ---
+    // --- State Internal ---
     let blinkInterval;
-    let speedMode = 1; // Default ke MPH (sesuai kode referensi)
-    let isVisible = false;
+    let speedMode = 1; // Default ke MPH
+    let isVisible = true; 
 
-    // Atur visibilitas awal ke Sembunyi
-    dashboardBox.style.opacity = '0'; 
-    dashboardBox.style.visibility = 'hidden'; 
+    // Inisialisasi: Atur tampilan awal
+    currentSpeedElement.textContent = '0';
+    gearElement.textContent = 'R';
+    gearElement.style.color = '#ff0000'; 
+    setSpeedUnit(speedMode); 
     
-
     // =======================================================
-    // LOGIKA FUNGSIONALITAS BERDASARKAN KODE REFERENSI
+    // LOGIKA FUNGSIONALITAS
     // =======================================================
 
-    /** Mengupdate Unit Kecepatan (MPH, KMH, Knots) */
     function setSpeedUnit(mode) {
         speedMode = mode;
         switch(mode) {
@@ -36,19 +36,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    /** Mengupdate Angka Kecepatan (Melakukan Konversi m/s ke unit yang benar) */
     function setSpeed(speed_ms) {
         let speedDisplay;
         switch(speedMode) {
-            case 1: speedDisplay = Math.round(speed_ms * 2.236936); break; // MPH
-            case 2: speedDisplay = Math.round(speed_ms * 1.943844); break; // Knots
-            default: speedDisplay = Math.round(speed_ms * 3.6); // KMH
+            case 1: speedDisplay = Math.round(speed_ms * 2.236936); break; 
+            case 2: speedDisplay = Math.round(speed_ms * 1.943844); break; 
+            default: speedDisplay = Math.round(speed_ms * 3.6); 
         }
         currentSpeedElement.textContent = speedDisplay;
         
-        // Update Power Dots (RPM/Power Level) berdasarkan kecepatan yang sudah dikonversi (misalnya, MPH)
         const maxDots = 4;
-        let scaleMax = speedMode === 1 ? 120 : 180; // Asumsi max 120 MPH atau 180 KMH
+        let scaleMax = speedMode === 1 ? 120 : 180; 
         let powerLevel = Math.min(maxDots, Math.ceil(speedDisplay / (scaleMax / maxDots))); 
         
         powerDots.forEach((dot, index) => {
@@ -56,7 +54,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    /** Mengupdate Bar Kesehatan (0-1) */
     function setHealth(health_01) {
         const health_100 = Math.max(0, Math.min(100, health_01 * 100));
 
@@ -72,7 +69,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    /** Mengupdate Bar Bahan Bakar (0-1) */
     function setFuel(fuel_01) {
         const fuel_100 = Math.max(0, Math.min(100, fuel_01 * 100));
 
@@ -80,125 +76,91 @@ document.addEventListener('DOMContentLoaded', () => {
         fuelPercent.textContent = `${Math.round(fuel_100)}%`;
     }
 
-    /** Mengupdate Gear */
     function setGear(gear) {
         let displayGear = String(gear || 'R').toUpperCase();
-        
-        // Jika gear 0, biasanya Netral (N) atau Mundur (R) jika kendaraan tidak bergerak. Kita set 'R' default.
         if (displayGear === '0') displayGear = 'R'; 
         
         gearElement.textContent = displayGear;
         gearElement.style.color = (displayGear === 'R' || displayGear === 'N') ? '#ff0000' : '#fff'; 
     }
 
-    /** Mengupdate Sein (indicators adalah bitwise, tapi kita hanya butuh 1, 2, atau 0) */
     function setIndicators(leftState, rightState) {
         let state = 0;
         if (leftState) state = 1;
         if (rightState) state = 2;
-        if (leftState && rightState) state = 3; // Hazard
+        if (leftState && rightState) state = 3; 
 
-        // Hentikan interval lama jika status berubah
         if (state !== setIndicators.lastState) {
             clearInterval(blinkInterval);
             turnLeft.classList.remove('active');
             turnRight.classList.remove('active');
 
-            if (state === 1) { // Kiri
-                blinkInterval = setInterval(() => { turnLeft.classList.toggle('active'); }, 250);
-            } else if (state === 2) { // Kanan
-                blinkInterval = setInterval(() => { turnRight.classList.toggle('active'); }, 250);
-            } else if (state === 3) { // Hazard
-                 blinkInterval = setInterval(() => { 
-                    turnLeft.classList.toggle('active');
-                    turnRight.classList.toggle('active');
-                 }, 250);
-            }
+            if (state === 1) { blinkInterval = setInterval(() => { turnLeft.classList.toggle('active'); }, 250); } 
+            else if (state === 2) { blinkInterval = setInterval(() => { turnRight.classList.toggle('active'); }, 250); } 
+            else if (state === 3) { blinkInterval = setInterval(() => { turnLeft.classList.toggle('active'); turnRight.classList.toggle('active'); }, 250); }
         }
         setIndicators.lastState = state;
     }
-    setIndicators.lastState = 0; // State awal
+    setIndicators.lastState = 0; 
 
     // =======================================================
     // FUNGSI UTAMA PENGHUBUNG (NUI LISTENER)
     // =======================================================
     
-    // Inisialisasi unit kecepatan agar terlihat
-    setSpeedUnit(speedMode); 
-    
+    const updateUI = (data) => {
+        // 1. KONTROL VISIBILITAS TOTAL
+        if (data.show !== undefined) {
+            dashboardBox.style.opacity = data.show ? '1' : '0';
+            dashboardBox.style.visibility = data.show ? 'visible' : 'hidden';
+            isVisible = data.show;
+            if (!isVisible) {
+                clearInterval(blinkInterval);
+                turnLeft.classList.remove('active');
+                turnRight.classList.remove('active');
+                return;
+            }
+        }
+        if (!isVisible) return; 
+        
+        // 2. DATA UTAMA
+        if (data.speed !== undefined) setSpeed(data.speed);
+        if (data.gear !== undefined) setGear(data.gear);
+        if (data.health !== undefined) setHealth(data.health);
+        if (data.fuel !== undefined) setFuel(data.fuel);
+        
+        // 3. INDICATORS
+        if (data.leftIndicator !== undefined || data.rightIndicator !== undefined) {
+            setIndicators(data.leftIndicator || false, data.rightIndicator || false);
+        }
+
+        // 4. SPEED MODE
+        if (data.speedMode !== undefined) setSpeedUnit(data.speedMode);
+
+        // 5. ICON LAINNYA (Misalnya Engine State, Headlights, dll.)
+        const engineIcon = document.getElementById('engine-icon');
+        if (data.engineActive !== undefined) {
+             engineIcon.classList.toggle('active', data.engineActive);
+        }
+        // ... Tambahkan logika untuk ikon lain di sini (headlights, abs, dll.)
+    };
+
     // Menerima pesan dari game client
     window.addEventListener('message', (event) => {
         const data = event.data;
-        
-        // Gunakan 'speedoUpdate' atau 'UPDATE_HUD_DATA' sebagai tipe pesan
         if (data.type === 'speedoUpdate' || data.type === 'UPDATE_HUD_DATA') {
-            
-            // 1. KONTROL VISIBILITAS
-            if (data.show !== undefined) {
-                dashboardBox.style.opacity = data.show ? '1' : '0';
-                dashboardBox.style.visibility = data.show ? 'visible' : 'hidden';
-                isVisible = data.show;
-                if (!isVisible) return; 
-            }
-            if (!isVisible) return; 
-
-            // 2. DATA UTAMA (Menggunakan data yang dikirim oleh skrip Anda)
-            if (data.speed !== undefined) setSpeed(data.speed);
-            if (data.gear !== undefined) setGear(data.gear);
-            if (data.health !== undefined) setHealth(data.health);
-            if (data.fuel !== undefined) setFuel(data.fuel);
-            
-            // 3. INDICATORS
-            // Kode referensi Anda menggunakan dua setter terpisah, jadi kita harus menebak state gabungan
-            if (data.indicators !== undefined) {
-                // Asumsi data.indicators adalah objek {left: boolean, right: boolean}
-                setIndicators(data.indicators.left, data.indicators.right);
-            } else if (data.leftIndicator !== undefined || data.rightIndicator !== undefined) {
-                setIndicators(data.leftIndicator || false, data.rightIndicator || false);
-            }
-
-            // 4. SPEED MODE
-            if (data.speedMode !== undefined) setSpeedUnit(data.speedMode);
-
-            // 5. IKON STATUS LAINNYA (Anda dapat menambahkan fungsi setHeadlights, setEngine, dll. jika diperlukan)
-            // Contoh untuk Headlights:
-            // const lightsIcon = document.querySelector('.lights-icon');
-            // lightsIcon.classList.toggle('active', data.headlights > 0);
+            updateUI(data.payload || data); 
         }
     });
 
-    // --- Demo untuk Testing Browser ---
-    /* Hapus bagian ini saat di lingkungan game */
-    let demoSpeed = 0; let targetSpeed = 0; let demoTurnSignal = 0; let demoHealth = 1; let demoFuel = 0.87;
-    
-    setTimeout(() => {
-        setSpeedUnit(1); // Set ke MPH
-        updateUI({ speed: 0, health: 1, fuel: 0.87, gear: 'R', leftIndicator: false, rightIndicator: false, show: true });
-    }, 500);
-
-    setInterval(() => {
-        if (dashboardBox.style.opacity === '0') return;
-
-        if (Math.random() < 0.05) {
-            targetSpeed = Math.floor(Math.random() * 45); // Target m/s
-            demoTurnSignal = Math.floor(Math.random() * 3);
-        }
-        if (demoSpeed < targetSpeed) { demoSpeed = Math.min(targetSpeed, demoSpeed + 0.5); } 
-        else if (demoSpeed > targetSpeed) { demoSpeed = Math.max(0, demoSpeed - 1); }
-
-        demoHealth = Math.max(0, Math.min(1, demoHealth + (Math.random() * 0.002 - 0.001)));
-        demoFuel = Math.max(0, demoFuel - 0.0005);
-
-        // Simulasi pengiriman data
-        updateUI({
-            speed: demoSpeed,
-            health: demoHealth,
-            fuel: demoFuel,
-            gear: demoSpeed > 27 ? 'D' : (demoSpeed > 17 ? '2' : (demoSpeed > 2 ? '1' : 'R')),
-            leftIndicator: demoTurnSignal === 1,
-            rightIndicator: demoTurnSignal === 2,
-            show: true
-        });
-    }, 50); 
-    /* Hapus bagian DEMO sampai sini */
+    // Panggil updateUI sekali untuk memastikan nilai awal diatur.
+    updateUI({ 
+        speed: 0, 
+        health: 1, 
+        fuel: 0.87, 
+        gear: 'R', 
+        leftIndicator: false, 
+        rightIndicator: false,
+        engineActive: false,
+        show: true
+    });
 });
