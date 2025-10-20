@@ -31,7 +31,7 @@ body {
 }
 
 /* =======================================
-   KOTAK DASHBOARD UTAMA (HUD) - DIPERBAIKI
+   KOTAK DASHBOARD UTAMA (HUD)
    ======================================= */
 .dashboard-box {
     width: 180px; 
@@ -42,7 +42,7 @@ body {
     padding: 8px; 
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* Penting agar isi tidak menumpuk */
+    justify-content: space-between; 
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5); 
     opacity: 1; 
     visibility: visible; 
@@ -53,11 +53,10 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    flex-grow: 1; /* Biarkan mengambil ruang yang tersisa */
+    flex-grow: 1; 
 }
 
 .status-bars {
-    /* Mengatur H dan F serta barnya agar rapi di kiri atas */
     display: grid;
     grid-template-columns: auto 10px;
     align-items: flex-end;
@@ -127,19 +126,18 @@ body {
     margin-top: -3px;
 }
 
-/* --- MIDDLE ROW (PERCENT & DOTS) - DIPERBAIKI --- */
+/* --- MIDDLE ROW (PERCENT & DOTS) --- */
 .middle-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-top: 5px;
-    width: 100%; /* Pastikan mengambil lebar penuh kotak */
-    padding: 0 2px; /* Padding sedikit agar persen tidak menempel di sudut */
+    width: 100%; 
+    padding: 0 2px;
 }
 
 .bar-percents {
     display: flex;
-    /* Lebar disesuaikan agar pas dengan dua bar */
     width: 50px; 
     justify-content: space-between;
     font-size: 0.6em;
@@ -170,7 +168,7 @@ body {
     box-shadow: 0 0 3px rgba(255, 255, 255, 0.8);
 }
 
-/* --- BOTTOM ROW (ICONS) - DIPERBAIKI --- */
+/* --- BOTTOM ROW (ICONS) --- */
 .bottom-row {
     display: flex;
     justify-content: space-between;
@@ -178,7 +176,7 @@ body {
     padding-top: 5px;
     margin-top: 5px;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
-    width: 100%; /* Pastikan mengambil lebar penuh kotak */
+    width: 100%; 
 }
 
 .icon {
@@ -189,7 +187,6 @@ body {
     text-align: center;
 }
 
-/* Ikon Indikator dibuat lebih kecil dan transparan di tengah */
 .turn-icon {
     font-size: 0.9em;
     opacity: 0.3; 
@@ -214,7 +211,7 @@ body {
 
 
 /* =======================================
-   KOTAK RADIO (BARU)
+   KOTAK RADIO
    ======================================= */
 .radio-box {
     width: 180px; 
