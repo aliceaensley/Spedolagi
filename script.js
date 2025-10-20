@@ -1,17 +1,15 @@
 // =======================================================
-// VARIABEL GLOBAL & KONFIGURASI NUI
+// VARIABEL GLOBAL & KONFIGURASI
 // =======================================================
 let elements = {};
-let speedMode = 1; 
+let speedMode = 0; // Default KMH (0)
 let indicators = 0;
-let isCustomHeadUnitVisible = false; 
 let blinkInterval;
 let lastIndicatorState = 0;
-
-// ⚠️ TIDAK ADA RESOURCE_NAME KARENA TIDAK ADA FETCH/NUI CALLBACK KE LUA
+let isSimulationRunning = false; 
 
 // =======================================================
-// FUNGSI KONTROL DASHBOARD (SETTER SPEDOMETER, DLL.)
+// FUNGSI KONTROL DASHBOARD (SETTER)
 // =======================================================
 
 function setEngine(state) {
@@ -20,7 +18,6 @@ function setEngine(state) {
 }
 
 function setSpeed(speed_ms) {
-    // Logika konversi kecepatan tetap ada (MS ke MPH/Knots/KMH)
     let speedDisplay;
     switch(speedMode) {
         case 1: speedDisplay = Math.round(speed_ms * 2.236936); break; // MPH
@@ -31,7 +28,7 @@ function setSpeed(speed_ms) {
     
     // Logika Power Bar
     const maxDots = 4;
-    let scaleMax = speedMode === 1 ? 120 : 180; 
+    let scaleMax = 100; // Skala maks RPM/Power untuk simulasi
     let powerLevel = Math.min(maxDots, Math.ceil(speedDisplay / (scaleMax / maxDots))); 
     const powerDots = document.querySelectorAll('.power-bar-dots .dot');
     powerDots.forEach((dot, index) => {
@@ -53,7 +50,6 @@ function setHealth(health_01) {
     const healthPercentElement = document.getElementById('health-percent');
     if (healthFill) {
         healthFill.style.height = `${Math.round(health_100)}%`;
-        // Mengubah warna Health berdasarkan persentase
         healthFill.style.backgroundColor = health_100 < 30 ? '#ff0000' : (health_100 < 60 ? '#ffff00' : '#00ff00'); 
     }
     if (healthPercentElement) healthPercentElement.textContent = `${Math.round(health_100)}%`; 
@@ -84,11 +80,11 @@ function controlIndicators(state) {
         clearInterval(blinkInterval);
         if (turnLeft) turnLeft.classList.remove('active');
         if (turnRight) turnRight.classList.remove('active');
-        if (state === 1) { // Kiri
+        if (state === 1) { 
             blinkInterval = setInterval(() => { if(turnLeft) turnLeft.classList.toggle('active'); }, 250);
-        } else if (state === 2) { // Kanan
+        } else if (state === 2) { 
             blinkInterval = setInterval(() => { if(turnRight) turnRight.classList.toggle('active'); }, 250);
-        } else if (state === 3) { // Hazard
+        } else if (state === 3) { 
              blinkInterval = setInterval(() => { 
                 if(turnLeft) turnLeft.classList.toggle('active');
                 if(turnRight) turnRight.classList.toggle('active');
@@ -120,59 +116,70 @@ function setSpeedMode(mode) {
     speedModeElement.innerText = (mode === 1) ? 'MPH' : ((mode === 2) ? 'Knots' : 'KMH');
 }
 
-function toggleHeadUnitVisibility() {
-    const button = document.getElementById('toggle-game-hud-button');
-    const headUnitContainer = document.getElementById('custom-headunit-container'); 
-    if (!headUnitContainer) return;
+/**
+ * Fungsi ini menggantikan peran Lua/Game Engine dalam Web Murni.
+ * Mensimulasikan data kendaraan yang terus berubah.
+ */
+function startSimulation() {
+    if (isSimulationRunning) return;
+    isSimulationRunning = true;
+    let currentSpeed = 0;
+    let currentFuel = 0.8; 
+    let currentHealth = 1.0; 
+    let currentGear = 'N';
 
-    isCustomHeadUnitVisible = !isCustomHeadUnitVisible;
+    const maxSpeed = 30; // 30 m/s (sekitar 108 KMH)
     
-    if (isCustomHeadUnitVisible) {
-        button.classList.remove('hidden');
-        headUnitContainer.style.display = 'flex'; 
-    } else {
-        button.classList.add('hidden');
-        headUnitContainer.style.display = 'none'; 
-    }
+    // Tampilkan HUD secara paksa di web murni
+    const headUnitContainer = document.getElementById('custom-headunit-container');
+    if (headUnitContainer) headUnitContainer.style.display = 'flex';
+
+    setInterval(() => {
+        // SIMULASI KECEPATAN (Berubah acak)
+        const speedChange = (Math.random() - 0.5) * 5; // -2.5 sampai +2.5
+        currentSpeed = Math.max(0, Math.min(maxSpeed, currentSpeed + speedChange));
+        setSpeed(currentSpeed);
+
+        // SIMULASI GEAR
+        if (currentSpeed > 25) currentGear = '5';
+        else if (currentSpeed > 20) currentGear = '4';
+        else if (currentSpeed > 15) currentGear = '3';
+        else if (currentSpeed > 8) currentGear = '2';
+        else if (currentSpeed > 0.5) currentGear = '1';
+        else if (currentSpeed === 0) currentGear = 'P';
+        setGear(currentGear);
+
+        // SIMULASI BAHAN BAKAR (Menurun perlahan)
+        currentFuel = Math.max(0, currentFuel - 0.001); 
+        setFuel(currentFuel);
+        setEngine(currentFuel > 0.05); // Mesin mati jika bensin habis
+
+        // SIMULASI KESEHATAN
+        if (Math.random() < 0.02) { // 2% kemungkinan 'kecelakaan' kecil
+             currentHealth = Math.max(0.1, currentHealth - 0.05);
+        }
+        setHealth(currentHealth);
+        
+        // SIMULASI INDIKATOR
+        // 2% kemungkinan turn kiri atau kanan
+        const indicatorRoll = Math.random();
+        if (indicatorRoll < 0.02) setLeftIndicator(true);
+        else if (indicatorRoll < 0.04) setRightIndicator(true);
+        else { setLeftIndicator(false); setRightIndicator(false); }
+
+        // SIMULASI LAMPU
+        setHeadlights(Math.random() < 0.5 ? 1 : 0);
+
+        // SIMULASI SABUK PENGAMAN (selalu menyala)
+        setSeatbelts(true);
+
+    }, 200); // Update setiap 200 milidetik
 }
 
 
 // =======================================================
-// FUNGSI UTAMA PENGHUBUNG (NUI LISTENER)
+// INITIALIZATION
 // =======================================================
-
-/**
- * Fungsi utama untuk menerima data dari client.lua FiveM dan mengupdate HUD.
- * Anda harus mengirim data ini dari client.lua menggunakan SendNuiMessage.
- */
-const updateUI = (data) => {
-    const dashboardBox = document.getElementById('dashboard-box');
-    dashboardBox.style.opacity = '1'; 
-    dashboardBox.style.visibility = 'visible'; 
-
-    if (data.engine !== undefined) setEngine(data.engine);
-    if (data.speed !== undefined) setSpeed(data.speed);
-    if (data.fuel !== undefined) setFuel(data.fuel);
-    if (data.health !== undefined) setHealth(data.health);
-    if (data.gear !== undefined) setGear(data.gear);
-    if (data.headlights !== undefined) setHeadlights(data.headlights); 
-    if (data.seatbelts !== undefined) setSeatbelts(data.seatbelts); 
-    if (data.speedMode !== undefined) setSpeedMode(data.speedMode);
-    if (data.leftIndicator !== undefined) setLeftIndicator(data.leftIndicator);
-    if (data.rightIndicator !== undefined) setRightIndicator(data.rightIndicator);
-};
-
-// Menerima pesan NUI dari Client-Side Lua
-window.addEventListener('message', (event) => {
-    const item = event.data;
-    if (item.action === 'updateHUD') {
-        updateUI(item.data);
-    }
-    if (item.action === 'toggleHeadUnit') {
-        toggleHeadUnitVisibility();
-    }
-});
-
 
 document.addEventListener('DOMContentLoaded', () => {
     // INISIALISASI ELEMENTS
@@ -180,24 +187,24 @@ document.addEventListener('DOMContentLoaded', () => {
     elements.gear = document.getElementById('gear');
     elements.speedMode = document.getElementById('speed-mode');
 
+    // Karena ini Web Murni, kita tidak perlu tombol toggle atau NUI listener.
+    // Kita langsung mulai simulasi agar HUD bergerak.
+    startSimulation();
 
-    const toggleGameHudButton = document.getElementById('toggle-game-hud-button');
-    if (toggleGameHudButton) {
-        toggleGameHudButton.addEventListener('click', toggleHeadUnitVisibility); 
-    }
+    // Panggil updateUI sekali untuk nilai awal
+    const initialData = { 
+        speed: 0, health: 1.0, fuel: 1.0, gear: 'N', headlights: 0, engine: false, seatbelts: false, 
+        leftIndicator: false, rightIndicator: false, speedMode: 0 // KMH
+    };
     
-    // INISIALISASI STATUS AWAL HEAD UNIT (SEMBUNYI)
-    const headUnitContainer = document.getElementById('custom-headunit-container');
-    if (headUnitContainer) {
-        headUnitContainer.style.display = 'none'; 
-    }
-    if (toggleGameHudButton) {
-        toggleGameHudButton.classList.add('hidden');
-    }
-
-    // Panggil updateUI sekali untuk nilai awal (Demo)
-    updateUI({ 
-        speed: 0, health: 1, fuel: 0.87, gear: 'R', headlights: 0, engine: false, seatbelts: true, 
-        leftIndicator: false, rightIndicator: false, speedMode: 1
-    });
+    // Panggil setter untuk menampilkan nilai awal
+    setSpeedMode(initialData.speedMode);
+    setSpeed(initialData.speed);
+    setFuel(initialData.fuel);
+    setHealth(initialData.health);
+    setGear(initialData.gear);
+    setEngine(initialData.engine);
+    setSeatbelts(initialData.seatbelts);
+    setLeftIndicator(initialData.leftIndicator);
+    setRightIndicator(initialData.rightIndicator);
 });
