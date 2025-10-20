@@ -5,7 +5,6 @@
     user-select: none;
     user-drag: none;
     box-sizing: border-box; 
-    /* Menggunakan font digital atau fallback yang jelas */
     font-family: 'Consolas', monospace, 'Digital-7', sans-serif;
 }
 body {
@@ -14,22 +13,9 @@ body {
     color: white;
     background-color: transparent !important; 
     overflow: hidden;
-    font-size: 14px; /* Default font size yang lebih jelas */
+    font-size: 14px; 
 }
-
-.game-background {
-    background: transparent; 
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-}
-
-/* =======================================
-   CONTAINER UTAMA DASHBOARD
-   ======================================= */
+/* ... (Bagian .game-background dan .digital-dashboard-container sama) ... */
 .digital-dashboard-container {
     position: fixed;
     bottom: 20px;
@@ -40,9 +26,9 @@ body {
 .dashboard-box {
     width: 250px;
     height: 150px;
-    background-color: rgba(30, 30, 45, 0.95); /* Sedikit lebih pekat */
+    background-color: rgba(30, 30, 45, 0.95); 
     border-radius: 10px;
-    padding: 12px 15px; /* Tambah sedikit padding */
+    padding: 12px 15px; 
     box-sizing: border-box;
     display: flex;
     gap: 15px;
@@ -53,8 +39,9 @@ body {
     transition: opacity 0.3s;
 }
 
+
 /* =======================================
-   BAGIAN BAR INDIKATOR KIRI (H/F) - FIX TATA LETAK
+   BAGIAN BAR INDIKATOR KIRI (H/F) - FIX BAR DAN POSISI PERSEN
    ======================================= */
 .bars-section {
     display: flex;
@@ -62,29 +49,48 @@ body {
     align-items: center;
     width: 50px; 
     flex-shrink: 0;
+    height: 100%; /* MEMASTIKAN TINGGI BAR SECTION PENUH */
+    padding-top: 0;
+    padding-bottom: 0;
 }
 
 .bar-labels-top {
     display: flex;
     justify-content: space-between;
     width: 100%;
+    margin-bottom: 3px; 
+    font-size: 0.65em; /* Ukuran persentase lebih kecil */
+    font-weight: bold;
+    color: #fff; /* Warna default putih */
+}
+
+/* Penyesuaian warna untuk persentase */
+#health-percent { color: #00ff00; }
+#fuel-percent { color: #ffaa00; }
+
+.label-indicators {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
     margin-bottom: 5px; 
     font-size: 0.9em;
 }
-
-.bar-label {
+.indicator-text {
     font-weight: bold;
     color: #fff;
     width: 15px; 
     text-align: center;
 }
 
+
 .bar-columns {
     display: flex;
     gap: 8px;
-    height: 80px; /* Menambah tinggi bar */
+    flex-grow: 1; /* MEMASTIKAN KOLOM MENGISI RUANG YANG TERSISA */
     flex-shrink: 0;
     align-items: flex-end; 
+    max-height: 80px; /* Batasi tinggi maksimum bar */
+    padding-bottom: 25px; /* Tambah padding agar ikon status tidak menimpa */
 }
 
 .bar-column {
@@ -96,6 +102,7 @@ body {
     display: flex;
     align-items: flex-end;
     border-top: 1px solid #444; 
+    height: 100%; /* Gunakan tinggi penuh dari bar-columns */
 }
 
 .bar-fill {
@@ -105,25 +112,7 @@ body {
 .health-fill { background-color: #00ff00; }
 .fuel-fill { background-color: #ffaa00; }
 
-.percentage-row {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    font-size: 0.65em; /* Ukuran persentase lebih kecil */
-    font-weight: bold;
-    flex-shrink: 0;
-    margin-top: 5px; 
-}
-.percentage-row span {
-    width: 15px;
-    text-align: center;
-}
-#health-percent { color: #00ff00; }
-#fuel-percent { color: #ffaa00; }
-
-/* =======================================
-   DISPLAY KECEPATAN & INDIKATOR TENGAH
-   ======================================= */
+/* ... (Bagian .center-display-section sama) ... */
 .center-display-section {
     flex-grow: 1;
     display: flex;
@@ -137,11 +126,11 @@ body {
     display: flex;
     align-items: baseline; 
     position: relative;
-    height: 50px; /* Memperbaiki tinggi agar angka 0 besar tidak memotong */
+    height: 50px; 
 }
 
 .speed-value {
-    font-size: 4em; /* Sedikit lebih kecil agar lebih proporsional */
+    font-size: 4em; 
     font-weight: 900;
     color: white;
     line-height: 1;
@@ -152,7 +141,7 @@ body {
     position: absolute;
     right: -10px; 
     top: 0;
-    font-size: 1.5em; /* Gear lebih kecil */
+    font-size: 1.5em; 
     font-weight: bold;
     color: #ff0000; 
     line-height: 1;
@@ -167,11 +156,10 @@ body {
     flex-shrink: 0;
 }
 
-/* Indikator Baris Bawah (RPM/Power Dots) */
 .power-bar-dots {
     display: flex;
     gap: 5px;
-    margin-top: 5px; /* Mendekatkan ke Unit MPH */
+    margin-top: 5px; 
     flex-shrink: 0;
 }
 
@@ -187,8 +175,9 @@ body {
     box-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
 }
 
+
 /* =======================================
-   IKON STATUS BAWAH - FIX TATA LETAK
+   IKON STATUS BAWAH
    ======================================= */
 .status-icons-row {
     position: absolute;
@@ -199,27 +188,26 @@ body {
     display: flex;
     justify-content: space-between; 
     align-items: center;
-    padding-top: 8px; /* Lebih banyak padding di atas garis */
+    padding-top: 8px; 
     border-top: 1px solid rgba(255, 255, 255, 0.2);
-    /* Mengalihkan flex-grow dari center-display ke sini */
-    flex-grow: 1; 
-    margin-top: auto; 
+    /* Penting: Pastikan tidak mengganggu tinggi bar */
+    height: 35px; 
 }
 
 .icon {
-    font-size: 1.4em; /* Ukuran ikon */
+    font-size: 1.4em; 
     color: #00ffff; 
     text-shadow: 0 0 3px rgba(0, 255, 255, 0.5);
     opacity: 0.5; 
     transition: opacity 0.2s, color 0.2s; 
 }
 
-/* Simbol Ikon Kustom (Menggunakan Entitas Unicode Umum) */
+/* Simbol Ikon Kustom (Unicode) */
 #turn-left-icon::before { content: '←'; } 
 #turn-right-icon::before { content: '→'; }
-#engine-icon::before { content: '⚡'; } /* Ikon petir/mesin yang lebih umum */
-#headlights-icon::before { content: '💡'; } /* Ikon Bohlam */
-#abs-icon::before { content: '⇋'; } /* Simbol zig-zag */
+#engine-icon::before { content: '⚡'; } 
+#headlights-icon::before { content: '💡'; } 
+#abs-icon::before { content: '⇋'; } 
 
 /* Status Aktif */
 .icon.active { 
@@ -227,11 +215,6 @@ body {
     color: #66ccff;
 }
 
-/* Override Sein Aktif (Warna khas biru muda) */
 #turn-left-icon.active, #turn-right-icon.active {
     color: #00ffff;
 }
-
-/* Overide warna bar Health/Fuel di persentase agar sama dengan gambar */
-#health-percent { color: #00ff00; }
-#fuel-percent { color: #ffaa00; }
