@@ -86,38 +86,4 @@ body {
 .icon.active { opacity: 1; color: #66ccff; }
 #turn-left-icon.active, #turn-right-icon.active { color: #00ffff; }
 
-
-/* =======================================
-   GAYA TOMBOL HIDE/SHOW UNTUK HEAD UNIT GAME
-   ======================================= */
-.toggle-game-hud-button {
-    position: fixed;
-    bottom: 20px;
-    left: 50%; 
-    transform: translateX(-50%); 
-    
-    background-color: rgba(30, 30, 45, 0.95);
-    color: #00ffff;
-    border: 1px solid #00ffff;
-    border-radius: 5px;
-    padding: 5px 10px;
-    font-size: 0.8em;
-    font-weight: bold;
-    cursor: pointer;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-    z-index: 10;
-    transition: background-color 0.2s, color 0.2s;
-}
-
-.toggle-game-hud-button:hover {
-    background-color: #00ffff;
-    color: #1e1e2d;
-}
-.toggle-game-hud-button.hidden {
-    border-color: #ff0000;
-    color: #ff0000;
-}
-.toggle-game-hud-button.hidden:hover {
-    background-color: #ff0000;
-    color: #1e1e2d;
-}
+/* Semua gaya tombol Head Unit dihapus */
