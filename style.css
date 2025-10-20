@@ -2,281 +2,100 @@
 body {
     margin: 0;
     padding: 0;
-    font-family: 'Consolas', 'Arial Black', sans-serif;
+    font-family: 'Arial Black', sans-serif;
     color: white;
     background-color: transparent; 
     overflow: hidden;
 }
 
 .game-background {
+    /* Tetap transparan */
+    background: transparent; 
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: transparent; 
     z-index: 1;
 }
 
-/* UI di Sudut Kanan Atas */
-.top-right-ui {
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    display: flex;
-    align-items: center;
-    background-color: transparent; 
-    padding: 5px 15px;
-    z-index: 5;
-}
-
-.nav-btn {
-    background: none;
-    border: 1px solid #000;
-    color: #000;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    font-size: 0.8em;
-    margin: 0 5px;
-}
-
-/* CONTAINER SPEEDOMETER */
-.speedometer-container {
+/* CONTAINER SPEEDOMETER MINIMALIS */
+.minimal-speedometer-container {
     position: fixed;
     bottom: 20px;
     right: 20px;
     z-index: 10;
 }
 
-.speedometer-rage {
-    width: 250px;
-    height: 250px;
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-/* LINGKARAN LUAR (Ring Neon) */
-.outer-ring {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    border: 5px solid #00ffff;
-    box-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
-    background-color: rgba(0, 0, 0, 0.7); /* Background abu-abu gelap */
-    z-index: 2;
-}
-
-/* ANGKA RPM/RAGE - Menggunakan penempatan absolut dan rotasi sederhana */
-.rpm-numbers {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    z-index: 3;
-}
-
-.rpm-mark {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 10px; /* Lebar kecil */
-    height: 10px;
-    color: #00ff99; 
-    font-size: 1.2em;
-    font-weight: bold;
-    text-shadow: 0 0 5px rgba(0, 255, 153, 0.8);
-}
-
-/* Penempatan Angka: Disesuaikan dengan radius 100px (125px - 25px dari pusat) */
-/* Pola umum: rotate(A) translateY(-100px) rotate(-A) */
-.mark-0 { transform: translate(-50%, -50%) rotate(225deg) translate(0, -100px); color: white; }
-.mark-1 { transform: translate(-50%, -50%) rotate(250deg) translate(0, -100px); }
-.mark-2 { transform: translate(-50%, -50%) rotate(275deg) translate(0, -100px); }
-.mark-3 { transform: translate(-50%, -50%) rotate(300deg) translate(0, -100px); }
-.mark-4 { transform: translate(-50%, -50%) rotate(325deg) translate(0, -100px); }
-.mark-5 { transform: translate(-50%, -50%) rotate(350deg) translate(0, -100px); }
-.mark-6 { transform: translate(-50%, -50%) rotate(15deg) translate(0, -100px); }
-.mark-7 { transform: translate(-50%, -50%) rotate(40deg) translate(0, -100px); }
-.mark-8 { transform: translate(-50%, -50%) rotate(65deg) translate(0, -100px); }
-/* Mark 9 dihapus */
-
-
-/* GARIS GAUGE (MENGGUNAKAN PSEUDO-ELEMENTS UNTUK ARCS) */
-.gauge-bars {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    z-index: 3;
-}
-
-/* Bar Merah (Redline - Statis) */
-.gauge-red {
-    position: absolute;
-    width: 200px;
-    height: 200px;
-    border: 15px solid transparent;
-    border-radius: 50%;
-    top: 20px;
-    left: 20px;
-    clip: rect(0, 200px, 100px, 100px);
-    /* Warna: Merah Solid */
-    border-color: #ff0000 #ff0000 transparent transparent;
-    transform: rotate(70deg); 
-}
-
-/* Bar Kuning (Statik) */
-.gauge-yellow {
-    position: absolute;
-    width: 200px;
-    height: 200px;
-    border: 15px solid transparent;
-    border-radius: 50%;
-    top: 20px;
-    left: 20px;
-    clip: rect(0, 200px, 100px, 100px);
-    /* Warna: Kuning Solid */
-    border-color: #ffff00 transparent transparent transparent;
-    transform: rotate(50deg);
-}
-
-/* Bar Hijau (Progres) */
-.gauge-green {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    transform: rotate(-135deg); 
-    mask: radial-gradient(closest-side, transparent 90px, black 95px);
-    -webkit-mask: radial-gradient(closest-side, transparent 90px, black 95px);
-    box-shadow: 0 0 10px rgba(0, 255, 153, 0.5);
-    --progress-deg: 0%; 
-    background: conic-gradient(
-        #00ff99 0%, 
-        #00ff99 var(--progress-deg), 
-        transparent var(--progress-deg)
-    );
-}
-
-/* AREA TENGAH */
-.center-display {
-    position: relative;
-    z-index: 4;
+.speedometer-box {
+    width: 150px; /* Lebar kotak */
+    height: 80px; /* Tinggi kotak */
+    background-color: rgba(0, 0, 0, 0.7); /* Hitam transparan */
+    border-radius: 5px;
+    padding: 5px;
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    background-color: transparent;
+    justify-content: space-between;
+    /* Border strip biru di sisi kanan (simulasi) */
+    border-right: 5px solid #00f; 
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
-/* Speed Digital (2 Kotak) */
-.digital-speed {
-    display: flex;
-    gap: 5px;
-    margin-top: -10px;
-}
-
-.digital-speed span {
-    font-size: 2.5em;
-    font-weight: bold;
+/* Kecepatan Digital */
+.speed-display {
+    text-align: right;
+    padding-right: 10px;
+    font-size: 3.5em;
+    font-weight: 900; /* Extra bold */
     color: white;
-    background-color: transparent;
-    padding: 2px 8px;
     line-height: 1;
-    border: none;
-    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5); 
-}
-
-/* Avatar/Orang di Tengah (Bendera Rusia) */
-.avatar-placeholder {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background-color: transparent; 
-    border: 2px solid #555;
     margin-top: 5px;
-    position: relative;
-    overflow: hidden;
-    /* Bendera Rusia: Putih, Biru, Merah */
-    background-image: linear-gradient(to bottom, 
-        white 0% 33%, 
-        #0033a0 33% 66%, 
-        #ff0000 66% 100%
-    );
 }
 
-/* Indikator Tengah Bawah */
-.center-indicators {
+/* Indikator Bawah */
+.bottom-info {
     display: flex;
-    align-items: center;
-    /* Jarak diperkecil */
-    gap: 15px; 
-    margin-top: 5px;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 0 5px 5px 5px;
 }
 
-.icon {
-    font-size: 1.5em;
+.gear-unit {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
-.engine-light {
-    color: #00ff99;
-}
-
-.headlight {
-    color: #ffff00; /* Kuning terang */
-}
-
-/* Posisikan ikon bahan bakar di tengah */
-.fuel-icon-center {
-    font-size: 1.5em;
-    color: #ff0000;
-}
-
-.gear-indicator {
+#gear {
     font-size: 1.8em;
     font-weight: bold;
-    color: white;
-    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
-    /* Sembunyikan gear indikator di HTML, hanya tampilkan N */
-    display: none; 
+    color: #00f; /* Warna Biru */
+    line-height: 1;
+    text-shadow: 0 0 5px rgba(0, 0, 255, 0.5);
 }
 
-
-/* IKON BAWAH LUAR - Perbaiki Penempatan */
-.bottom-icons {
-    position: absolute;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    padding: 0 10px;
-    z-index: 3;
-    /* Atur posisi vertikalnya secara spesifik */
-    bottom: 40px; 
+.unit {
+    font-size: 0.6em;
+    font-weight: normal;
+    color: #fff;
+    margin-top: -5px;
 }
 
-.car-icon {
-    font-size: 1.5em;
-    color: #ff0000; /* Warna merah sesuai gambar */
-    /* Posisikan di kiri bawah */
-    position: absolute;
-    left: 20px;
-    bottom: -15px; 
+/* Bar Kesehatan/Bar Hijau */
+.health-bar-container {
+    width: 60px; /* Lebar bar */
+    height: 8px; /* Tinggi bar */
+    background-color: #333;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 3px;
 }
 
-.volume-icon {
-    font-size: 1.5em;
-    color: #00ffff; /* Warna cyan sesuai gambar */
-    /* Posisikan di kanan bawah */
-    position: absolute;
-    right: 5px;
-    bottom: -10px; 
+.health-bar {
+    height: 100%;
+    width: 100%; /* Default 100% penuh */
+    background-color: #00ff00; /* Warna Hijau */
+    transition: width 0.3s ease-out;
 }
