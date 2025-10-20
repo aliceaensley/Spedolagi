@@ -218,7 +218,8 @@ body {
 #turn-right-icon::before { content: '→'; }
 #engine-icon::before { content: '⚡'; } 
 #headlights-icon::before { content: '💡'; } 
-#abs-icon::before { content: '\1F6B9'; } /* Ikon Sabuk Pengaman (menggantikan ABS) */
+/* PERUBAHAN FINAL: Ganti ke ikon Kursi (💺) */
+#abs-icon::before { content: '\1F4BA'; }
 
 /* Status Aktif */
 .icon.active { 
