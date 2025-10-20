@@ -3,27 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Speedometer Minimalis 2</title>
+    <title>Digital Dashboard HUD</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="game-background">
-        </div>
+    <div class="game-background"></div>
 
-    <div class="minimal-speedometer-container">
-        
-        <div class="bottom-green-bar-container">
-            <div class="bottom-green-bar" id="green-bar"></div>
-        </div>
-        
-        <div class="speedometer-box" id="speedometer-box">
+    <div class="digital-dashboard-container">
+        <div class="dashboard-box">
             
-            <div class="speed-display">
-                <span id="current-speed">71</span>
+            <div class="bars-section">
+                <span class="bar-label">H</span>
+                <div class="bar-column">
+                    <div class="bar-fill health-fill" id="health-fill"></div>
+                </div>
+                <span class="bar-label">F</span>
+                <div class="bar-column">
+                    <div class="bar-fill fuel-fill" id="fuel-fill"></div>
+                </div>
             </div>
-            
-            <span class="gear-number" id="gear">2</span>
+
+            <div class="center-display-section">
+                <div class="percentage-row">
+                    <span id="health-percent">100%</span>
+                    <span id="fuel-percent">87%</span>
+                </div>
+                
+                <div class="speed-readout">
+                    <span id="current-speed">0</span>
+                    <span class="gear-letter" id="gear">R</span>
+                </div>
+                <div class="unit-text">MPH</div>
+
+                <div class="power-bar-dots">
+                    <span class="dot active"></span>
+                    <span class="dot active"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </div>
+            </div>
+
+            <div class="status-icons-row">
+                <i class="icon indicator-icon turn-left">&#9664;</i>
+                <i class="icon status-icon engine-icon" id="engine-icon">⚡</i>
+                <i class="icon status-icon lights-icon">💡</i>
+                <i class="icon status-icon abs-icon">⇋</i>
+                <i class="icon indicator-icon turn-right">&#9654;</i>
+            </div>
         </div>
     </div>
 
