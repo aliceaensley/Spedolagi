@@ -15,7 +15,6 @@ body {
     overflow: hidden;
     font-size: 14px; 
 }
-
 .game-background {
     background: transparent; 
     position: fixed;
@@ -27,7 +26,7 @@ body {
 }
 
 /* =======================================
-   1. DASHBOARD KUSTOM (KANAN BAWAH) - GAYA TIDAK BERUBAH
+   1. DASHBOARD KUSTOM (KANAN BAWAH) - PERBAIKAN TATA LETAK
    ======================================= */
 .digital-dashboard-container {
     position: fixed;
@@ -35,6 +34,7 @@ body {
     right: 20px;
     z-index: 10;
 }
+
 .dashboard-box {
     width: 250px;
     height: 150px;
@@ -42,10 +42,55 @@ body {
     border-radius: 10px;
     padding: 12px 15px; 
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4); 
-    display: flex; gap: 15px;
+    
+    display: flex; 
+    gap: 10px; /* Mengurangi gap */
     opacity: 1; visibility: visible; 
 }
-/* ... (Gaya Bar, Speedometer, dan Ikon Status SAMA PERSIS) ... */
+
+/* --- Bar Indikator --- */
+.bars-section { 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    width: 50px; /* Lebar tetap */
+    flex-shrink: 0; 
+    height: 100%; 
+}
+.bar-labels-top { display: flex; justify-content: space-between; width: 100%; margin-bottom: 3px; font-size: 0.65em; font-weight: bold; color: #fff; }
+#health-percent { color: #00ff00; }
+#fuel-percent { color: #ffaa00; }
+.label-indicators { display: flex; justify-content: space-between; width: 100%; margin-bottom: 5px; font-size: 0.9em;}
+.indicator-text { font-weight: bold; color: #fff; width: 15px; text-align: center;}
+.bar-columns { 
+    display: flex; 
+    gap: 8px; 
+    flex-grow: 1; 
+    align-items: flex-end; 
+    max-height: 80px; 
+    padding-bottom: 25px; /* Memberi ruang di bawah bar */
+}
+.bar-column { width: 15px; background-color: #333; border-radius: 3px; overflow: hidden; position: relative; display: flex; align-items: flex-end; border-top: 1px solid #444; height: 100%; }
+.bar-fill { width: 100%; transition: height 0.3s ease-out, background-color 0.3s;}
+.health-fill { background-color: #00ff00; }
+.fuel-fill { background-color: #ffaa00; }
+
+/* --- Speedometer Tengah --- */
+.center-display-section { 
+    flex-grow: 1; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: flex-start; 
+    padding-top: 5px; 
+}
+.speed-readout { display: flex; align-items: baseline; position: relative; height: 50px; }
+.speed-value { font-size: 4em; font-weight: 900; color: white; line-height: 1; text-shadow: 0 0 10px rgba(255, 255, 255, 0.5); }
+.gear-letter { position: absolute; right: -10px; top: 0; font-size: 1.5em; font-weight: bold; color: #ff0000; line-height: 1; text-shadow: 0 0 5px rgba(255, 0, 0, 0.5); }
+.unit-text { font-size: 0.7em; color: #ccc; margin-top: -5px; font-weight: bold; flex-shrink: 0; }
+.power-bar-dots { display: flex; gap: 5px; margin-top: 5px; flex-shrink: 0; }
+.dot { width: 15px; height: 5px; background-color: #444; border-radius: 1px; }
+.dot.active { background-color: white; box-shadow: 0 0 5px rgba(255, 255, 255, 0.8); }
 
 /* --- Ikon Status Bawah --- */
 .status-icons-row { position: absolute; bottom: 10px; left: 15px; right: 15px; width: auto; display: flex; justify-content: space-between; align-items: center; padding-top: 8px; border-top: 1px solid rgba(255, 255, 255, 0.2); height: 35px; }
@@ -69,21 +114,21 @@ body {
     transform: translateX(-50%); 
     z-index: 5;
     
-    /* Ukuran dan Gaya Ponsel */
-    width: 380px; /* Lebar tablet/ponsel */
-    height: 250px; /* Tinggi tablet/ponsel */
+    width: 380px; 
+    height: 250px; 
     background-color: rgba(0, 0, 0, 0.9);
     border-radius: 18px; 
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
     padding: 10px;
     
-    display: flex;
+    display: flex; /* Penting untuk tata letak internal */
     flex-direction: column;
     color: #fff;
     font-size: 12px;
     
-    /* Transisi untuk menyembunyikan/menampilkan */
     transition: all 0.3s ease-in-out; 
+    /* ATURAN INI AKAN DITIMPA OLEH JS SAAT DIMUAT */
+    display: none; 
 }
 
 /* Status Bar */
@@ -129,7 +174,7 @@ body {
 }
 
 .app-icon i {
-    font-size: 2.5em; /* Ukuran ikon yang besar */
+    font-size: 2.5em; 
     margin-bottom: 5px;
     background-color: rgba(255, 255, 255, 0.1);
     padding: 10px;
@@ -165,10 +210,19 @@ body {
 .hud-icon { font-size: 1.2em; line-height: 1; }
 .hud-label { letter-spacing: 1px; }
 
-/* Status Glow Biru (Terlihat) */
-.toggle-hud-styled:not(.hidden) { border-color: #00ffff; color: #ffffff; box-shadow: 0 0 10px rgba(0, 255, 255, 0.5); }
-/* Status Glow Merah (Tersembunyi) */
-.toggle-hud-styled.hidden { border-color: #ff3333; color: #ff9999; box-shadow: 0 0 5px rgba(255, 51, 51, 0.3); }
+/* Status Head Unit Tersembunyi (DEFAULT SAAT INI) */
+.toggle-hud-styled.hidden {
+    border-color: #ff3333;
+    color: #ff9999;
+    box-shadow: 0 0 5px rgba(255, 51, 51, 0.3);
+}
+
+/* Status Head Unit Terlihat */
+.toggle-hud-styled:not(.hidden) { 
+    border-color: #00ffff; 
+    color: #ffffff; 
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5); 
+}
 
 /* Hover Effect */
 .toggle-hud-styled:not(.hidden):hover { background-color: rgba(10, 10, 20, 1); box-shadow: 0 0 15px rgba(0, 255, 255, 0.8); }
