@@ -2,20 +2,19 @@
 body {
     margin: 0;
     padding: 0;
-    font-family: 'Consolas', monospace; /* Font monospace untuk tampilan digital */
+    font-family: 'Consolas', monospace; 
     color: white;
     background-color: transparent; 
     overflow: hidden;
 }
 
 .game-background {
-    /* Hanya untuk menunjukkan transparansi */
+    background: transparent; 
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: transparent; 
     z-index: 1;
 }
 
@@ -30,39 +29,49 @@ body {
 .dashboard-box {
     width: 250px;
     height: 150px;
-    background-color: rgba(30, 30, 50, 0.7); /* Biru gelap transparan */
+    /* Abu-abu tua transparan dengan rounded corner */
+    background-color: rgba(60, 60, 60, 0.9); 
     border-radius: 10px;
     padding: 15px;
     box-sizing: border-box;
     display: flex;
     gap: 15px;
-    /* Efek Glow */
-    box-shadow: 0 0 15px rgba(0, 150, 255, 0.3); 
-    border: 1px solid rgba(0, 150, 255, 0.5);
+    /* Shadow lembut untuk kedalaman */
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4); 
+    /* Tidak ada border terlihat di gambar terakhir */
 }
 
-/* BAGIAN BAR KIRI (HEALTH/FUEL) */
+/* BAR INDIKATOR KIRI (HEALTH/FUEL) */
 .bars-section {
     display: flex;
-    align-items: flex-end;
-    gap: 8px;
-    position: relative;
-    padding-bottom: 25px; /* Ruang untuk persentase */
+    flex-direction: column;
+    align-items: center;
+    width: 50px; /* Lebar area bar */
+}
+
+.bar-labels-top {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 5px;
 }
 
 .bar-label {
-    position: absolute;
-    top: 0;
     font-size: 0.8em;
     font-weight: bold;
     color: #fff;
+    width: 15px; /* Lebar kolom bar */
+    text-align: center;
 }
-.bars-section > .bar-label:nth-child(1) { left: 0; }
-.bars-section > .bar-label:nth-child(3) { left: 24px; } /* Sesuaikan posisi label F */
+
+.bar-columns {
+    display: flex;
+    gap: 8px;
+    height: 70px; /* Tinggi bar */
+}
 
 .bar-column {
     width: 15px;
-    height: 80px;
     background-color: #333;
     border-radius: 3px;
     overflow: hidden;
@@ -73,57 +82,59 @@ body {
 
 .bar-fill {
     width: 100%;
-    transition: height 0.3s ease-out;
+    transition: height 0.3s ease-out, background-color 0.3s;
 }
 
-.health-fill { background-color: #00ff00; height: 100%; }
-.fuel-fill { background-color: #ffaa00; height: 87%; }
-
-/* DISPLAY TENGAH */
-.center-display-section {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-}
-
+/* Persentase di bawah bar */
 .percentage-row {
-    width: 100%;
     display: flex;
-    justify-content: space-around;
-    position: absolute;
-    bottom: 3px;
-    left: -3px;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 5px;
     font-size: 0.7em;
     font-weight: bold;
-    color: #fff;
-    width: 70px; /* Lebar area bar */
+}
+.percentage-row span {
+    width: 15px;
+    text-align: center;
 }
 #health-percent { color: #00ff00; }
 #fuel-percent { color: #ffaa00; }
 
 
+/* DISPLAY KECEPATAN TENGAH */
+.center-display-section {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around; /* Rapi secara vertikal */
+    padding-top: 5px;
+}
+
 .speed-readout {
     display: flex;
-    align-items: center;
-    margin-top: -5px;
+    align-items: baseline; /* Sejajarkan angka dan gear */
+    position: relative;
+    margin-top: -10px;
 }
 
 #current-speed {
-    font-size: 4em;
+    font-size: 5em; /* Lebih besar */
     font-weight: 900;
     color: white;
     line-height: 1;
-    /* Efek Glow Digital */
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    /* Gunakan font yang mirip tampilan 7-segment, jika tersedia */
 }
 
 .gear-letter {
+    position: absolute;
+    right: -10px; /* Posisikan R di kanan atas angka */
+    top: 0;
     font-size: 2em;
     font-weight: bold;
-    color: #ff0000; /* Merah untuk Gear */
-    margin-left: 5px;
+    color: #ff0000; 
     line-height: 1;
     text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
 }
@@ -139,7 +150,8 @@ body {
 .power-bar-dots {
     display: flex;
     gap: 5px;
-    margin-top: 5px;
+    /* Posisikan persis di bawah unit teks */
+    margin-top: 5px; 
 }
 
 .dot {
@@ -147,13 +159,11 @@ body {
     height: 5px;
     background-color: #444;
     border-radius: 1px;
-    border: 1px solid #555;
+    /* Hapus border agar terlihat lebih rapi */
 }
 
 .dot.active {
     background-color: white;
-    border-color: white;
-    /* Efek Cahaya pada Dot */
     box-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
 }
 
@@ -161,9 +171,9 @@ body {
 .status-icons-row {
     position: absolute;
     bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 85%;
+    left: 15px; /* Mulai dari kiri box */
+    right: 15px; /* Sampai kanan box */
+    width: auto;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -172,24 +182,11 @@ body {
 }
 
 .icon {
-    font-size: 1.2em;
-    padding: 0 2px;
-}
-
-.indicator-icon {
-    color: #00ffff; /* Biru Cyan untuk lampu sein */
+    font-size: 1.5em; /* Ikon sedikit lebih besar */
+    color: #00ffff; /* Warna neon cyan untuk semua ikon */
     text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
-    opacity: 0.4;
+    opacity: 0.5; /* Default mati/redup */
     transition: opacity 0.2s;
 }
 
-.status-icon {
-    color: #00ffff;
-    text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
-}
-
-/* Aktif/Mati Ikon (Akan diatur oleh JS) */
-.indicator-icon.active { opacity: 1; }
-
-#engine-icon { color: #00ffff; }
-/* #lights-icon, #abs-icon, etc. */
+.indicator-icon.active, .status-icon.active { opacity: 1; }
