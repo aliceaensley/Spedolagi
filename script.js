@@ -1,72 +1,65 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const digitalSpeedDisplay = document.getElementById('digital-speed');
-    const digitalSpeedSpans = digitalSpeedDisplay.querySelectorAll('span');
+    const currentSpeedElement = document.getElementById('current-speed');
     const gearElement = document.getElementById('gear');
-    const gaugeGreen = document.getElementById('gauge-green');
+    const healthBar = document.getElementById('health-bar');
 
-    let speed = 0; // Kecepatan/Rage
+    let speed = 0;
     let gear = 'N';
+    let health = 100; // Mulai dari 100%
 
-    function updateGauge(newSpeed) {
-        // 1. Update Kecepatan Digital (2 kotak)
-        const speedStr = newSpeed.toString().padStart(2, '0').slice(-2); // Pastikan 2 digit
-        digitalSpeedSpans[0].textContent = speedStr[0];
-        digitalSpeedSpans[1].textContent = speedStr[1];
+    function updateSpeedometer() {
+        // 1. Simulasi Perubahan Kecepatan (0 - 200)
+        // Gunakan target speed untuk simulasi yang lebih realistis
+        let targetSpeed = Math.floor(Math.random() * 180);
+        
+        // Perlambat perubahan untuk simulasi akselerasi/deselerasi
+        if (speed < targetSpeed) {
+            speed = Math.min(targetSpeed, speed + 5);
+        } else if (speed > targetSpeed) {
+            speed = Math.max(0, speed - 8);
+        }
 
-        // 2. Update Gear (Kita hanya tampilkan 'N' di tengah, seperti gambar)
-        if (newSpeed === 0) {
+        currentSpeedElement.textContent = speed;
+
+        // 2. Update Gear (Simpel)
+        if (speed === 0) {
             gear = 'N';
+        } else if (speed < 40) {
+            gear = '1';
+        } else if (speed < 80) {
+            gear = '2';
+        } else if (speed < 130) {
+            gear = '3';
         } else {
-            // Untuk simulasi, kita biarkan gear 'N' di tengah jika kecepatannya > 0
-            // Namun, jika ingin gear berubah, gunakan logika sebelumnya:
-            // gear = newSpeed < 50 ? '1' : '2'; 
+            gear = '4';
         }
         gearElement.textContent = gear;
+    }
 
-        // 3. Update Bar RPM/RAGE (Hijau)
-        const maxRage = 180; 
-        let percentage = Math.min(1, newSpeed / maxRage);
-        let arcPercentage = percentage * 50; 
-
-        // Batasi arc hijau agar tidak masuk zona kuning/merah
-        if (newSpeed > 140) { // Anggap 140 batas hijau
-            arcPercentage = (140 / maxRage) * 50;
-        }
+    function updateHealthBar() {
+        // Simulasi perubahan Health/Bar Hijau
+        // Health akan berkurang dan bertambah secara acak
+        const change = Math.floor(Math.random() * 3) - 1; // -1, 0, atau 1
+        health = Math.max(0, Math.min(100, health + change));
         
-        gaugeGreen.style.setProperty('--progress-deg', `${arcPercentage}%`);
-    }
-
-    // --- Simulasi Pergerakan ---
-    let targetSpeed = 0;
-    
-    function accelerate() {
-        targetSpeed = Math.floor(Math.random() * 160) + 10; 
-    }
-
-    function decelerate() {
-        targetSpeed = Math.floor(Math.random() * 20);
-    }
-
-    setInterval(() => {
-        // Perpindahan halus menuju target
-        if (speed < targetSpeed) {
-            speed = Math.min(targetSpeed, speed + 2);
-        } else if (speed > targetSpeed) {
-            speed = Math.max(0, speed - 3);
-        }
-
-        updateGauge(speed);
-    }, 50); 
-
-    // Ganti Target Speed setiap beberapa detik
-    setInterval(() => {
-        if (Math.random() > 0.5) {
-            accelerate();
+        // Atur lebar bar dan warna jika di bawah ambang batas
+        healthBar.style.width = `${health}%`;
+        
+        if (health < 30) {
+            healthBar.style.backgroundColor = '#ff0000'; // Merah
+        } else if (health < 60) {
+            healthBar.style.backgroundColor = '#ffff00'; // Kuning
         } else {
-            decelerate();
+            healthBar.style.backgroundColor = '#00ff00'; // Hijau
         }
-    }, 4000);
+    }
 
-    // Inisialisasi awal
-    updateGauge(0);
+    // Perbarui speedometer setiap 100ms untuk gerakan halus
+    setInterval(updateSpeedometer, 100);
+    // Perbarui bar kesehatan lebih lambat
+    setInterval(updateHealthBar, 1000); 
+    
+    // Panggil inisialisasi
+    updateSpeedometer();
+    updateHealthBar();
 });
