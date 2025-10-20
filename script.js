@@ -1,81 +1,56 @@
 // =======================================================
-// VARIABEL GLOBAL & KONFIGURASI
+// VARIABEL GLOBAL
 // =======================================================
-let elements = {}; // Digunakan untuk menyimpan referensi elemen DOM
-let speedMode = 1; // Default MPH (Sesuai Screenshot)
+let elements = {};
+let speedMode = 1; 
 let indicators = 0;
-let blinkInterval;
-let lastIndicatorState = 0;
-let isSimulationRunning = false; 
 
-// Menggantikan onOrOff dari kode Anda, diimplementasikan dalam setter
-// const onOrOff = state => state ? 'On' : 'Off'; 
+const onOrOff = state => state ? 'On' : 'Off';
 
 // =======================================================
-// FUNGSI KONTROL DASHBOARD (SETTER - Diambil dari kode asli Anda)
+// FUNGSI SETTER
 // =======================================================
 
-/**
- * Memperbarui tampilan ikon mesin (Engine).
- * @param {boolean} state Jika true, mesin menyala; sebaliknya mati.
- */
 function setEngine(state) {
-    const engineIcon = document.getElementById('engine-icon');
-    if (engineIcon) engineIcon.classList.toggle('active', state);
+    document.getElementById('engine-icon').classList.toggle('active', state);
+    elements.engine.innerText = onOrOff(state); 
 }
 
-/**
- * Memperbarui tampilan kecepatan dan mode unit.
- * @param {number} speed_ms Nilai kecepatan dalam meter per detik (m/s).
- */
 function setSpeed(speed_ms) {
     let speedDisplay;
-    // Logika konversi tetap sama persis seperti di kode asli Anda
     switch(speedMode) {
         case 1: speedDisplay = Math.round(speed_ms * 2.236936); break; // MPH
         case 2: speedDisplay = Math.round(speed_ms * 1.943844); break; // Knots
         default: speedDisplay = Math.round(speed_ms * 3.6); // KMH
     }
-    // Menggunakan elements.speed yang telah dipetakan ke #speed-display
-    if (elements.speed) elements.speed.innerText = speedDisplay; 
+    elements.speed.innerText = speedDisplay; 
     
-    // Panggil setRPM di sini untuk mengaitkan kecepatan dengan bar RPM
-    // Kami menggunakan kecepatan/max_speed sebagai representasi sederhana RPM_01
-    setRPM(speed_ms / 35.0); // 35 m/s sebagai max speed simulasi
-}
-
-/**
- * Menggantikan setRPM numerik dengan kontrol RPM Bar visual.
- * @param {number} rpm_01 Nilai RPM dari 0 hingga 1.
- */
-function setRPM(rpm_01) {
-    const maxDots = 8;
-    // Nilai RPM dari 0.0 sampai 1.0
-    const rpmLevel = Math.max(0, Math.min(maxDots, Math.ceil(rpm_01 * maxDots))); 
-    const rpmDots = document.querySelectorAll('#rpm-display .dot');
-    
-    rpmDots.forEach((dot, index) => {
-        dot.classList.toggle('active', index < rpmLevel);
+    const maxDots = 4;
+    let scaleMax = speedMode === 1 ? 120 : 180; 
+    let powerLevel = Math.min(maxDots, Math.ceil(speedDisplay / (scaleMax / maxDots))); 
+    const powerDots = document.querySelectorAll('.power-bar-dots .dot');
+    powerDots.forEach((dot, index) => {
+        dot.classList.toggle('active', index < powerLevel);
     });
 }
 
-/**
- * Memperbarui bilah dan persentase bahan bakar.
- * @param {number} fuel_01 Nilai bahan bakar (0 hingga 1).
- */
+function setRPM(rpm) {
+    elements.rpm.innerText = `${rpm.toFixed(4)} RPM`;
+}
+
 function setFuel(fuel_01) {
     const fuel_100 = Math.max(0, Math.min(100, fuel_01 * 100));
     const fuelPercentElement = document.getElementById('fuel-percent');
-    const fuelFill = document.getElementById('fuel-fill');
 
-    if (fuelFill) fuelFill.style.height = `${Math.round(fuel_100)}%`;
-    if (fuelPercentElement) fuelPercentElement.textContent = `${Math.round(fuel_100)}%`; 
+    document.getElementById('fuel-fill').style.height = `${Math.round(fuel_100)}%`;
+    
+    if (fuelPercentElement) {
+        fuelPercentElement.textContent = `${Math.round(fuel_100)}%`; 
+    }
+
+    elements.fuel.innerText = `${fuel_100.toFixed(1)}%`;
 }
 
-/**
- * Memperbarui bilah dan persentase kesehatan/kerusakan.
- * @param {number} health_01 Nilai kesehatan/kerusakan (0 hingga 1).
- */
 function setHealth(health_01) {
     const health_100 = Math.max(0, Math.min(100, health_01 * 100));
     const healthFill = document.getElementById('health-fill');
@@ -83,61 +58,77 @@ function setHealth(health_01) {
     
     if (healthFill) {
         healthFill.style.height = `${Math.round(health_100)}%`;
-        // Mengubah warna Health berdasarkan persentase
-        healthFill.style.backgroundColor = health_100 < 30 ? '#ff0000' : (health_100 < 60 ? '#ffff00' : '#00ff00'); 
     }
-    if (healthPercentElement) healthPercentElement.textContent = `${Math.round(health_100)}%`; 
+    
+    if (healthPercentElement) {
+        healthPercentElement.textContent = `${Math.round(health_100)}%`; 
+    }
+    
+    if (healthFill) {
+        if (health_100 < 30) {
+            healthFill.style.backgroundColor = '#ff0000'; 
+        } else if (health_100 < 60) {
+            healthFill.style.backgroundColor = '#ffff00'; 
+        } else {
+            healthFill.style.backgroundColor = '#00ff00'; 
+        }
+    }
+
+    elements.health.innerText = `${health_100.toFixed(1)}%`;
 }
 
-/**
- * Memperbarui tampilan gigi (Gear).
- * @param {number} gear Nilai gigi.
- */
 function setGear(gear) {
-    const gearElement = document.getElementById('gear-display');
+    const gearElement = document.getElementById('gear');
     if (!gearElement) return;
 
     let displayGear = String(gear).toUpperCase();
-    if (displayGear === '0') displayGear = 'N'; 
-    if (displayGear.length > 1 && displayGear.match(/[A-Z]/i)) { 
-        displayGear = displayGear[0];
-    }
+    
+    if (displayGear === '0') {
+        displayGear = 'N'; 
+    } 
+    
     gearElement.innerText = displayGear;
-    gearElement.style.color = (displayGear === 'R' || displayGear === 'N' || displayGear === 'P') ? '#ff0000' : '#fff'; 
+    
+    gearElement.style.color = (displayGear === 'R' || displayGear === 'N') ? '#ff0000' : '#fff'; 
+    
+    if (elements.gear) {
+        elements.gear.innerText = displayGear;
+    }
 }
 
-/**
- * Memperbarui status ikon lampu depan.
- * @param {number} state Status lampu depan (0: Off, 1: On, 2: High Beam).
- */
 function setHeadlights(state) {
-    const headlightsIcon = document.getElementById('headlights-icon');
-    let displayOn = state === 1 || state === 2; 
-    if (headlightsIcon) headlightsIcon.classList.toggle('active', displayOn);
+    let display = 'Off';
+    if (state === 1 || state === 2) display = 'On';
+
+    document.getElementById('headlights-icon').classList.toggle('active', display !== 'Off');
+
+    switch(state) {
+        case 1: elements.headlights.innerText = 'On'; break;
+        case 2: elements.headlights.innerText = 'High Beam'; break;
+        default: elements.headlights.innerText = 'Off';
+    }
 }
 
-/**
- * Mengontrol logika berkelip untuk indikator.
- * @param {number} state Nilai biner indikator (0: Off, 1: Kiri, 2: Kanan, 3: Hazard).
- */
+let blinkInterval;
+let lastIndicatorState = 0;
+
 function controlIndicators(state) {
     const turnLeft = document.getElementById('turn-left-icon'); 
     const turnRight = document.getElementById('turn-right-icon'); 
-    
+
     if (state !== lastIndicatorState) {
         clearInterval(blinkInterval);
-        
-        if (turnLeft) turnLeft.classList.remove('active');
-        if (turnRight) turnRight.classList.remove('active');
+        turnLeft.classList.remove('active');
+        turnRight.classList.remove('active');
 
         if (state === 1) { // Kiri
-            blinkInterval = setInterval(() => { if(turnLeft) turnLeft.classList.toggle('active'); }, 250);
+            blinkInterval = setInterval(() => { turnLeft.classList.toggle('active'); }, 250);
         } else if (state === 2) { // Kanan
-            blinkInterval = setInterval(() => { if(turnRight) turnRight.classList.toggle('active'); }, 250);
+            blinkInterval = setInterval(() => { turnRight.classList.toggle('active'); }, 250);
         } else if (state === 3) { // Hazard
              blinkInterval = setInterval(() => { 
-                if(turnLeft) turnLeft.classList.toggle('active');
-                if(turnRight) turnRight.classList.toggle('active');
+                turnLeft.classList.toggle('active');
+                turnRight.classList.toggle('active');
              }, 250);
         }
     }
@@ -145,114 +136,123 @@ function controlIndicators(state) {
 }
 
 function setLeftIndicator(state) {
-    // Logika asli: indicators = (indicators & 0b10) | (state ? 0b01 : 0b00); 
-    indicators = (indicators & 0b10) | (state ? 0b01 : 0b00); 
+    indicators = (indicators & 0b10) | (state ? 0b01 : 0b00);
     controlIndicators(indicators);
+    elements.indicators.innerText = `${indicators & 0b01 ? 'On' : 'Off'} / ${indicators & 0b10 ? 'On' : 'Off'}`;
 }
 
 function setRightIndicator(state) {
-    // Logika asli: indicators = (indicators & 0b01) | (state ? 0b10 : 0b00); 
-    indicators = (indicators & 0b01) | (state ? 0b10 : 0b00); 
+    indicators = (indicators & 0b01) | (state ? 0b10 : 0b00);
     controlIndicators(indicators);
+    elements.indicators.innerText = `${indicators & 0b01 ? 'On' : 'Off'} / ${indicators & 0b10 ? 'On' : 'Off'}`;
 }
 
-/**
- * Memperbarui status ikon sabuk pengaman.
- * @param {boolean} state Jika true, sabuk terpasang.
- */
+/** Fungsi Seatbelts yang menyala saat terpasang (state = true) */
 function setSeatbelts(state) {
-    const seatbeltIcon = document.getElementById('seatbelts-icon');
+    const seatbeltIcon = document.getElementById('abs-icon');
+    
+    // LOGIKA FINAL: Ikon aktif (menyala) ketika state = true (sabuk terpasang)
     if (seatbeltIcon) {
-        seatbeltIcon.innerText = state ? 'link' : 'link_off'; // Gunakan ikon Material
         seatbeltIcon.classList.toggle('active', state); 
+    }
+
+    elements.seatbelts.innerText = onOrOff(state);
+}
+
+function setSpeedMode(mode) {
+    speedMode = mode;
+    switch(mode) {
+        case 1: elements.speedMode.innerText = 'MPH'; break;
+        case 2: elements.speedMode.innerText = 'Knots'; break;
+        default: elements.speedMode.innerText = 'KMH';
     }
 }
 
-/**
- * Mengatur mode kecepatan dan memperbarui unit.
- * @param {number} mode Mode kecepatan (0: KMH, 1: MPH, 2: Knots).
- */
-function setSpeedMode(mode) {
-    speedMode = mode;
-    const speedModeElement = document.getElementById('speed-mode-unit');
-    if (!speedModeElement) return;
-    speedModeElement.innerText = (mode === 1) ? 'MPH' : ((mode === 2) ? 'Knots' : 'KMH');
-}
-
 
 // =======================================================
-// SIMULASI DATA (Untuk Demo Web Murni)
+// FUNGSI UTAMA PENGHUBUNG (NUI LISTENER)
 // =======================================================
 
-function startSimulation() {
-    if (isSimulationRunning) return;
-    isSimulationRunning = true;
-    let currentSpeed = 0; // m/s
-    let currentFuel = 1.0; 
-    let currentHealth = 1.0; 
-    
-    const maxSpeed = 35; // 35 m/s
-    
-    const headUnitContainer = document.getElementById('custom-headunit-container');
-    if (headUnitContainer) headUnitContainer.style.display = 'flex'; // Tampilkan HUD
+const updateUI = (data) => {
+    const dashboardBox = document.getElementById('dashboard-box');
+    let isVisible = dashboardBox.style.opacity === '1';
 
-    setInterval(() => {
-        // SIMULASI KECEPATAN (Akselerasi/Deselerasi)
-        const speedChange = (Math.random() - 0.5) * 5; 
-        currentSpeed = Math.max(0, Math.min(maxSpeed, currentSpeed + speedChange));
-        setSpeed(currentSpeed);
-        
-        // SIMULASI GEAR
-        let currentGear = 'N';
-        if (currentSpeed > 30) currentGear = '5';
-        else if (currentSpeed > 25) currentGear = '4';
-        else if (currentSpeed > 18) currentGear = '3';
-        else if (currentSpeed > 10) currentGear = '2';
-        else if (currentSpeed > 0.5) currentGear = '1';
-        else currentGear = 'P'; // Park/Neutral saat diam
-        setGear(currentGear);
-
-        // SIMULASI BAHAN BAKAR (Menurun perlahan)
-        currentFuel = Math.max(0, currentFuel - 0.0005); 
-        setFuel(currentFuel);
-        setEngine(currentFuel > 0.02); 
-
-        // SIMULASI KESEHATAN (Kadang-kadang turun)
-        if (Math.random() < 0.01) { 
-             currentHealth = Math.max(0.1, currentHealth - 0.03);
+    // KONTROL VISIBILITAS TOTAL
+    if (data.show !== undefined) {
+        dashboardBox.style.opacity = data.show ? '1' : '0';
+        dashboardBox.style.visibility = data.show ? 'visible' : 'hidden';
+        isVisible = data.show;
+        if (!isVisible) {
+            clearInterval(blinkInterval);
+            lastIndicatorState = 0;
+            return;
         }
-        setHealth(currentHealth);
-        
-        // SIMULASI INDIKATOR (Berubah acak)
-        const indicatorRoll = Math.random();
-        if (indicatorRoll < 0.015) { setLeftIndicator(true); setRightIndicator(false); }
-        else if (indicatorRoll < 0.03) { setRightIndicator(true); setLeftIndicator(false); }
-        else if (indicatorRoll < 0.04) { setLeftIndicator(true); setRightIndicator(true); } // Hazard
-        else { setLeftIndicator(false); setRightIndicator(false); }
-
-        // SIMULASI LAMPU
-        setHeadlights(Math.random() < 0.7 ? 1 : 0);
-
-        // SIMULASI SABUK PENGAMAN (Aktif jika kecepatan > 1 m/s)
-        setSeatbelts(currentSpeed > 1.0);
-
-    }, 200); 
-}
-
-
-// =======================================================
-// INITIALIZATION
-// =======================================================
-
-document.addEventListener('DOMContentLoaded', () => {
-    // PETAKAN ELEMENTS KE ID BARU SESUAI HTML DIGITAL
-    elements.speed = document.getElementById('speed-display'); 
-    // elemen 'engine', 'fuel', 'health', 'gear', 'headlights', 'seatbelts' 
-    // dan 'speedMode' dipetakan langsung ke fungsi setter-nya di atas.
+    }
+    if (!isVisible) return; 
     
-    // Set mode kecepatan awal
-    setSpeedMode(1); // Default MPH
+    // DATA UTAMA
+    if (data.engine !== undefined) setEngine(data.engine);
+    if (data.speed !== undefined) setSpeed(data.speed);
+    if (data.rpm !== undefined) setRPM(data.rpm);
+    if (data.fuel !== undefined) setFuel(data.fuel);
+    if (data.health !== undefined) setHealth(data.health);
+    if (data.gear !== undefined) setGear(data.gear);
+    if (data.headlights !== undefined) setHeadlights(data.headlights);
+    if (data.seatbelts !== undefined) setSeatbelts(data.seatbelts);
+    if (data.speedMode !== undefined) setSpeedMode(data.speedMode);
 
-    // Mulai simulasi data agar HUD bergerak di browser
-    startSimulation(); 
+    // INDICATORS
+    if (data.leftIndicator !== undefined) setLeftIndicator(data.leftIndicator);
+    if (data.rightIndicator !== undefined) setRightIndicator(data.rightIndicator);
+};
+
+
+// Wait for the DOM to be fully loaded
+document.addEventListener('DOMContentLoaded', () => {
+    // INISIALISASI ELEMENTS
+    elements = {
+        // ID TERSEMBUNYI
+        engine: document.getElementById('engine'),
+        speed: document.getElementById('speed'),
+        rpm: document.getElementById('rpm'),
+        fuel: document.getElementById('fuel'),
+        health: document.getElementById('health'),
+        gear: document.getElementById('gear'),
+        headlights: document.getElementById('headlights'),
+        indicators: document.getElementById('indicators'),
+        seatbelts: document.getElementById('seatbelts'),
+        speedMode: document.getElementById('speed-mode'),
+        
+        // ID VISUAL
+        'dashboard-box': document.getElementById('dashboard-box'),
+        'health-fill': document.getElementById('health-fill'),
+        'fuel-fill': document.getElementById('fuel-fill'),
+        'health-percent': document.getElementById('health-percent'),
+        'fuel-percent': document.getElementById('fuel-percent'),
+        'turn-left-icon': document.getElementById('turn-left-icon'),
+        'turn-right-icon': document.getElementById('turn-right-icon'),
+    };
+
+    // Menerima pesan dari game client
+    window.addEventListener('message', (event) => {
+        const data = event.data;
+        if (data.type === 'speedoUpdate' || data.type === 'UPDATE_HUD_DATA') {
+            updateUI(data.payload || data); 
+        }
+    });
+
+    // Panggil updateUI sekali untuk nilai awal
+    updateUI({ 
+        speed: 0, 
+        health: 1, 
+        fuel: 0.87, 
+        gear: 'R', 
+        headlights: 0,
+        engine: false,
+        seatbelts: true, // Default: TRUE (Ikon kursi menyala, menunjukkan terpasang)
+        leftIndicator: false, 
+        rightIndicator: false,
+        speedMode: 1, 
+        show: true
+    });
 });
