@@ -4,35 +4,45 @@ body {
     padding: 0;
     font-family: 'Consolas', 'Arial Black', sans-serif;
     color: white;
-    /* PENTING: Hapus atau jadikan background body transparan */
     background-color: transparent; 
     overflow: hidden;
 }
 
-/* Latar Belakang Game (Hanya untuk simulasi, biarkan transparan) */
 .game-background {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    /* Hapus semua latar belakang, biarkan transparan */
     background: transparent; 
     z-index: 1;
 }
 
-/* UI di Sudut Kanan Atas (Biarkan transparan, atau atur opasitas rendah) */
+/* UI di Sudut Kanan Atas */
 .top-right-ui {
     position: fixed;
     top: 10px;
     right: 10px;
     display: flex;
     align-items: center;
-    /* Jadikan background transparan */
     background-color: transparent; 
-    border-radius: 20px;
     padding: 5px 15px;
     z-index: 5;
+}
+
+.nav-btn {
+    background: none;
+    border: 1px solid #000;
+    color: #000;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 0.8em;
+    margin: 0 5px;
 }
 
 /* CONTAINER SPEEDOMETER */
@@ -52,7 +62,7 @@ body {
     align-items: center;
 }
 
-/* LINGKARAN LUAR (Ring Neon - Biarkan solid/glow) */
+/* LINGKARAN LUAR (Ring Neon) */
 .outer-ring {
     position: absolute;
     width: 100%;
@@ -60,12 +70,11 @@ body {
     border-radius: 50%;
     border: 5px solid #00ffff;
     box-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
-    /* Sedikit opasitas pada background, tapi tidak sepenuhnya transparan */
-    background-color: rgba(0, 0, 0, 0.4); 
+    background-color: rgba(0, 0, 0, 0.7); /* Background abu-abu gelap */
     z-index: 2;
 }
 
-/* ANGKA RPM/RAGE */
+/* ANGKA RPM/RAGE - Menggunakan penempatan absolut dan rotasi sederhana */
 .rpm-numbers {
     position: absolute;
     width: 100%;
@@ -77,24 +86,27 @@ body {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
-    color: #00ff99;
+    width: 10px; /* Lebar kecil */
+    height: 10px;
+    color: #00ff99; 
     font-size: 1.2em;
     font-weight: bold;
     text-shadow: 0 0 5px rgba(0, 255, 153, 0.8);
 }
 
-/* Posisi Angka (Tidak Berubah) */
-.mark-0 { transform: translate(-50%, -50%) rotate(225deg) translateY(-110px) rotate(-225deg); }
-.mark-1 { transform: translate(-50%, -50%) rotate(250deg) translateY(-110px) rotate(-250deg); }
-.mark-2 { transform: translate(-50%, -50%) rotate(275deg) translateY(-110px) rotate(-275deg); }
-.mark-3 { transform: translate(-50%, -50%) rotate(300deg) translateY(-110px) rotate(-300deg); }
-.mark-4 { transform: translate(-50%, -50%) rotate(325deg) translateY(-110px) rotate(-325deg); }
-.mark-5 { transform: translate(-50%, -50%) rotate(350deg) translateY(-110px) rotate(-350deg); }
-.mark-6 { transform: translate(-50%, -50%) rotate(15deg) translateY(-110px) rotate(-15deg); }
-.mark-7 { transform: translate(-50%, -50%) rotate(40deg) translateY(-110px) rotate(-40deg); }
-.mark-8 { transform: translate(-50%, -50%) rotate(65deg) translateY(-110px) rotate(-65deg); }
-.mark-9 { transform: translate(-50%, -50%) rotate(90deg) translateY(-110px) rotate(-90deg); }
+/* Penempatan Angka: Disesuaikan dengan radius 100px (125px - 25px dari pusat) */
+/* Pola umum: rotate(A) translateY(-100px) rotate(-A) */
+.mark-0 { transform: translate(-50%, -50%) rotate(225deg) translate(0, -100px); color: white; }
+.mark-1 { transform: translate(-50%, -50%) rotate(250deg) translate(0, -100px); }
+.mark-2 { transform: translate(-50%, -50%) rotate(275deg) translate(0, -100px); }
+.mark-3 { transform: translate(-50%, -50%) rotate(300deg) translate(0, -100px); }
+.mark-4 { transform: translate(-50%, -50%) rotate(325deg) translate(0, -100px); }
+.mark-5 { transform: translate(-50%, -50%) rotate(350deg) translate(0, -100px); }
+.mark-6 { transform: translate(-50%, -50%) rotate(15deg) translate(0, -100px); }
+.mark-7 { transform: translate(-50%, -50%) rotate(40deg) translate(0, -100px); }
+.mark-8 { transform: translate(-50%, -50%) rotate(65deg) translate(0, -100px); }
+/* Mark 9 dihapus */
+
 
 /* GARIS GAUGE (MENGGUNAKAN PSEUDO-ELEMENTS UNTUK ARCS) */
 .gauge-bars {
@@ -114,9 +126,9 @@ body {
     top: 20px;
     left: 20px;
     clip: rect(0, 200px, 100px, 100px);
-    border-color: rgba(255, 0, 0, 0.8) rgba(255, 0, 0, 0.8) transparent transparent;
-    transform: rotate(70deg);
-    box-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
+    /* Warna: Merah Solid */
+    border-color: #ff0000 #ff0000 transparent transparent;
+    transform: rotate(70deg); 
 }
 
 /* Bar Kuning (Statik) */
@@ -129,9 +141,9 @@ body {
     top: 20px;
     left: 20px;
     clip: rect(0, 200px, 100px, 100px);
-    border-color: rgba(255, 255, 0, 0.8) transparent transparent transparent;
+    /* Warna: Kuning Solid */
+    border-color: #ffff00 transparent transparent transparent;
     transform: rotate(50deg);
-    box-shadow: 0 0 10px rgba(255, 255, 0, 0.8);
 }
 
 /* Bar Hijau (Progres) */
@@ -143,8 +155,8 @@ body {
     transform: rotate(-135deg); 
     mask: radial-gradient(closest-side, transparent 90px, black 95px);
     -webkit-mask: radial-gradient(closest-side, transparent 90px, black 95px);
-    box-shadow: 0 0 20px rgba(0, 255, 153, 0.8);
-    --progress-deg: 0%; /* Default */
+    box-shadow: 0 0 10px rgba(0, 255, 153, 0.5);
+    --progress-deg: 0%; 
     background: conic-gradient(
         #00ff99 0%, 
         #00ff99 var(--progress-deg), 
@@ -163,11 +175,10 @@ body {
     width: 150px;
     height: 150px;
     border-radius: 50%;
-    /* PENTING: Jadikan background transparan */
     background-color: transparent;
 }
 
-/* Speed Digital (3 Kotak) */
+/* Speed Digital (2 Kotak) */
 .digital-speed {
     display: flex;
     gap: 5px;
@@ -178,40 +189,37 @@ body {
     font-size: 2.5em;
     font-weight: bold;
     color: white;
-    /* PENTING: Hapus background hitam di belakang angka */
     background-color: transparent;
     padding: 2px 8px;
     line-height: 1;
-    /* Hapus border hitam */
     border: none;
-    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5); /* Beri sedikit glow agar terlihat */
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5); 
 }
 
-/* Avatar/Orang di Tengah */
+/* Avatar/Orang di Tengah (Bendera Rusia) */
 .avatar-placeholder {
     width: 80px;
     height: 80px;
     border-radius: 50%;
-    /* Gunakan background transparan di luar desain bendera */
     background-color: transparent; 
     border: 2px solid #555;
     margin-top: 5px;
     position: relative;
     overflow: hidden;
-    /* Simulasikan bendera/desain di gambar */
-    background-image: linear-gradient(to bottom, white 0% 33%, #ff0000 33% 66%, #0000ff 66% 100%);
+    /* Bendera Rusia: Putih, Biru, Merah */
+    background-image: linear-gradient(to bottom, 
+        white 0% 33%, 
+        #0033a0 33% 66%, 
+        #ff0000 66% 100%
+    );
 }
 
-.avatar-placeholder::before {
-    /* Hapus elemen yang tidak terlihat di gambar baru */
-    content: none;
-}
-
-/* Indikator Tengah Bawah (Tidak Berubah) */
+/* Indikator Tengah Bawah */
 .center-indicators {
     display: flex;
     align-items: center;
-    gap: 10px;
+    /* Jarak diperkecil */
+    gap: 15px; 
     margin-top: 5px;
 }
 
@@ -224,7 +232,13 @@ body {
 }
 
 .headlight {
-    color: white;
+    color: #ffff00; /* Kuning terang */
+}
+
+/* Posisikan ikon bahan bakar di tengah */
+.fuel-icon-center {
+    font-size: 1.5em;
+    color: #ff0000;
 }
 
 .gear-indicator {
@@ -232,20 +246,37 @@ body {
     font-weight: bold;
     color: white;
     text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    /* Sembunyikan gear indikator di HTML, hanya tampilkan N */
+    display: none; 
 }
 
-/* IKON BAWAH LUAR (Tidak Berubah) */
+
+/* IKON BAWAH LUAR - Perbaiki Penempatan */
 .bottom-icons {
     position: absolute;
-    bottom: 20px;
-    width: 90%;
+    width: 100%;
     display: flex;
     justify-content: space-between;
     padding: 0 10px;
     z-index: 3;
+    /* Atur posisi vertikalnya secara spesifik */
+    bottom: 40px; 
 }
 
-.car-icon, .fuel-icon, .volume-icon {
+.car-icon {
     font-size: 1.5em;
-    color: white;
+    color: #ff0000; /* Warna merah sesuai gambar */
+    /* Posisikan di kiri bawah */
+    position: absolute;
+    left: 20px;
+    bottom: -15px; 
+}
+
+.volume-icon {
+    font-size: 1.5em;
+    color: #00ffff; /* Warna cyan sesuai gambar */
+    /* Posisikan di kanan bawah */
+    position: absolute;
+    right: 5px;
+    bottom: -10px; 
 }
