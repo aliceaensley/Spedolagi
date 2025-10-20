@@ -7,45 +7,51 @@ document.addEventListener('DOMContentLoaded', () => {
     // Fungsionalitas untuk menampilkan Headunit
     toggleYoutubeBtn.addEventListener('click', () => {
         youtubeHeadunit.classList.remove('hidden');
-        // Pilihan: Sembunyikan tombol toggle saat headunit terbuka
-        toggleYoutubeBtn.style.display = 'none';
+        // Sembunyikan tombol toggle saat headunit terbuka
+        toggleYoutubeBtn.style.opacity = '0';
+        toggleYoutubeBtn.style.pointerEvents = 'none';
     });
 
     // Fungsionalitas untuk menyembunyikan Headunit
     hideYoutubeBtn.addEventListener('click', () => {
         youtubeHeadunit.classList.add('hidden');
         // Tampilkan kembali tombol toggle
-        toggleYoutubeBtn.style.display = 'block';
+        toggleYoutubeBtn.style.opacity = '1';
+        toggleYoutubeBtn.style.pointerEvents = 'auto';
     });
 
-    // Simulasi perubahan data Speedometer (Opsional)
+    // --- Simulasi Data Speedometer ---
     const currentSpeedElement = document.getElementById('current-speed');
     const gearElement = document.getElementById('gear');
 
-    let speed = 120;
+    let speed = 126; // Mulai dari nilai di gambar
     let gear = '4';
 
     function updateSpeedometer() {
-        // Contoh: Kecepatan berubah secara acak (simulasi)
-        speed = Math.floor(Math.random() * (180 - 80 + 1)) + 80;
-        
-        // Contoh: Gear berubah berdasarkan kecepatan
-        if (speed < 10) {
+        // Simulasi perubahan kecepatan: +/- 5 setiap detik
+        const change = Math.floor(Math.random() * 11) - 5; 
+        speed = Math.max(0, speed + change); // Pastikan kecepatan tidak negatif
+
+        // Simulasi perubahan Gear (Sederhana)
+        if (speed === 0) {
             gear = 'N';
-        } else if (speed < 40) {
+        } else if (speed < 30) {
             gear = '1';
-        } else if (speed < 70) {
+        } else if (speed < 60) {
             gear = '2';
         } else if (speed < 100) {
             gear = '3';
-        } else {
+        } else if (speed < 150) {
             gear = '4';
+        } else {
+            gear = '5';
         }
 
-        currentSpeedElement.textContent = speed;
+        currentSpeedElement.textContent = speed.toString().padStart(3, '0').slice(-3); // Memastikan 3 digit
         gearElement.textContent = gear;
     }
 
-    // Perbarui speedometer setiap 2 detik (simulasi)
-    setInterval(updateSpeedometer, 2000);
+    // Perbarui speedometer setiap 1 detik
+    setInterval(updateSpeedometer, 1000);
+    updateSpeedometer(); // Panggil sekali untuk inisialisasi
 });
