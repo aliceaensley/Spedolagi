@@ -11,25 +11,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const turnRight = document.querySelector('.turn-right');
     const dashboardBox = document.querySelector('.dashboard-box');
 
-    // --- State Global untuk Indikator Sein ---
+    // --- State Global ---
     let blinkInterval;
-    let isVisible = false; // State untuk mengontrol visibilitas total
+    let isVisible = true; // Di set true karena CSS diubah untuk terlihat (mode debugging)
 
-    // Atur visibilitas awal (tersembunyi) di CSS. 
-    // Di sini kita pastikan mulai dengan angka 0 dan Gear 'R' (default)
-    
-    // Inisialisasi awal UI saat DOM dimuat
-    currentSpeedElement.textContent = '0';
-    gearElement.textContent = 'R';
-    healthFill.style.height = '100%';
-    fuelFill.style.height = '100%';
-    healthPercent.textContent = '100%';
-    fuelPercent.textContent = '100%';
-    powerDots.forEach(dot => dot.classList.remove('active'));
-    dashboardBox.style.opacity = '0'; // Sembunyikan dashboard secara default
-
-    
-    // Fungsi Utama untuk Menerima dan Memperbarui Data (dipanggil dari Game/Server)
+    // Fungsi Utama untuk Menerima dan Memperbarui Data (Dipanggil dari Game/Server)
     /**
      * @param {object} data - Objek data dari game/server
      * @param {number} data.speed - Kecepatan saat ini (misalnya 0-200)
@@ -37,31 +23,28 @@ document.addEventListener('DOMContentLoaded', () => {
      * @param {number} data.fuel - Persentase Bahan Bakar (0-100)
      * @param {string} data.gear - Gear saat ini (N, R, 1, 2, 3, D, dll.)
      * @param {number} data.turnSignal - Status sein (0=off, 1=left, 2=right)
-     * @param {boolean} data.show - Visibilitas dashboard (true/false)
+     * @param {boolean} [data.show] - Visibilitas dashboard (true/false)
      */
     window.updateData = function(data) {
         
-        // 1. Kontrol Visibilitas Total (Sesuai dengan logika jgvrp-speedometer)
+        // 1. Kontrol Visibilitas (Opsional, jika skrip game ingin menyembunyikan)
         if (data.show !== undefined) {
             dashboardBox.style.opacity = data.show ? '1' : '0';
             dashboardBox.style.visibility = data.show ? 'visible' : 'hidden';
             isVisible = data.show;
         }
 
-        // Jika tidak terlihat, hentikan pembaruan visual lainnya
         if (!isVisible) return; 
-
 
         // 2. Kecepatan & Gear
         currentSpeedElement.textContent = Math.round(data.speed);
         
         let displayGear = String(data.gear).toUpperCase();
         gearElement.textContent = displayGear;
-        // Penyesuaian warna gear untuk R (Mundur)
         if (displayGear === 'R') {
              gearElement.style.color = '#ff0000'; 
         } else {
-             gearElement.style.color = '#fff'; // Default
+             gearElement.style.color = '#fff'; 
         }
 
 
@@ -70,11 +53,11 @@ document.addEventListener('DOMContentLoaded', () => {
         healthPercent.textContent = `${Math.round(data.health)}%`;
         
         if (data.health < 30) {
-            healthFill.style.backgroundColor = '#ff0000'; // Merah
+            healthFill.style.backgroundColor = '#ff0000'; 
         } else if (data.health < 60) {
-            healthFill.style.backgroundColor = '#ffff00'; // Kuning
+            healthFill.style.backgroundColor = '#ffff00'; 
         } else {
-            healthFill.style.backgroundColor = '#00ff00'; // Hijau
+            healthFill.style.backgroundColor = '#00ff00'; 
         }
         
         // 4. Bar Fuel
@@ -83,7 +66,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // 5. Power Dots (RPM/Power Level)
         const maxDots = 4;
-        // Asumsi power level adalah persentase kecepatan dari maks (misalnya 160)
         let powerLevel = Math.min(maxDots, Math.ceil(data.speed / (160 / maxDots))); 
         
         powerDots.forEach((dot, index) => {
@@ -96,33 +78,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Fungsi Kontrol Sein (Mengelola Interval Berkedip)
     function controlTurnSignal(state) {
-        // Hentikan interval lama jika ada
         clearInterval(blinkInterval);
         turnLeft.classList.remove('active');
         turnRight.classList.remove('active');
 
-        if (state === 1) { // Kiri
+        if (state === 1) { 
             blinkInterval = setInterval(() => {
                 turnLeft.classList.toggle('active');
             }, 250);
-        } else if (state === 2) { // Kanan
+        } else if (state === 2) { 
             blinkInterval = setInterval(() => {
                 turnRight.classList.toggle('active');
             }, 250);
         } else {
-            // State 0 (Off) - Pastikan mati
             turnLeft.classList.remove('active');
             turnRight.classList.remove('active');
         }
     }
 
-    // --- PENTING: Struktur untuk Menerima Data dari Game/Server ---
-    // Jika Anda menggunakan FiveM/RageMP NUI, Anda akan menggunakan event listener seperti ini:
-    /*
-    window.addEventListener('message', function(event) {
-        if (event.data.type === "UPDATE_HUD_DATA") {
-            window.updateData(event.data.payload);
-        }
-    });
-    */
+    // Inisialisasi awal UI
+    // Kita panggil window.updateData sekali untuk memastikan semua elemen diatur ke nilai awal
+    window.updateData({ speed: 0, health: 100, fuel: 87, gear: 'R', turnSignal: 0, show: isVisible });
 });
