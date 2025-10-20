@@ -6,6 +6,7 @@ body {
     padding: 0;
     font-family: 'Consolas', monospace; 
     color: white;
+    /* PENTING: LATAR BELAKANG TRANSPARAN UNTUK HUD GAME */
     background-color: transparent; 
     overflow: hidden;
 }
@@ -41,7 +42,7 @@ body {
     gap: 15px;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4); 
     
-    /* VISIBILITAS UNTUK DEBUGGING (Agar terlihat saat dibuka di browser) */
+    /* VISIBILITAS AWAL: TERLIHAT (untuk debugging browser) */
     opacity: 1; 
     visibility: visible; 
     transition: opacity 0.3s;
