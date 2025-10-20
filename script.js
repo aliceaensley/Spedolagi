@@ -1,15 +1,18 @@
 // =======================================================
 // VARIABEL GLOBAL & KONFIGURASI
 // =======================================================
-let elements = {};
+let elements = {}; // Digunakan untuk menyimpan referensi elemen DOM
 let speedMode = 1; // Default MPH (Sesuai Screenshot)
 let indicators = 0;
 let blinkInterval;
 let lastIndicatorState = 0;
 let isSimulationRunning = false; 
 
+// Menggantikan onOrOff dari kode Anda, diimplementasikan dalam setter
+// const onOrOff = state => state ? 'On' : 'Off'; 
+
 // =======================================================
-// FUNGSI KONTROL DASHBOARD (SETTER)
+// FUNGSI KONTROL DASHBOARD (SETTER - Diambil dari kode asli Anda)
 // =======================================================
 
 /**
@@ -27,17 +30,22 @@ function setEngine(state) {
  */
 function setSpeed(speed_ms) {
     let speedDisplay;
-    // Logika konversi tetap sama dari kode asli Anda
+    // Logika konversi tetap sama persis seperti di kode asli Anda
     switch(speedMode) {
         case 1: speedDisplay = Math.round(speed_ms * 2.236936); break; // MPH
         case 2: speedDisplay = Math.round(speed_ms * 1.943844); break; // Knots
         default: speedDisplay = Math.round(speed_ms * 3.6); // KMH
     }
+    // Menggunakan elements.speed yang telah dipetakan ke #speed-display
     if (elements.speed) elements.speed.innerText = speedDisplay; 
+    
+    // Panggil setRPM di sini untuk mengaitkan kecepatan dengan bar RPM
+    // Kami menggunakan kecepatan/max_speed sebagai representasi sederhana RPM_01
+    setRPM(speed_ms / 35.0); // 35 m/s sebagai max speed simulasi
 }
 
 /**
- * Memperbarui RPM Bar (mengganti RPM numerik dengan visual bar titik).
+ * Menggantikan setRPM numerik dengan kontrol RPM Bar visual.
  * @param {number} rpm_01 Nilai RPM dari 0 hingga 1.
  */
 function setRPM(rpm_01) {
@@ -119,7 +127,6 @@ function controlIndicators(state) {
     if (state !== lastIndicatorState) {
         clearInterval(blinkInterval);
         
-        // Nonaktifkan semua sebelum memulai interval baru
         if (turnLeft) turnLeft.classList.remove('active');
         if (turnRight) turnRight.classList.remove('active');
 
@@ -138,11 +145,13 @@ function controlIndicators(state) {
 }
 
 function setLeftIndicator(state) {
+    // Logika asli: indicators = (indicators & 0b10) | (state ? 0b01 : 0b00); 
     indicators = (indicators & 0b10) | (state ? 0b01 : 0b00); 
     controlIndicators(indicators);
 }
 
 function setRightIndicator(state) {
+    // Logika asli: indicators = (indicators & 0b01) | (state ? 0b10 : 0b00); 
     indicators = (indicators & 0b01) | (state ? 0b10 : 0b00); 
     controlIndicators(indicators);
 }
@@ -182,8 +191,7 @@ function startSimulation() {
     let currentFuel = 1.0; 
     let currentHealth = 1.0; 
     
-    const maxSpeed = 35; 
-    const maxRPM = 1.0; 
+    const maxSpeed = 35; // 35 m/s
     
     const headUnitContainer = document.getElementById('custom-headunit-container');
     if (headUnitContainer) headUnitContainer.style.display = 'flex'; // Tampilkan HUD
@@ -193,10 +201,6 @@ function startSimulation() {
         const speedChange = (Math.random() - 0.5) * 5; 
         currentSpeed = Math.max(0, Math.min(maxSpeed, currentSpeed + speedChange));
         setSpeed(currentSpeed);
-
-        // SIMULASI RPM (Lebih tinggi saat kecepatan tinggi)
-        let simulatedRPM = Math.min(maxRPM, currentSpeed / (maxSpeed * 0.8));
-        setRPM(simulatedRPM);
         
         // SIMULASI GEAR
         let currentGear = 'N';
@@ -229,7 +233,7 @@ function startSimulation() {
         // SIMULASI LAMPU
         setHeadlights(Math.random() < 0.7 ? 1 : 0);
 
-        // SIMULASI SABUK PENGAMAN (Aktif jika kecepatan > 0)
+        // SIMULASI SABUK PENGAMAN (Aktif jika kecepatan > 1 m/s)
         setSeatbelts(currentSpeed > 1.0);
 
     }, 200); 
@@ -241,17 +245,12 @@ function startSimulation() {
 // =======================================================
 
 document.addEventListener('DOMContentLoaded', () => {
-    // PETAKAN ELEMENTS KE ID BARU
-    elements.engine = document.getElementById('engine-icon'); // ID baru
-    elements.speed = document.getElementById('speed-display'); // ID baru
-    elements.rpm = document.getElementById('rpm-display'); // ID baru (sekarang div)
-    elements.fuel = document.getElementById('fuel-fill'); // ID baru (sekarang fill bar)
-    elements.health = document.getElementById('health-fill'); // ID baru (sekarang fill bar)
-    elements.gear = document.getElementById('gear-display'); // ID baru
-    elements.headlights = document.getElementById('headlights-icon'); // ID baru
-    elements.seatbelts = document.getElementById('seatbelts-icon'); // ID baru
-
-    // Set nilai awal dan mode
+    // PETAKAN ELEMENTS KE ID BARU SESUAI HTML DIGITAL
+    elements.speed = document.getElementById('speed-display'); 
+    // elemen 'engine', 'fuel', 'health', 'gear', 'headlights', 'seatbelts' 
+    // dan 'speedMode' dipetakan langsung ke fungsi setter-nya di atas.
+    
+    // Set mode kecepatan awal
     setSpeedMode(1); // Default MPH
 
     // Mulai simulasi data agar HUD bergerak di browser
