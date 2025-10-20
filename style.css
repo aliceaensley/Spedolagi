@@ -78,12 +78,18 @@ body {
 /* --- (Gaya Ikon Status Bawah) --- */
 .status-icons-row { position: absolute; bottom: 10px; left: 15px; right: 15px; width: auto; display: flex; justify-content: space-between; align-items: center; padding-top: 8px; border-top: 1px solid rgba(255, 255, 255, 0.2); height: 35px; }
 .icon { font-size: 1.4em; color: #00ffff; text-shadow: 0 0 3px rgba(0, 255, 255, 0.5); opacity: 0.5; transition: opacity 0.2s, color 0.2s; }
+/* Ikon Sein */
 #turn-left-icon::before { content: '←'; } 
 #turn-right-icon::before { content: '→'; }
+/* Ikon Mesin */
 #engine-icon::before { content: '⚡'; } 
+/* Ikon Lampu */
 #headlights-icon::before { content: '💡'; } 
-#abs-icon::before { content: '\1F4BA'; } /* Ikon Kursi (💺) untuk Seatbelt */
+/* Ikon Seatbelt */
+#abs-icon::before { content: '\1F4BA'; } 
+/* Ikon Aktif */
 .icon.active { opacity: 1; color: #66ccff; }
+/* Sein Aktif (Warna khusus) */
 #turn-left-icon.active, #turn-right-icon.active { color: #00ffff; }
 
 
