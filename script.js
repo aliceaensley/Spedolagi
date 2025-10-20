@@ -109,8 +109,8 @@ let blinkInterval;
 let lastIndicatorState = 0;
 
 function controlIndicators(state) {
-    const turnLeft = document.querySelector('.turn-left');
-    const turnRight = document.querySelector('.turn-right');
+    const turnLeft = document.getElementById('turn-left-icon'); // Menggunakan ID baru
+    const turnRight = document.getElementById('turn-right-icon'); // Menggunakan ID baru
 
     if (state !== lastIndicatorState) {
         clearInterval(blinkInterval);
