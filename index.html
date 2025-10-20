@@ -3,63 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RAGE Speedometer</title>
+    <title>Speedometer Minimalis</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div class="game-background">
-        <div class="top-right-ui">
-            <button class="nav-btn">◀</button>
-            <button class="nav-btn">▶</button>
         </div>
-    </div>
 
-    <div class="speedometer-container">
-        <div class="speedometer-rage">
+    <div class="minimal-speedometer-container">
+        <div class="speedometer-box">
             
-            <div class="outer-ring"></div>
-
-            <div class="rpm-numbers">
-                <span class="rpm-mark mark-0">0</span>
-                <span class="rpm-mark mark-1">1</span>
-                <span class="rpm-mark mark-2">2</span>
-                <span class="rpm-mark mark-3">3</span>
-                <span class="rpm-mark mark-4">4</span>
-                <span class="rpm-mark mark-5">5</span>
-                <span class="rpm-mark mark-6">6</span>
-                <span class="rpm-mark mark-7">7</span>
-                <span class="rpm-mark mark-8">8</span>
-                </div>
-
-            <div class="gauge-bars">
-                <div class="gauge-green" id="gauge-green"></div>
-                <div class="gauge-yellow"></div>
-                <div class="gauge-red"></div>
-            </div>
-
-            <div class="center-display">
-                
-                <div class="digital-speed" id="digital-speed">
-                    <span>0</span>
-                    <span>0</span>
-                </div>
-                
-                <div class="avatar-placeholder"></div>
-
-                <div class="center-indicators">
-                    <i class="icon engine-light">⚙️</i>
-                    <div class="fuel-icon-center">⛽</div> 
-                    <span class="gear-indicator" id="gear">N</span>
-                    <i class="icon headlight">💡</i>
-                </div>
-            </div>
-
-            <div class="bottom-icons">
-                <i class="icon car-icon">🚗</i>
-                <i class="icon volume-icon">🔊</i>
+            <div class="speed-display">
+                <span id="current-speed">0</span>
             </div>
             
+            <div class="bottom-info">
+                <div class="gear-unit">
+                    <span id="gear">N</span>
+                    <span class="unit">KM/H</span>
+                </div>
+                
+                <div class="health-bar-container">
+                    <div class="health-bar" id="health-bar"></div>
+                </div>
+            </div>
         </div>
     </div>
 
