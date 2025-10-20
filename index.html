@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Digital Dashboard HUD Final</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
 
@@ -67,24 +68,27 @@
     </div>
     
     
-    <div id="custom-headunit-container" style="
-        position: fixed; 
-        bottom: 80px; 
-        left: 50%; 
-        transform: translateX(-50%); 
-        z-index: 5;
-        width: 350px; 
-        height: 200px; 
-        background-color: rgba(0, 0, 0, 0.8);
-        border-radius: 15px;
-        color: white;
-        text-align: center;
-        padding: 20px;
-        font-size: 1.5em;
-        box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
-    ">
-        <p>Head Unit Kustom Anda</p>
-        <p>Konten yang akan di-toggle oleh tombol di bawah.</p>
+    <div id="custom-headunit-container" class="custom-headunit-style">
+        <div class="headunit-status-bar">
+            <span>Harmony</span>
+            <div>
+                <i class="fas fa-signal"></i> 5G 
+                <i class="fas fa-battery-half"></i> 11:38
+            </div>
+        </div>
+
+        <div class="app-grid">
+            <div class="app-icon"><i class="fas fa-music"></i> <span class="app-label">Music</span></div>
+            <div class="app-icon"><i class="fas fa-map-marked-alt"></i> <span class="app-label">Maps</span></div>
+            <div class="app-icon"><i class="fas fa-calculator"></i> <span class="app-label">Calculator</span></div>
+            <div class="app-icon"><i class="fas fa-cog"></i> <span class="app-label">Settings</span></div>
+            
+            <div class="app-icon"><i class="fas fa-cloud-sun"></i> <span class="app-label">Weather</span></div>
+            <div class="app-icon"><i class="fas fa-globe"></i> <span class="app-label">Harmony</span></div>
+            <div class="app-icon"><i class="fab fa-youtube"></i> <span class="app-label">YouTube</span></div>
+            <div class="app-icon"><i class="fas fa-broadcast-tower"></i> <span class="app-label">Radio</span></div>
+        </div>
+        
     </div>
     
 <button id="toggle-game-hud-button" class="toggle-hud-styled">
