@@ -3,57 +3,36 @@ body {
     margin: 0;
     padding: 0;
     font-family: 'Consolas', 'Arial Black', sans-serif;
-    background-color: #000;
     color: white;
+    /* PENTING: Hapus atau jadikan background body transparan */
+    background-color: transparent; 
     overflow: hidden;
-    /* Ganti font ini jika Anda memiliki font kustom game */
 }
 
+/* Latar Belakang Game (Hanya untuk simulasi, biarkan transparan) */
 .game-background {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: #111; 
-    /* Simulasi latar belakang buram/garasi */
-    background-image: url('https://via.placeholder.com/1920x1080/333333/808080?text=LATAR+BELAKANG+GAME');
-    background-size: cover;
-    filter: brightness(0.4);
+    /* Hapus semua latar belakang, biarkan transparan */
+    background: transparent; 
     z-index: 1;
 }
 
-/* UI di Sudut Kanan Atas (Untuk Konteks) */
+/* UI di Sudut Kanan Atas (Biarkan transparan, atau atur opasitas rendah) */
 .top-right-ui {
     position: fixed;
     top: 10px;
     right: 10px;
     display: flex;
     align-items: center;
-    background-color: rgba(0, 0, 0, 0.7);
+    /* Jadikan background transparan */
+    background-color: transparent; 
     border-radius: 20px;
     padding: 5px 15px;
     z-index: 5;
-}
-
-.ready-text {
-    font-size: 0.8em;
-    color: #00ff99;
-    font-weight: bold;
-    margin: 0 10px;
-}
-
-.nav-btn {
-    background: none;
-    border: 2px solid #fff;
-    color: #fff;
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
 }
 
 /* CONTAINER SPEEDOMETER */
@@ -73,15 +52,16 @@ body {
     align-items: center;
 }
 
-/* LINGKARAN LUAR (Neon Cyan) */
+/* LINGKARAN LUAR (Ring Neon - Biarkan solid/glow) */
 .outer-ring {
     position: absolute;
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    border: 5px solid #00ffff; /* Warna Cyan Neon */
+    border: 5px solid #00ffff;
     box-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
-    background-color: rgba(0, 0, 0, 0.4); /* Background semi-transparan */
+    /* Sedikit opasitas pada background, tapi tidak sepenuhnya transparan */
+    background-color: rgba(0, 0, 0, 0.4); 
     z-index: 2;
 }
 
@@ -98,14 +78,13 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    color: #00ff99; /* Warna Hijau Neon */
+    color: #00ff99;
     font-size: 1.2em;
     font-weight: bold;
-    /* Efek Glow pada teks */
     text-shadow: 0 0 5px rgba(0, 255, 153, 0.8);
 }
 
-/* Posisi Angka Menggunakan Transformasi CSS */
+/* Posisi Angka (Tidak Berubah) */
 .mark-0 { transform: translate(-50%, -50%) rotate(225deg) translateY(-110px) rotate(-225deg); }
 .mark-1 { transform: translate(-50%, -50%) rotate(250deg) translateY(-110px) rotate(-250deg); }
 .mark-2 { transform: translate(-50%, -50%) rotate(275deg) translateY(-110px) rotate(-275deg); }
@@ -128,16 +107,15 @@ body {
 /* Bar Merah (Redline - Statis) */
 .gauge-red {
     position: absolute;
-    width: 200px; /* Ukuran arc */
+    width: 200px;
     height: 200px;
     border: 15px solid transparent;
     border-radius: 50%;
     top: 20px;
     left: 20px;
-    clip: rect(0, 200px, 100px, 100px); /* Batasi untuk 1/4 lingkaran atas kanan */
-    /* Warna */
+    clip: rect(0, 200px, 100px, 100px);
     border-color: rgba(255, 0, 0, 0.8) rgba(255, 0, 0, 0.8) transparent transparent;
-    transform: rotate(70deg); /* Atur posisi merah di ujung kanan atas */
+    transform: rotate(70deg);
     box-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
 }
 
@@ -151,31 +129,22 @@ body {
     top: 20px;
     left: 20px;
     clip: rect(0, 200px, 100px, 100px);
-    /* Warna */
     border-color: rgba(255, 255, 0, 0.8) transparent transparent transparent;
-    transform: rotate(50deg); /* Posisikan kuning di sebelah merah */
+    transform: rotate(50deg);
     box-shadow: 0 0 10px rgba(255, 255, 0, 0.8);
 }
 
-/* Bar Hijau (Progres - Menggunakan CSS Cone Gradient untuk arc yang mudah) */
+/* Bar Hijau (Progres) */
 .gauge-green {
     position: absolute;
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    background: conic-gradient(
-        #00ff99 0%, 
-        #00ff99 50%, 
-        transparent 50%
-    );
-    /* Transformasi agar gradient dimulai dari posisi jam 7:30 */
     transform: rotate(-135deg); 
-    /* Masking untuk membuat arc */
     mask: radial-gradient(closest-side, transparent 90px, black 95px);
     -webkit-mask: radial-gradient(closest-side, transparent 90px, black 95px);
     box-shadow: 0 0 20px rgba(0, 255, 153, 0.8);
-    /* Properti ini akan diubah dengan JS untuk simulasi RPM */
-    --progress-deg: 50%; /* Nilai default 50% */
+    --progress-deg: 0%; /* Default */
     background: conic-gradient(
         #00ff99 0%, 
         #00ff99 var(--progress-deg), 
@@ -194,7 +163,8 @@ body {
     width: 150px;
     height: 150px;
     border-radius: 50%;
-    background-color: rgba(0, 0, 0, 0.7);
+    /* PENTING: Jadikan background transparan */
+    background-color: transparent;
 }
 
 /* Speed Digital (3 Kotak) */
@@ -208,10 +178,13 @@ body {
     font-size: 2.5em;
     font-weight: bold;
     color: white;
-    background-color: rgba(0, 0, 0, 0.9);
+    /* PENTING: Hapus background hitam di belakang angka */
+    background-color: transparent;
     padding: 2px 8px;
     line-height: 1;
-    border: 1px solid #333;
+    /* Hapus border hitam */
+    border: none;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5); /* Beri sedikit glow agar terlihat */
 }
 
 /* Avatar/Orang di Tengah */
@@ -219,26 +192,22 @@ body {
     width: 80px;
     height: 80px;
     border-radius: 50%;
-    background-color: #333;
-    /* Simulasi kepala putih dan garis leher hitam seperti di gambar */
-    background-image: linear-gradient(to bottom, white 0% 50%, #333 50% 100%);
+    /* Gunakan background transparan di luar desain bendera */
+    background-color: transparent; 
     border: 2px solid #555;
     margin-top: 5px;
-    /* Tambahkan detail baju/jaket */
     position: relative;
     overflow: hidden;
+    /* Simulasikan bendera/desain di gambar */
+    background-image: linear-gradient(to bottom, white 0% 33%, #ff0000 33% 66%, #0000ff 66% 100%);
 }
 
 .avatar-placeholder::before {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 30%;
-    bottom: 0;
-    background-color: #ff0000; /* Garis merah di baju */
+    /* Hapus elemen yang tidak terlihat di gambar baru */
+    content: none;
 }
 
-/* Indikator Tengah Bawah */
+/* Indikator Tengah Bawah (Tidak Berubah) */
 .center-indicators {
     display: flex;
     align-items: center;
@@ -251,7 +220,7 @@ body {
 }
 
 .engine-light {
-    color: #00ff99; /* Hijau Neon */
+    color: #00ff99;
 }
 
 .headlight {
@@ -265,7 +234,7 @@ body {
     text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
 }
 
-/* IKON BAWAH LUAR */
+/* IKON BAWAH LUAR (Tidak Berubah) */
 .bottom-icons {
     position: absolute;
     bottom: 20px;
