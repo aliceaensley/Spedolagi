@@ -4,21 +4,19 @@
 let elements = {};
 let speedMode = 1; 
 let indicators = 0;
-let isCustomHeadUnitVisible = true; 
+let isCustomHeadUnitVisible = true; // Status Head Unit Tambahan
 let blinkInterval;
 let lastIndicatorState = 0;
 
 const onOrOff = state => state ? 'On' : 'Off';
 
 // =======================================================
-// FUNGSI SETTER (DASHBOARD KUSTOM)
+// FUNGSI SETTER (DASHBOARD KUSTOM - TIDAK ADA PERUBAHAN LOGIKA)
 // =======================================================
 
 function setEngine(state) {
     const engineIcon = document.getElementById('engine-icon');
-    if (engineIcon) {
-        engineIcon.classList.toggle('active', state);
-    }
+    if (engineIcon) engineIcon.classList.toggle('active', state);
 }
 
 function setSpeed(speed_ms) {
@@ -28,8 +26,9 @@ function setSpeed(speed_ms) {
         case 2: speedDisplay = Math.round(speed_ms * 1.943844); break; 
         default: speedDisplay = Math.round(speed_ms * 3.6); 
     }
-    elements.speed.innerText = speedDisplay; 
+    if (elements.speed) elements.speed.innerText = speedDisplay; 
     
+    // Logika RPM dots
     const maxDots = 4;
     let scaleMax = speedMode === 1 ? 120 : 180; 
     let powerLevel = Math.min(maxDots, Math.ceil(speedDisplay / (scaleMax / maxDots))); 
@@ -39,17 +38,12 @@ function setSpeed(speed_ms) {
     });
 }
 
-function setRPM(rpm) {
-    // Implementasi setter RPM jika diperlukan
-}
-
 function setFuel(fuel_01) {
     const fuel_100 = Math.max(0, Math.min(100, fuel_01 * 100));
     const fuelPercentElement = document.getElementById('fuel-percent');
-    document.getElementById('fuel-fill').style.height = `${Math.round(fuel_100)}%`;
-    if (fuelPercentElement) {
-        fuelPercentElement.textContent = `${Math.round(fuel_100)}%`; 
-    }
+    const fuelFill = document.getElementById('fuel-fill');
+    if (fuelFill) fuelFill.style.height = `${Math.round(fuel_100)}%`;
+    if (fuelPercentElement) fuelPercentElement.textContent = `${Math.round(fuel_100)}%`; 
 }
 
 function setHealth(health_01) {
@@ -58,40 +52,24 @@ function setHealth(health_01) {
     const healthPercentElement = document.getElementById('health-percent');
     if (healthFill) {
         healthFill.style.height = `${Math.round(health_100)}%`;
-        if (health_100 < 30) {
-            healthFill.style.backgroundColor = '#ff0000'; 
-        } else if (health_100 < 60) {
-            healthFill.style.backgroundColor = '#ffff00'; 
-        } else {
-            healthFill.style.backgroundColor = '#00ff00'; 
-        }
+        healthFill.style.backgroundColor = health_100 < 30 ? '#ff0000' : (health_100 < 60 ? '#ffff00' : '#00ff00'); 
     }
-    if (healthPercentElement) {
-        healthPercentElement.textContent = `${Math.round(health_100)}%`; 
-    }
+    if (healthPercentElement) healthPercentElement.textContent = `${Math.round(health_100)}%`; 
 }
 
 function setGear(gear) {
     const gearElement = document.getElementById('gear');
     if (!gearElement) return;
-
     let displayGear = String(gear).toUpperCase();
-    if (displayGear === '0') {
-        displayGear = 'N'; 
-    } 
+    if (displayGear === '0') displayGear = 'N'; 
     gearElement.innerText = displayGear;
     gearElement.style.color = (displayGear === 'R' || displayGear === 'N') ? '#ff0000' : '#fff'; 
 }
 
-
 function setHeadlights(state) {
     const headlightsIcon = document.getElementById('headlights-icon');
-    let display = 'Off';
-    if (state === 1 || state === 2) display = 'On';
-
-    if (headlightsIcon) {
-        headlightsIcon.classList.toggle('active', display !== 'Off');
-    }
+    let displayOn = state === 1 || state === 2;
+    if (headlightsIcon) headlightsIcon.classList.toggle('active', displayOn);
 }
 
 // PERBAIKAN LOGIKA SEIN/INDIKATOR
@@ -101,15 +79,14 @@ function controlIndicators(state) {
 
     if (state !== lastIndicatorState) {
         clearInterval(blinkInterval);
-        
         if (turnLeft) turnLeft.classList.remove('active');
         if (turnRight) turnRight.classList.remove('active');
 
-        if (state === 1) { 
+        if (state === 1) { // Kiri
             blinkInterval = setInterval(() => { if(turnLeft) turnLeft.classList.toggle('active'); }, 250);
-        } else if (state === 2) { 
+        } else if (state === 2) { // Kanan
             blinkInterval = setInterval(() => { if(turnRight) turnRight.classList.toggle('active'); }, 250);
-        } else if (state === 3) { 
+        } else if (state === 3) { // Hazard
              blinkInterval = setInterval(() => { 
                 if(turnLeft) turnLeft.classList.toggle('active');
                 if(turnRight) turnRight.classList.toggle('active');
@@ -131,22 +108,14 @@ function setRightIndicator(state) {
 
 function setSeatbelts(state) {
     const seatbeltIcon = document.getElementById('abs-icon');
-    
-    if (seatbeltIcon) {
-        seatbeltIcon.classList.toggle('active', state); 
-    }
+    if (seatbeltIcon) seatbeltIcon.classList.toggle('active', state); 
 }
 
 function setSpeedMode(mode) {
     speedMode = mode;
     const speedModeElement = document.getElementById('speed-mode');
     if (!speedModeElement) return;
-
-    switch(mode) {
-        case 1: speedModeElement.innerText = 'MPH'; break;
-        case 2: speedModeElement.innerText = 'Knots'; break;
-        default: speedModeElement.innerText = 'KMH';
-    }
+    speedModeElement.innerText = (mode === 1) ? 'MPH' : ((mode === 2) ? 'Knots' : 'KMH');
 }
 
 // =======================================================
@@ -157,15 +126,13 @@ function toggleHeadUnitVisibility() {
     const button = document.getElementById('toggle-game-hud-button');
     const headUnitContainer = document.getElementById('custom-headunit-container'); 
 
-    if (!headUnitContainer) {
-        return;
-    }
+    if (!headUnitContainer) return;
 
     isCustomHeadUnitVisible = !isCustomHeadUnitVisible;
     
     if (isCustomHeadUnitVisible) {
         button.classList.remove('hidden');
-        headUnitContainer.style.display = 'block'; 
+        headUnitContainer.style.display = 'flex'; // Menggunakan flex karena Head Unit adalah flex container
     } else {
         button.classList.add('hidden');
         headUnitContainer.style.display = 'none'; 
@@ -185,7 +152,7 @@ const updateUI = (data) => {
 
     if (data.engine !== undefined) setEngine(data.engine);
     if (data.speed !== undefined) setSpeed(data.speed);
-    if (data.rpm !== undefined) setRPM(data.rpm);
+    // if (data.rpm !== undefined) setRPM(data.rpm); // Uncomment jika Anda punya data RPM
     if (data.fuel !== undefined) setFuel(data.fuel);
     if (data.health !== undefined) setHealth(data.health);
     if (data.gear !== undefined) setGear(data.gear);
@@ -199,12 +166,11 @@ const updateUI = (data) => {
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    // INISIALISASI ELEMENTS
-    elements = {
-        speed: document.getElementById('speed'), 
-        gear: document.getElementById('gear'),
-        speedMode: document.getElementById('speed-mode'),
-    };
+    // INISIALISASI ELEMENTS (Hanya yang digunakan oleh setSpeed, dll. untuk menghindari error undefined)
+    elements.speed = document.getElementById('speed'); 
+    elements.gear = document.getElementById('gear');
+    elements.speedMode = document.getElementById('speed-mode');
+
 
     const toggleGameHudButton = document.getElementById('toggle-game-hud-button');
     if (toggleGameHudButton) {
@@ -214,7 +180,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // INISIALISASI STATUS AWAL HEAD UNIT TAMBAHAN
     const headUnitContainer = document.getElementById('custom-headunit-container');
     if (headUnitContainer) {
-        headUnitContainer.style.display = 'block'; 
+        // Atur status awal Head Unit
+        headUnitContainer.style.display = 'flex'; // Default visible
     }
 
     window.addEventListener('message', (event) => {
