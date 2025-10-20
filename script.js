@@ -1,65 +1,64 @@
 document.addEventListener('DOMContentLoaded', () => {
     const currentSpeedElement = document.getElementById('current-speed');
     const gearElement = document.getElementById('gear');
-    const healthBar = document.getElementById('health-bar');
+    const greenBar = document.getElementById('green-bar');
 
-    let speed = 0;
-    let gear = 'N';
-    let health = 100; // Mulai dari 100%
+    let speed = 71; // Mulai dari nilai di gambar
+    let gear = 2;   // Mulai dari nilai di gambar
+    let barValue = 100; // Asumsi bar hijau adalah 100%
 
     function updateSpeedometer() {
-        // 1. Simulasi Perubahan Kecepatan (0 - 200)
-        // Gunakan target speed untuk simulasi yang lebih realistis
-        let targetSpeed = Math.floor(Math.random() * 180);
+        // --- Simulasi Kecepatan ---
+        // Target kecepatan acak (misalnya 0 hingga 150 KM/H)
+        let targetSpeed = Math.floor(Math.random() * 150);
         
-        // Perlambat perubahan untuk simulasi akselerasi/deselerasi
+        // Perlambatan/akselerasi halus
         if (speed < targetSpeed) {
-            speed = Math.min(targetSpeed, speed + 5);
+            speed = Math.min(targetSpeed, speed + 1);
         } else if (speed > targetSpeed) {
-            speed = Math.max(0, speed - 8);
+            speed = Math.max(0, speed - 2);
         }
 
-        currentSpeedElement.textContent = speed;
+        currentSpeedElement.textContent = Math.round(speed);
 
-        // 2. Update Gear (Simpel)
+        // --- Simulasi Gear ---
         if (speed === 0) {
             gear = 'N';
-        } else if (speed < 40) {
-            gear = '1';
-        } else if (speed < 80) {
-            gear = '2';
-        } else if (speed < 130) {
-            gear = '3';
+        } else if (speed < 30) {
+            gear = 1;
+        } else if (speed < 60) {
+            gear = 2;
+        } else if (speed < 100) {
+            gear = 3;
+        } else if (speed < 140) {
+            gear = 4;
         } else {
-            gear = '4';
+            gear = 5;
         }
         gearElement.textContent = gear;
-    }
-
-    function updateHealthBar() {
-        // Simulasi perubahan Health/Bar Hijau
-        // Health akan berkurang dan bertambah secara acak
-        const change = Math.floor(Math.random() * 3) - 1; // -1, 0, atau 1
-        health = Math.max(0, Math.min(100, health + change));
         
-        // Atur lebar bar dan warna jika di bawah ambang batas
-        healthBar.style.width = `${health}%`;
+        // --- Simulasi Bar Hijau (Asumsi Fuel/Health) ---
+        // Bar akan berkurang secara perlahan
+        barValue = Math.max(0, barValue - 0.1); 
         
-        if (health < 30) {
-            healthBar.style.backgroundColor = '#ff0000'; // Merah
-        } else if (health < 60) {
-            healthBar.style.backgroundColor = '#ffff00'; // Kuning
+        greenBar.style.width = `${barValue}%`;
+        
+        // Optional: Ganti warna bar jika rendah
+        if (barValue < 20) {
+            greenBar.style.backgroundColor = '#ff0000'; // Merah
         } else {
-            healthBar.style.backgroundColor = '#00ff00'; // Hijau
+            greenBar.style.backgroundColor = '#00ff00'; // Hijau
+        }
+        
+        // Jika barValue mencapai 0, reset simulasi
+        if (barValue === 0) {
+            barValue = 100;
         }
     }
 
-    // Perbarui speedometer setiap 100ms untuk gerakan halus
-    setInterval(updateSpeedometer, 100);
-    // Perbarui bar kesehatan lebih lambat
-    setInterval(updateHealthBar, 1000); 
+    // Perbarui speedometer setiap 50ms untuk gerakan yang sangat halus
+    setInterval(updateSpeedometer, 50); 
     
-    // Panggil inisialisasi
+    // Inisialisasi awal
     updateSpeedometer();
-    updateHealthBar();
 });
