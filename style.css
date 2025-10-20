@@ -4,6 +4,7 @@
 * {
     user-select: none;
     user-drag: none;
+    box-sizing: border-box; /* Pastikan box-sizing konsisten */
 }
 body {
     margin: 0;
@@ -59,13 +60,15 @@ body {
     align-items: center;
     width: 50px; 
     justify-content: space-between; 
+    padding-top: 5px; /* Sesuaikan padding */
+    padding-bottom: 5px;
 }
 
 .bar-labels-top {
     display: flex;
     justify-content: space-between;
     width: 100%;
-    margin-bottom: 5px; /* Sedikit spasi di atas bar */
+    margin-bottom: 5px; 
 }
 
 .bar-label {
@@ -81,7 +84,7 @@ body {
     gap: 8px;
     height: 70px; 
     flex-shrink: 0;
-    align-items: flex-end; /* Memastikan bar dimulai dari bawah */
+    align-items: flex-end; 
 }
 
 .bar-column {
@@ -109,7 +112,7 @@ body {
     font-size: 0.7em;
     font-weight: bold;
     flex-shrink: 0;
-    margin-top: 5px; /* Spasi di bawah bar */
+    margin-top: 5px; 
 }
 .percentage-row span {
     width: 15px;
@@ -127,7 +130,7 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    padding-top: 5px; /* Sedikit padding atas */
+    padding-top: 5px; 
 }
 
 .speed-readout {
@@ -158,7 +161,7 @@ body {
 .unit-text {
     font-size: 0.8em;
     color: #ccc;
-    margin-top: -10px; /* Mendekatkan ke angka kecepatan */
+    margin-top: -10px; 
     font-weight: bold;
     flex-shrink: 0;
 }
@@ -184,7 +187,7 @@ body {
 }
 
 /* =======================================
-   IKON STATUS BAWAH (Fokus Penyesuaian)
+   IKON STATUS BAWAH
    ======================================= */
 .status-icons-row {
     position: absolute;
@@ -193,27 +196,28 @@ body {
     right: 15px; 
     width: auto;
     display: flex;
-    justify-content: space-between; /* Untuk menyebarkan ikon secara merata */
+    justify-content: space-between; 
     align-items: center;
     padding-top: 5px;
     border-top: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .icon {
-    font-size: 1.3em; /* Ukuran ikon sedikit lebih kecil */
+    font-size: 1.3em; /* Ukuran ikon */
     color: #00ffff; /* Warna default biru muda untuk ikon */
     text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
     opacity: 0.5; 
-    transition: opacity 0.2s, color 0.2s; /* Tambahkan transisi warna */
+    transition: opacity 0.2s, color 0.2s; 
 }
 
-/* Simbol Ikon Kustom (Menggunakan Content Property) */
-.turn-left::before { content: '←'; } /* Panah kiri */
-.turn-right::before { content: '→'; } /* Panah kanan */
-.engine-icon::before { content: '⛭'; } /* Sama seperti sebelumnya */
-.lights-icon::before { content: '&#128262;'; } /* Ikon bohlam (ganti jika ada yang lebih baik) */
-.abs-icon::before { content: '𝔄'; } /* Ikon ABS yang lebih mirip (dari gambar) */
-
+/* Hapus `::before` content yang menyebabkan masalah teks ikon */
+.turn-left::before, 
+.turn-right::before,
+.engine-icon::before, 
+.lights-icon::before, 
+.abs-icon::before {
+    content: none; 
+}
 
 /* Status Aktif - Ikon ini terlihat sedikit lebih terang di gambar */
 .indicator-icon.active, .status-icon.active { 
