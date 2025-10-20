@@ -2,11 +2,12 @@
 // VARIABEL GLOBAL & KONFIGURASI
 // =======================================================
 let elements = {};
-let speedMode = 0; // Default KMH (0)
+let speedMode = 0; // 0=KMH, 1=MPH, 2=Knots
 let indicators = 0;
 let blinkInterval;
 let lastIndicatorState = 0;
 let isSimulationRunning = false; 
+
 
 // =======================================================
 // FUNGSI KONTROL DASHBOARD (SETTER)
@@ -28,7 +29,7 @@ function setSpeed(speed_ms) {
     
     // Logika Power Bar
     const maxDots = 4;
-    let scaleMax = 100; // Skala maks RPM/Power untuk simulasi
+    let scaleMax = 100; // Untuk visual RPM/Power
     let powerLevel = Math.min(maxDots, Math.ceil(speedDisplay / (scaleMax / maxDots))); 
     const powerDots = document.querySelectorAll('.power-bar-dots .dot');
     powerDots.forEach((dot, index) => {
@@ -116,26 +117,26 @@ function setSpeedMode(mode) {
     speedModeElement.innerText = (mode === 1) ? 'MPH' : ((mode === 2) ? 'Knots' : 'KMH');
 }
 
+
 /**
- * Fungsi ini menggantikan peran Lua/Game Engine dalam Web Murni.
- * Mensimulasikan data kendaraan yang terus berubah.
+ * SIMULASI DATA (Menggantikan data dari FiveM/Lua)
  */
 function startSimulation() {
     if (isSimulationRunning) return;
     isSimulationRunning = true;
     let currentSpeed = 0;
-    let currentFuel = 0.8; 
+    let currentFuel = 1.0; 
     let currentHealth = 1.0; 
     let currentGear = 'N';
 
     const maxSpeed = 30; // 30 m/s (sekitar 108 KMH)
     
-    // Tampilkan HUD secara paksa di web murni
+    // Tampilkan HUD di browser secara paksa
     const headUnitContainer = document.getElementById('custom-headunit-container');
     if (headUnitContainer) headUnitContainer.style.display = 'flex';
 
     setInterval(() => {
-        // SIMULASI KECEPATAN (Berubah acak)
+        // SIMULASI KECEPATAN (Berubah acak, percepatan/perlambatan)
         const speedChange = (Math.random() - 0.5) * 5; // -2.5 sampai +2.5
         currentSpeed = Math.max(0, Math.min(maxSpeed, currentSpeed + speedChange));
         setSpeed(currentSpeed);
@@ -155,25 +156,25 @@ function startSimulation() {
         setEngine(currentFuel > 0.05); // Mesin mati jika bensin habis
 
         // SIMULASI KESEHATAN
-        if (Math.random() < 0.02) { // 2% kemungkinan 'kecelakaan' kecil
+        if (Math.random() < 0.02) { 
              currentHealth = Math.max(0.1, currentHealth - 0.05);
         }
         setHealth(currentHealth);
         
-        // SIMULASI INDIKATOR
-        // 2% kemungkinan turn kiri atau kanan
+        // SIMULASI INDIKATOR (Berubah acak)
         const indicatorRoll = Math.random();
         if (indicatorRoll < 0.02) setLeftIndicator(true);
         else if (indicatorRoll < 0.04) setRightIndicator(true);
+        else if (indicatorRoll < 0.06) { setLeftIndicator(true); setRightIndicator(true); } // Hazard
         else { setLeftIndicator(false); setRightIndicator(false); }
 
         // SIMULASI LAMPU
         setHeadlights(Math.random() < 0.5 ? 1 : 0);
 
-        // SIMULASI SABUK PENGAMAN (selalu menyala)
+        // SIMULASI SABUK PENGAMAN
         setSeatbelts(true);
 
-    }, 200); // Update setiap 200 milidetik
+    }, 200); 
 }
 
 
@@ -186,25 +187,10 @@ document.addEventListener('DOMContentLoaded', () => {
     elements.speed = document.getElementById('speed'); 
     elements.gear = document.getElementById('gear');
     elements.speedMode = document.getElementById('speed-mode');
-
-    // Karena ini Web Murni, kita tidak perlu tombol toggle atau NUI listener.
-    // Kita langsung mulai simulasi agar HUD bergerak.
-    startSimulation();
-
-    // Panggil updateUI sekali untuk nilai awal
-    const initialData = { 
-        speed: 0, health: 1.0, fuel: 1.0, gear: 'N', headlights: 0, engine: false, seatbelts: false, 
-        leftIndicator: false, rightIndicator: false, speedMode: 0 // KMH
-    };
     
-    // Panggil setter untuk menampilkan nilai awal
-    setSpeedMode(initialData.speedMode);
-    setSpeed(initialData.speed);
-    setFuel(initialData.fuel);
-    setHealth(initialData.health);
-    setGear(initialData.gear);
-    setEngine(initialData.engine);
-    setSeatbelts(initialData.seatbelts);
-    setLeftIndicator(initialData.leftIndicator);
-    setRightIndicator(initialData.rightIndicator);
+    // Set nilai awal dan mode
+    setSpeedMode(0); // Set ke KMH
+
+    // Mulai simulasi data agar HUD bergerak di browser
+    startSimulation(); 
 });
