@@ -3,106 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital Dashboard HUD Final</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Custom Vehicle HUD</title>
+    <link rel="stylesheet" href="style.css"> 
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
 
-    <div class="game-background"></div>
-
-    <div class="digital-dashboard-container">
-        <div class="dashboard-box" id="dashboard-box">
-            
-            <div class="bars-section">
-                <div class="bar-labels-top">
-                    <span class="bar-label" id="health-percent">100%</span>
-                    <span class="bar-label" id="fuel-percent">87%</span>
-                </div>
-                <div class="label-indicators">
-                    <span class="indicator-text">H</span>
-                    <span class="indicator-text">F</span>
-                </div>
-                <div class="bar-columns">
-                    <div class="bar-column">
-                        <div class="bar-fill health-fill" id="health-fill"></div>
-                    </div>
-                    <div class="bar-column">
-                        <div class="bar-fill fuel-fill" id="fuel-fill"></div>
-                    </div>
+    <div id="custom-headunit-container">
+        <div id="dashboard-box">
+            <div class="indicators">
+                <i class="material-icons indicator-icon" id="turn-left-icon">arrow_left</i>
+                <i class="material-icons indicator-icon" id="headlights-icon">highlight</i>
+                <i class="material-icons indicator-icon" id="engine-icon">settings</i>
+                <i class="material-icons indicator-icon" id="abs-icon">warning</i>
+                <i class="material-icons indicator-icon" id="turn-right-icon">arrow_right</i>
+            </div>
+            <div class="speed-section">
+                <span id="speed">0</span>
+                <span id="speed-mode">KMH</span>
+            </div>
+            <div class="gear-section">
+                <span id="gear">N</span>
+            </div>
+            <div class="power-bar">
+                <div class="power-bar-label">PWR</div>
+                <div class="power-bar-dots">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
                 </div>
             </div>
-
-            <div class="center-display-section">
-                <div class="speed-readout">
-                    <span id="speed" class="speed-value">0</span> 
-                    <span class="gear-letter" id="gear">R</span>
+            <div class="status-bars">
+                <div class="bar-container fuel">
+                    <i class="material-icons">local_gas_station</i>
+                    <div class="bar-fill-wrapper"><div id="fuel-fill" class="fill"></div></div>
+                    <span id="fuel-percent">100%</span>
                 </div>
-                <div class="unit-text" id="speed-mode">MPH</div> 
-                <div class="power-bar-dots" id="rpm-dots">
-                    <span class="dot"></span><span class="dot"></span>
-                    <span class="dot"></span><span class="dot"></span>
-                </div>
-            </div>
-
-            <div class="status-icons-row">
-                <i class="icon indicator-icon" id="turn-left-icon"></i> 
-                <i class="icon status-icon" id="engine-icon"></i> 
-                <i class="icon status-icon" id="headlights-icon"></i> 
-                <i class="icon status-icon" id="abs-icon"></i> 
-                <i class="icon indicator-icon" id="turn-right-icon"></i>
-
-                <div style="display:none;">
-                    <span id="indicators"></span><span id="engine"></span><span id="headlights"></span>
-                    <span id="rpm"></span><span id="health"></span><span id="fuel"></span><span id="seatbelts"></span>
+                <div class="bar-container health">
+                    <i class="material-icons">favorite</i>
+                    <div class="bar-fill-wrapper"><div id="health-fill" class="fill"></div></div>
+                    <span id="health-percent">100%</span>
                 </div>
             </div>
         </div>
+        </div>
+    
+    <div id="toggle-game-hud-button" class="hidden">
+        Toggle HUD
     </div>
-    
-    
-    <div id="custom-headunit-container" class="custom-headunit-style">
-        <div class="headunit-status-bar" id="headunit-status-bar">
-            <span>Harmony</span>
-            <div>
-                <i class="fas fa-signal"></i> 5G 
-                <i class="fas fa-battery-half"></i> 11:38
-            </div>
-        </div>
 
-        <div class="app-grid" id="app-home-screen">
-            <div class="app-icon"><i class="fas fa-music"></i> <span class="app-label">Music</span></div>
-            <div class="app-icon"><i class="fas fa-map-marked-alt"></i> <span class="app-label">Maps</span></div>
-            <div class="app-icon"><i class="fas fa-calculator"></i> <span class="app-label">Calculator</span></div>
-            <div class="app-icon"><i class="fas fa-cog"></i> <span class="app-label">Settings</span></div>
-            
-            <div class="app-icon"><i class="fas fa-cloud-sun"></i> <span class="app-label">Weather</span></div>
-            <div class="app-icon"><i class="fas fa-globe"></i> <span class="app-label">Harmony</span></div>
-            <div class="app-icon" id="youtube-app-icon">
-                <i class="fab fa-youtube"></i> 
-                <span class="app-label">YouTube</span>
-            </div>
-            <div class="app-icon"><i class="fas fa-broadcast-tower"></i> <span class="app-label">Radio</span></div>
-        </div>
-        
-        <div class="youtube-screen" id="youtube-screen" style="display: none;">
-            <div class="youtube-header">
-                <i class="fas fa-times close-btn" id="youtube-close-btn"></i>
-                <input type="text" id="youtube-search-input" placeholder="Cari video di YouTube...">
-                <button id="youtube-search-btn"><i class="fas fa-search"></i></button>
-            </div>
-            <div class="youtube-content" id="youtube-content">
-                <p>Cari sesuatu untuk mulai memutar video...</p>
-            </div>
-        </div>
-        
-    </div>
-    
-<button id="toggle-game-hud-button" class="toggle-hud-styled hidden">
-        <span class="hud-icon">📱</span> 
-        <span class="hud-label">HEAD UNIT</span>
-    </button>
-    
     <script src="script.js"></script>
 </body>
 </html>
