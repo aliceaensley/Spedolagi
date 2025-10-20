@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setSpeedUnit(speedMode); 
     
     // =======================================================
-    // LOGIKA FUNGSIONALITAS
+    // LOGIKA FUNGSIONALITAS (Diadaptasi dari kode referensi Anda)
     // =======================================================
 
     function setSpeedUnit(mode) {
@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
         currentSpeedElement.textContent = speedDisplay;
         
         const maxDots = 4;
-        let scaleMax = speedMode === 1 ? 120 : 180; 
+        let scaleMax = speedMode === 1 ? 120 : 180; // Skala maksimal untuk RPM
         let powerLevel = Math.min(maxDots, Math.ceil(speedDisplay / (scaleMax / maxDots))); 
         
         powerDots.forEach((dot, index) => {
@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setIndicators.lastState = 0; 
 
     // =======================================================
-    // FUNGSI UTAMA PENGHUBUNG (NUI LISTENER)
+    // PENGHUBUNG NUI (Hanya mendengarkan data dari Game)
     // =======================================================
     
     const updateUI = (data) => {
@@ -129,6 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (data.fuel !== undefined) setFuel(data.fuel);
         
         // 3. INDICATORS
+        // Menerima data dari client script
         if (data.leftIndicator !== undefined || data.rightIndicator !== undefined) {
             setIndicators(data.leftIndicator || false, data.rightIndicator || false);
         }
@@ -136,23 +137,24 @@ document.addEventListener('DOMContentLoaded', () => {
         // 4. SPEED MODE
         if (data.speedMode !== undefined) setSpeedUnit(data.speedMode);
 
-        // 5. ICON LAINNYA (Misalnya Engine State, Headlights, dll.)
+        // 5. IKON STATUS
         const engineIcon = document.getElementById('engine-icon');
         if (data.engineActive !== undefined) {
              engineIcon.classList.toggle('active', data.engineActive);
         }
-        // ... Tambahkan logika untuk ikon lain di sini (headlights, abs, dll.)
+        // ... Tambahkan ikon lain di sini jika data dikirim oleh game.
     };
 
     // Menerima pesan dari game client
     window.addEventListener('message', (event) => {
         const data = event.data;
+        // Asumsi event yang dikirim game adalah 'speedoUpdate' atau 'UPDATE_HUD_DATA'
         if (data.type === 'speedoUpdate' || data.type === 'UPDATE_HUD_DATA') {
             updateUI(data.payload || data); 
         }
     });
 
-    // Panggil updateUI sekali untuk memastikan nilai awal diatur.
+    // Panggil updateUI sekali untuk memastikan nilai awal diatur saat HUD dimuat di game.
     updateUI({ 
         speed: 0, 
         health: 1, 
