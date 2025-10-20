@@ -3,54 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Custom Vehicle HUD (Web Murni - Simulasi)</title>
+    <title>Custom Vehicle HUD</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> 
     <link rel="stylesheet" href="style.css"> 
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
 
     <div id="custom-headunit-container">
         <div id="dashboard-box">
-            <div class="indicators">
-                <i class="material-icons indicator-icon" id="turn-left-icon">arrow_left</i>
-                <i class="material-icons indicator-icon" id="headlights-icon">highlight</i>
-                <i class="material-icons indicator-icon" id="engine-icon">settings</i>
-                <i class="material-icons indicator-icon" id="abs-icon">warning</i>
-                <i class="material-icons indicator-icon" id="turn-right-icon">arrow_right</i>
-            </div>
-            <div class="speed-section">
-                <span id="speed">0</span>
-                <span id="speed-mode">KMH</span>
-            </div>
-            <div class="gear-section">
-                <span id="gear">N</span>
-            </div>
-            <div class="power-bar">
-                <div class="power-bar-label">PWR</div>
-                <div class="power-bar-dots">
-                    <div class="dot"></div>
-                    <div class="dot"></div>
-                    <div class="dot"></div>
-                    <div class="dot"></div>
-                </div>
-            </div>
-            <div class="status-bars">
-                <div class="bar-container fuel">
-                    <i class="material-icons">local_gas_station</i>
-                    <div class="bar-fill-wrapper"><div id="fuel-fill" class="fill"></div></div>
-                    <span id="fuel-percent">100%</span>
-                </div>
-                <div class="bar-container health">
-                    <i class="material-icons">favorite</i>
+
+            <div class="status-bar-group left">
+                <div class="status-bar health">
+                    <span class="bar-label">H</span>
                     <div class="bar-fill-wrapper"><div id="health-fill" class="fill"></div></div>
-                    <span id="health-percent">100%</span>
+                </div>
+                <div class="status-bar fuel">
+                    <span class="bar-label">F</span>
+                    <div class="bar-fill-wrapper"><div id="fuel-fill" class="fill"></div></div>
                 </div>
             </div>
+
+            <div class="main-display">
+                <span id="speed-display" class="speed-value">0</span>
+                <span id="gear-display" class="gear-value">N</span>
+                <span id="speed-mode-unit" class="speed-unit">MPH</span>
+            </div>
+
+            <div class="indicators-group">
+                <div class="indicator-group bottom-row">
+                    <i class="material-icons indicator-icon" id="turn-left-icon">arrow_left</i>
+                    <i class="material-icons indicator-icon" id="engine-icon">settings</i>
+                    <i class="material-icons indicator-icon" id="headlights-icon">highlight</i>
+                    <i class="material-icons indicator-icon" id="seatbelts-icon">link_off</i>
+                    <i class="material-icons indicator-icon" id="turn-right-icon">arrow_right</i>
+                </div>
+            </div>
+
+            <div id="rpm-display" class="rpm-bar">
+                <div class="dot active"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+
+            <div class="percentage-row">
+                <span id="health-percent" class="percent-label">100%</span>
+                <span id="fuel-percent" class="percent-label">100%</span>
+            </div>
+            
         </div>
     </div>
     
-    <div id="toggle-game-hud-button" style="display: none;"></div> 
-
     <script src="script.js"></script>
 </body>
 </html>
