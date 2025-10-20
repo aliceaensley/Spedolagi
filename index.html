@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speedometer & YouTube Headunit</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="game-background">
+        <p>Simulasi Latar Belakang Game</p>
+    </div>
+
+    <div class="speedometer-container">
+        <div class="speedometer">
+            <div class="gauge">
+                <div class="speed-value">
+                    <span id="current-speed">120</span>
+                    <span class="unit">KM/H</span>
+                </div>
+                <div class="gear-indicator" id="gear">N</div>
+            </div>
+            <div class="info-indicators">
+                <i class="icon fuel">⛽</i>
+                <i class="icon engine">⚠️</i>
+            </div>
+            <button id="toggle-youtube-btn" class="youtube-toggle-btn">▶️ YouTube</button>
+        </div>
+    </div>
+
+    <div class="youtube-headunit-overlay hidden" id="youtube-headunit">
+        <div class="youtube-app-interface">
+            <div class="app-header">
+                <button class="back-btn">←</button>
+                <span class="app-title">YouTube</span>
+                <button id="hide-youtube-btn" class="close-btn">Tutup</button>
+                <input type="text" placeholder="Cari..." class="search-input">
+            </div>
+
+            <div class="video-section">
+                <h3 class="section-title">Rekomendasi Video</h3>
+                <div class="video-card">
+                    <img src="video-thumbnail.jpg" alt="Video Thumbnail" class="thumbnail-placeholder">
+                    <p class="video-title">JUDUL VIDEO DANGDUT POPULER</p>
+                    <span class="video-views">1.2M ditonton</span>
+                </div>
+                <div class="video-card">
+                    <img src="video-thumbnail.jpg" alt="Video Thumbnail" class="thumbnail-placeholder">
+                    <p class="video-title">VIDEO LAINNYA</p>
+                    <span class="video-views">500K ditonton</span>
+                </div>
+            </div>
+
+            <div class="mini-player">
+                <img src="mini-thumbnail.jpg" alt="Mini Thumbnail" class="mini-thumbnail-placeholder">
+                <div class="mini-controls">
+                    <p class="mini-title">🎶 Sedang Diputar...</p>
+                    <div class="controls-row">
+                        <button>⏮️</button>
+                        <button class="play-pause">⏸️</button>
+                        <button>⏭️</button>
+                    </div>
+                </div>
+                <button class="maximize-btn">⇱</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
