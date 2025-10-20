@@ -48,9 +48,9 @@
 
             <div class="status-icons-row">
                 <i class="icon indicator-icon" id="turn-left-icon"></i> 
-                <i class="icon status-icon" id="engine-icon"></i> 
-                <i class="icon status-icon" id="headlights-icon"></i>
-                <i class="icon status-icon" id="abs-icon"></i> 
+                <i class="icon status-icon" id="engine-icon">⚡</i> 
+                <i class="icon status-icon" id="headlights-icon">💡</i>
+                <i class="icon status-icon" id="abs-icon">💺</i> 
                 <i class="icon indicator-icon" id="turn-right-icon"></i>
 
                 <div style="display:none;">
@@ -66,6 +66,27 @@
         </div>
     </div>
     
+    
+    <div id="custom-headunit-container" style="
+        position: fixed; 
+        bottom: 80px; 
+        left: 50%; 
+        transform: translateX(-50%); 
+        z-index: 5;
+        /* Tambahkan style, lebar, dan tinggi Head Unit Anda di sini */
+        width: 350px; 
+        height: 200px; 
+        background-color: rgba(0, 0, 0, 0.8);
+        border-radius: 15px;
+        color: white;
+        text-align: center;
+        padding: 20px;
+        font-size: 1.5em;
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+    ">
+        <p>Head Unit Kustom (Ponsel/Tablet) Anda</p>
+        <p>Ini adalah konten yang akan di-toggle.</p>
+    </div>
     
 <button id="toggle-game-hud-button" class="toggle-hud-styled">
         <span class="hud-icon">📱</span> 
