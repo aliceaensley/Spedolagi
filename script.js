@@ -133,8 +133,8 @@ function setSpeed(speed_ms) {
     }
     elements.speed.innerText = speedDisplay; 
     
-    const maxDots = 4;
-    let scaleMax = speedMode === 1 ? 120 : 180; 
+    const maxDots = 2; // Menggunakan 2 dots sesuai gambar
+    let scaleMax = speedMode === 1 ? 80 : 100; // Skala disesuaikan untuk 2 dots
     let powerLevel = Math.min(maxDots, Math.ceil(speedDisplay / (scaleMax / maxDots))); 
     const powerDots = document.querySelectorAll('.power-bar-dots .dot');
     powerDots.forEach((dot, index) => {
