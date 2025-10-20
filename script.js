@@ -7,8 +7,8 @@ let indicators = 0;
 
 const onOrOff = state => state ? 'On' : 'Off';
 
-// MENGGUNAKAN NAMA FILE LOKAL karena sudah satu folder
-const YAMETE_AUDIO_URL = 'yamete.mp3'; 
+// MENGGUNAKAN NAMA FILE LOKAL
+const YAMETE_AUDIO_URL = 'yamete.mp3'; 
 
 // Membuat objek Audio satu kali
 const yameteAudio = new Audio(YAMETE_AUDIO_URL);
@@ -16,7 +16,7 @@ yameteAudio.volume = 0.5; // Atur volume (opsional, 0.0 hingga 1.0)
 
 
 // =======================================================
-// FUNGSI SETTER (Bagian ini tidak berubah dari kode Anda, kecuali setSeatbelts)
+// FUNGSI SETTER
 // =======================================================
 
 function setEngine(state) {
@@ -156,8 +156,8 @@ function setRightIndicator(state) {
 }
 
 /** * Fungsi Seatbelts.
- * Memutar yamete.mp3 ketika state = true (sabuk terpasang).
- */
+ * Memutar yamete.mp3 ketika state = true (sabuk terpasang).
+ */
 function setSeatbelts(state) {
     const seatbeltIcon = document.getElementById('abs-icon');
     
@@ -165,12 +165,9 @@ function setSeatbelts(state) {
     if (state === true) {
         // Putar audio dari awal
         yameteAudio.pause();
-        yameteAudio.currentTime = 0; 
+        yameteAudio.currentTime = 0; 
         yameteAudio.play().catch(e => console.error("Error playing audio:", e));
-    } else {
-        // OPSIONAL: Jika ingin audio berhenti saat sabuk dilepas, uncomment baris ini:
-        // yameteAudio.pause(); 
-    }
+    } 
 
     // LOGIKA VISUAL
     if (seatbeltIcon) {
@@ -219,8 +216,7 @@ const updateUI = (data) => {
     if (data.health !== undefined) setHealth(data.health);
     if (data.gear !== undefined) setGear(data.gear);
     if (data.headlights !== undefined) setHeadlights(data.headlights);
-    // setSeatbelts harus dipanggil
-    if (data.seatbelts !== undefined) setSeatbelts(data.seatbelts); 
+    if (data.seatbelts !== undefined) setSeatbelts(data.seatbelts); 
     if (data.speedMode !== undefined) setSpeedMode(data.speedMode);
 
     // INDICATORS
@@ -244,7 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
         seatbelts: document.getElementById('seatbelts'),
         speedMode: document.getElementById('speed-mode'),
         
-        // ID VISUAL
+        // ID VISUAL (Ditambahkan agar elemen tidak null)
         'dashboard-box': document.getElementById('dashboard-box'),
         'health-fill': document.getElementById('health-fill'),
         'fuel-fill': document.getElementById('fuel-fill'),
@@ -253,6 +249,24 @@ document.addEventListener('DOMContentLoaded', () => {
         'turn-left-icon': document.getElementById('turn-left-icon'),
         'turn-right-icon': document.getElementById('turn-right-icon'),
     };
+    
+    // LOGIKA WELCOME OVERLAY BARU
+    const welcomeOverlay = document.getElementById('welcome-overlay');
+    
+    // Tampilkan overlay selama 5 detik, lalu sembunyikan
+    if (welcomeOverlay) {
+        setTimeout(() => {
+            welcomeOverlay.classList.add('hidden');
+        }, 5000); // 5000 milidetik = 5 detik
+        
+        // Atur agar overlay benar-benar dihapus dari DOM setelah transisi
+        welcomeOverlay.addEventListener('transitionend', function() {
+            if (welcomeOverlay.classList.contains('hidden')) {
+                welcomeOverlay.style.display = 'none';
+            }
+        });
+    }
+
 
     // Menerima pesan dari game client (Dipertahankan dari kode Anda)
     window.addEventListener('message', (event) => {
@@ -270,7 +284,7 @@ document.addEventListener('DOMContentLoaded', () => {
         gear: 'R', 
         headlights: 0,
         engine: false,
-        seatbelts: false, // Set default ke false, agar audio tidak langsung main
+        seatbelts: false,
         leftIndicator: false, 
         rightIndicator: false,
         speedMode: 1, 
