@@ -11,7 +11,7 @@
     <div class="game-background"></div>
 
     <div class="digital-dashboard-container">
-        <div class="dashboard-box">
+        <div class="dashboard-box" id="dashboard-box">
             
             <div class="bars-section">
                 <div class="bar-labels-top">
@@ -37,12 +37,12 @@
             <div class="center-display-section">
                 
                 <div class="speed-readout">
-                    <span id="current-speed">0</span>
+                    <span id="speed" class="speed-value">0</span> 
                     <span class="gear-letter" id="gear">R</span>
                 </div>
-                <div class="unit-text">MPH</div>
+                <div class="unit-text" id="speed-mode">MPH</div> 
 
-                <div class="power-bar-dots">
+                <div class="power-bar-dots" id="rpm-dots">
                     <span class="dot"></span>
                     <span class="dot"></span>
                     <span class="dot"></span>
@@ -51,11 +51,24 @@
             </div>
 
             <div class="status-icons-row">
-                <i class="icon indicator-icon turn-left"></i>
-                <i class="icon status-icon engine-icon" id="engine-icon"></i>
-                <i class="icon status-icon lights-icon"></i>
-                <i class="icon status-icon abs-icon"></i>
-                <i class="icon indicator-icon turn-right"></i>
+                <i class="icon indicator-icon turn-left" id="left-indicator-icon"></i>
+                
+                <i class="icon status-icon engine-icon" id="engine-icon"></i> 
+                
+                <i class="icon status-icon lights-icon" id="headlights-icon"></i>
+                
+                <div style="display:none;">
+                    <span id="indicators"></span>
+                    <span id="engine"></span>
+                    <span id="headlights"></span>
+                    <span id="rpm"></span>
+                    <span id="health"></span>
+                    <span id="fuel"></span>
+                    <span id="seatbelts"></span>
+                </div>
+
+                <i class="icon status-icon abs-icon"></i> 
+                <i class="icon indicator-icon turn-right" id="right-indicator-icon"></i>
             </div>
         </div>
     </div>
