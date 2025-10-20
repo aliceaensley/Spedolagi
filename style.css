@@ -31,7 +31,7 @@ body {
 }
 
 /* =======================================
-   KOTAK DASHBOARD UTAMA (HUD)
+   KOTAK DASHBOARD UTAMA (HUD) - DIPERBAIKI
    ======================================= */
 .dashboard-box {
     width: 180px; 
@@ -42,6 +42,7 @@ body {
     padding: 8px; 
     display: flex;
     flex-direction: column;
+    justify-content: space-between; /* Penting agar isi tidak menumpuk */
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5); 
     opacity: 1; 
     visibility: visible; 
@@ -52,16 +53,15 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    height: 50%;
+    flex-grow: 1; /* Biarkan mengambil ruang yang tersisa */
 }
 
 .status-bars {
+    /* Mengatur H dan F serta barnya agar rapi di kiri atas */
     display: grid;
     grid-template-columns: auto 10px;
     align-items: flex-end;
     gap: 3px;
-    height: 100%;
-    margin-right: 10px;
 }
 
 .bar-indicator {
@@ -127,21 +127,25 @@ body {
     margin-top: -3px;
 }
 
-/* --- MIDDLE ROW (PERCENT & DOTS) --- */
+/* --- MIDDLE ROW (PERCENT & DOTS) - DIPERBAIKI --- */
 .middle-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-top: 5px;
+    width: 100%; /* Pastikan mengambil lebar penuh kotak */
+    padding: 0 2px; /* Padding sedikit agar persen tidak menempel di sudut */
 }
 
 .bar-percents {
     display: flex;
-    width: 60px; /* Lebar total H & F area */
+    /* Lebar disesuaikan agar pas dengan dua bar */
+    width: 50px; 
     justify-content: space-between;
     font-size: 0.6em;
     font-weight: bold;
     color: white;
+    margin-left: 5px;
 }
 #health-percent { color: #00ff00; }
 #fuel-percent { color: #ffaa00; }
@@ -166,7 +170,7 @@ body {
     box-shadow: 0 0 3px rgba(255, 255, 255, 0.8);
 }
 
-/* --- BOTTOM ROW (ICONS) --- */
+/* --- BOTTOM ROW (ICONS) - DIPERBAIKI --- */
 .bottom-row {
     display: flex;
     justify-content: space-between;
@@ -174,6 +178,7 @@ body {
     padding-top: 5px;
     margin-top: 5px;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
+    width: 100%; /* Pastikan mengambil lebar penuh kotak */
 }
 
 .icon {
@@ -195,7 +200,7 @@ body {
 #turn-right-icon::before { content: '→'; }
 #engine-icon::before { content: '⚡'; }
 #headlights-icon::before { content: '💡'; }
-#abs-icon::before { content: '\1F4BA'; } /* Seatbelt/ABS */
+#abs-icon::before { content: '\1F4BA'; } 
 
 .icon.active {
     opacity: 1;
