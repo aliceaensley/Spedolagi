@@ -32,48 +32,40 @@
         </div>
                 <div class="dashboard-box" id="dashboard-box">
             
-            <div class="top-section">
-                <div class="bars-container">
-                    <div class="bar-pair">
-                        <span class="bar-indicator">H</span>
-                        <div class="bar-column"><div class="bar-fill health-fill" id="health-fill"></div></div>
-                    </div>
-                    <div class="bar-pair">
-                        <span class="bar-indicator">F</span>
-                        <div class="bar-column"><div class="bar-fill fuel-fill" id="fuel-fill"></div></div>
-                    </div>
-                </div>
+            <div class="top-row">
+                <div class="status-bars">
+                    <span class="bar-indicator">H</span>
+                    <div class="bar-column"><div class="bar-fill health-fill" id="health-fill"></div></div>
 
-                <div class="speed-section">
+                    <span class="bar-indicator">F</span>
+                    <div class="bar-column"><div class="bar-fill fuel-fill" id="fuel-fill"></div></div>
+                </div>
+                
+                <div class="speed-gear-display">
                     <span id="speed" class="speed-value">0</span>
                     <span class="gear-letter" id="gear">R</span>
+                    <span class="unit-text" id="speed-mode">MPH</span>
                 </div>
             </div>
 
-            <div class="bottom-section">
-                <div class="percent-row">
+            <div class="middle-row">
+                <div class="bar-percents">
                     <span id="health-percent">100%</span>
-                    <span class="unit-text" id="speed-mode">MPH</span>
                     <span id="fuel-percent">87%</span>
                 </div>
                 
-                <div class="indicator-row">
-                    <i class="icon indicator-icon" id="turn-left-icon"></i>
-                    <div class="power-bar-dots" id="rpm-dots">
-                        <span class="dot"></span>
-                        <span class="dot"></span>
-                        <span class="dot"></span>
-                        <span class="dot"></span>
-                    </div>
-                    <i class="icon indicator-icon" id="turn-right-icon"></i>
+                <div class="power-bar-dots" id="rpm-dots">
+                    <span class="dot"></span>
+                    <span class="dot"></span>
                 </div>
+            </div>
 
-                <div class="status-icon-row">
-                    <i class="icon status-icon" id="engine-icon"></i> 
-                    <i class="icon status-icon" id="headlights-icon"></i>
-                    <i class="icon status-icon" id="abs-icon"></i> 
-                </div>
-                
+            <div class="bottom-row">
+                <i class="icon indicator-icon turn-icon" id="turn-left-icon"></i>
+                <i class="icon status-icon" id="engine-icon"></i> 
+                <i class="icon status-icon" id="headlights-icon"></i>
+                <i class="icon status-icon" id="abs-icon"></i> 
+                <i class="icon indicator-icon turn-icon" id="turn-right-icon"></i>
             </div>
         </div>
             </div>
