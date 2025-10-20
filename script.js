@@ -4,7 +4,7 @@
 let elements = {};
 let speedMode = 1; 
 let indicators = 0;
-let isCustomHeadUnitVisible = false; // Head Unit DEFAULT TERSEMBUNYI
+let isCustomHeadUnitVisible = false; 
 let blinkInterval;
 let lastIndicatorState = 0;
 
@@ -71,7 +71,11 @@ function displayYoutubeResults(results) {
             </div>
         `;
         
-        item.addEventListener('click', () => playVideo(videoId));
+        // --- INI ADALAH LOGIKA YANG MEMASTIKAN PEMUTARAN VIDEO ---
+        item.addEventListener('click', () => {
+            playVideo(videoId);
+        });
+        
         contentDiv.appendChild(item);
     });
 }
@@ -81,15 +85,18 @@ function displayYoutubeResults(results) {
  */
 function playVideo(videoId) {
     const contentDiv = document.getElementById('youtube-content');
+    // Memasukkan iframe ke dalam div konten YouTube
     contentDiv.innerHTML = `
         <iframe 
             class="video-player-iframe" 
-            src="https://www.youtube.com/embed/${videoId}?autoplay=1" 
+            src="https://www.youtube.com/embed/${videoId}?autoplay=1&controls=1" 
             frameborder="0" 
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
             allowfullscreen
         ></iframe>
     `;
+    // Catatan: Parameter "autoplay=1" memungkinkan pemutaran otomatis,
+    // namun browser modern seringkali memblokir ini kecuali pengguna telah berinteraksi dengan halaman.
 }
 
 // =======================================================
@@ -273,9 +280,8 @@ document.addEventListener('DOMContentLoaded', () => {
         youtubeSearchBtn.addEventListener('click', () => {
             const query = document.getElementById('youtube-search-input').value;
             console.log("Mencari YouTube untuk:", query);
-            // DI SINI TEMPAT ANDA MEMANGGIL API BACKEND NUI (LUA) ANDA
             
-            // Untuk demo, kita menggunakan mock data:
+            // LAKUKAN PENCARIAN DI SINI (SIMULASI)
             alert("Simulasi pencarian untuk: " + query + ". Menampilkan hasil mock.");
             displayYoutubeResults(MOCK_YOUTUBE_RESULTS); 
         });
