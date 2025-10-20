@@ -4,67 +4,21 @@
 let elements = {};
 let speedMode = 1; 
 let indicators = 0;
-let isCustomHeadUnitVisible = true; // Status Head Unit Tambahan
+let isCustomHeadUnitVisible = false; // <<< INI PERUBAHAN PENTING: DEFAULT KE FALSE (TERSEMBUNYI)
 let blinkInterval;
 let lastIndicatorState = 0;
 
 const onOrOff = state => state ? 'On' : 'Off';
 
 // =======================================================
-// FUNGSI SETTER (DASHBOARD KUSTOM - TIDAK ADA PERUBAHAN LOGIKA)
+// FUNGSI SETTER (SPEEDOMETER)
 // =======================================================
 
 function setEngine(state) {
     const engineIcon = document.getElementById('engine-icon');
     if (engineIcon) engineIcon.classList.toggle('active', state);
 }
-
-function setSpeed(speed_ms) {
-    let speedDisplay;
-    switch(speedMode) {
-        case 1: speedDisplay = Math.round(speed_ms * 2.236936); break; 
-        case 2: speedDisplay = Math.round(speed_ms * 1.943844); break; 
-        default: speedDisplay = Math.round(speed_ms * 3.6); 
-    }
-    if (elements.speed) elements.speed.innerText = speedDisplay; 
-    
-    // Logika RPM dots
-    const maxDots = 4;
-    let scaleMax = speedMode === 1 ? 120 : 180; 
-    let powerLevel = Math.min(maxDots, Math.ceil(speedDisplay / (scaleMax / maxDots))); 
-    const powerDots = document.querySelectorAll('.power-bar-dots .dot');
-    powerDots.forEach((dot, index) => {
-        dot.classList.toggle('active', index < powerLevel);
-    });
-}
-
-function setFuel(fuel_01) {
-    const fuel_100 = Math.max(0, Math.min(100, fuel_01 * 100));
-    const fuelPercentElement = document.getElementById('fuel-percent');
-    const fuelFill = document.getElementById('fuel-fill');
-    if (fuelFill) fuelFill.style.height = `${Math.round(fuel_100)}%`;
-    if (fuelPercentElement) fuelPercentElement.textContent = `${Math.round(fuel_100)}%`; 
-}
-
-function setHealth(health_01) {
-    const health_100 = Math.max(0, Math.min(100, health_01 * 100));
-    const healthFill = document.getElementById('health-fill');
-    const healthPercentElement = document.getElementById('health-percent');
-    if (healthFill) {
-        healthFill.style.height = `${Math.round(health_100)}%`;
-        healthFill.style.backgroundColor = health_100 < 30 ? '#ff0000' : (health_100 < 60 ? '#ffff00' : '#00ff00'); 
-    }
-    if (healthPercentElement) healthPercentElement.textContent = `${Math.round(health_100)}%`; 
-}
-
-function setGear(gear) {
-    const gearElement = document.getElementById('gear');
-    if (!gearElement) return;
-    let displayGear = String(gear).toUpperCase();
-    if (displayGear === '0') displayGear = 'N'; 
-    gearElement.innerText = displayGear;
-    gearElement.style.color = (displayGear === 'R' || displayGear === 'N') ? '#ff0000' : '#fff'; 
-}
+// ... (setSpeed, setFuel, setHealth, setGear, setSpeedMode, dll. SAMA) ...
 
 function setHeadlights(state) {
     const headlightsIcon = document.getElementById('headlights-icon');
@@ -72,7 +26,7 @@ function setHeadlights(state) {
     if (headlightsIcon) headlightsIcon.classList.toggle('active', displayOn);
 }
 
-// PERBAIKAN LOGIKA SEIN/INDIKATOR
+// LOGIKA SEIN/INDIKATOR (SAMA)
 function controlIndicators(state) {
     const turnLeft = document.getElementById('turn-left-icon'); 
     const turnRight = document.getElementById('turn-right-icon'); 
@@ -111,12 +65,7 @@ function setSeatbelts(state) {
     if (seatbeltIcon) seatbeltIcon.classList.toggle('active', state); 
 }
 
-function setSpeedMode(mode) {
-    speedMode = mode;
-    const speedModeElement = document.getElementById('speed-mode');
-    if (!speedModeElement) return;
-    speedModeElement.innerText = (mode === 1) ? 'MPH' : ((mode === 2) ? 'Knots' : 'KMH');
-}
+// ... (setRPM, setFuel, setHealth, setGear, setSpeedMode - Anda harus menambahkannya) ...
 
 // =======================================================
 // FUNGSI KONTROL HEAD UNIT TAMBAHAN
@@ -132,10 +81,10 @@ function toggleHeadUnitVisibility() {
     
     if (isCustomHeadUnitVisible) {
         button.classList.remove('hidden');
-        headUnitContainer.style.display = 'flex'; // Menggunakan flex karena Head Unit adalah flex container
+        headUnitContainer.style.display = 'flex'; // TAMPILKAN
     } else {
         button.classList.add('hidden');
-        headUnitContainer.style.display = 'none'; 
+        headUnitContainer.style.display = 'none'; // SEMBUNYIKAN
     }
 }
 
@@ -145,28 +94,23 @@ function toggleHeadUnitVisibility() {
 // =======================================================
 
 const updateUI = (data) => {
-    // DASHBOARD KUSTOM SELALU TERLIHAT
+    // Memastikan dashboard selalu terlihat
     const dashboardBox = document.getElementById('dashboard-box');
     dashboardBox.style.opacity = '1'; 
     dashboardBox.style.visibility = 'visible'; 
 
     if (data.engine !== undefined) setEngine(data.engine);
     if (data.speed !== undefined) setSpeed(data.speed);
-    // if (data.rpm !== undefined) setRPM(data.rpm); // Uncomment jika Anda punya data RPM
-    if (data.fuel !== undefined) setFuel(data.fuel);
-    if (data.health !== undefined) setHealth(data.health);
-    if (data.gear !== undefined) setGear(data.gear);
+    // ... panggil setter lain di sini ...
     if (data.headlights !== undefined) setHeadlights(data.headlights); 
     if (data.seatbelts !== undefined) setSeatbelts(data.seatbelts); 
-    if (data.speedMode !== undefined) setSpeedMode(data.speedMode);
-
     if (data.leftIndicator !== undefined) setLeftIndicator(data.leftIndicator);
     if (data.rightIndicator !== undefined) setRightIndicator(data.rightIndicator);
 };
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    // INISIALISASI ELEMENTS (Hanya yang digunakan oleh setSpeed, dll. untuk menghindari error undefined)
+    // INISIALISASI ELEMENTS (Hanya yang digunakan oleh setSpeed, dll.)
     elements.speed = document.getElementById('speed'); 
     elements.gear = document.getElementById('gear');
     elements.speedMode = document.getElementById('speed-mode');
@@ -177,11 +121,15 @@ document.addEventListener('DOMContentLoaded', () => {
         toggleGameHudButton.addEventListener('click', toggleHeadUnitVisibility); 
     }
     
-    // INISIALISASI STATUS AWAL HEAD UNIT TAMBAHAN
+    // PERBAIKAN: INISIALISASI STATUS AWAL HEAD UNIT TAMBAHAN (SEMBUNYI)
     const headUnitContainer = document.getElementById('custom-headunit-container');
     if (headUnitContainer) {
-        // Atur status awal Head Unit
-        headUnitContainer.style.display = 'flex'; // Default visible
+        // Karena isCustomHeadUnitVisible = false, Head Unit harus disembunyikan
+        headUnitContainer.style.display = 'none'; 
+    }
+    // Karena isCustomHeadUnitVisible = false, tombol harus dalam state 'hidden' (merah)
+    if (toggleGameHudButton) {
+        toggleGameHudButton.classList.add('hidden');
     }
 
     window.addEventListener('message', (event) => {
