@@ -20,11 +20,16 @@ document.addEventListener('DOMContentLoaded', () => {
     let health = 100;
     let fuel = 87;
     let turnSignalState = 0; // 0=off, 1=left, 2=right
-
+    let targetSpeed = 0;
+    
     function updateDashboard() {
         // --- 1. Simulasi Kecepatan & Gear ---
-        let targetSpeed = Math.floor(Math.random() * 150);
+        // Ganti target speed setiap 2 detik untuk variasi
+        if (Math.random() < 0.05) {
+            targetSpeed = Math.floor(Math.random() * 160);
+        }
         
+        // Akselerasi/Deselerasi
         if (speed < targetSpeed) {
             speed = Math.min(targetSpeed, speed + 1);
         } else if (speed > targetSpeed) {
@@ -50,10 +55,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
         // --- 2. Simulasi Bar & Persentase (Health/Fuel) ---
-        // Health: Random +/- 0.5
-        health = Math.max(0, Math.min(100, health + (Math.random() * 1 - 0.5)));
-        // Fuel: Turun sangat perlahan
-        fuel = Math.max(0, fuel - 0.05);
+        health = Math.max(0, Math.min(100, health + (Math.random() * 0.2 - 0.1))); // +/- 0.1
+        fuel = Math.max(0, fuel - 0.05); // Turun 0.05% setiap 50ms
 
         // Update tampilan bar
         healthFill.style.height = `${health}%`;
@@ -62,13 +65,13 @@ document.addEventListener('DOMContentLoaded', () => {
         healthPercent.textContent = `${Math.round(health)}%`;
         fuelPercent.textContent = `${Math.round(fuel)}%`;
         
-        // Warna Health Bar berdasarkan kondisi
+        // Warna Health Bar
         if (health < 30) {
-            healthFill.style.backgroundColor = '#ff0000'; // Merah
+            healthFill.style.backgroundColor = '#ff0000'; 
         } else if (health < 60) {
-            healthFill.style.backgroundColor = '#ffff00'; // Kuning
+            healthFill.style.backgroundColor = '#ffff00'; 
         } else {
-            healthFill.style.backgroundColor = '#00ff00'; // Hijau
+            healthFill.style.backgroundColor = '#00ff00'; 
         }
         
         // --- 3. Simulasi Power Dots (RPM/Power) ---
@@ -80,12 +83,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         
         // --- 4. Simulasi Indikator Sein (Berkedip) ---
-        // Ganti status sein sesekali
-        if (Math.random() > 0.98) {
+        // Ganti status sein sesekali (misalnya 1%)
+        if (Math.random() < 0.01) {
             turnSignalState = Math.floor(Math.random() * 3); // 0, 1, atau 2
         }
 
-        // Berkedip jika aktif
+        // Logika Berkedip
         const isBlinking = Math.floor(Date.now() / 250) % 2 === 0;
 
         turnLeft.classList.remove('active');
@@ -98,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Perbarui dashboard setiap 50ms untuk fungsionalitas realtime yang sangat halus
+    // Perbarui dashboard setiap 50ms (20 FPS) untuk fungsionalitas realtime
     setInterval(updateDashboard, 50); 
     
     // Inisialisasi awal
