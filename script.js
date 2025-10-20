@@ -7,8 +7,8 @@ let indicators = 0;
 
 const onOrOff = state => state ? 'On' : 'Off';
 
-// GANTI URL INI dengan URL file yamete.mp3 Anda yang sebenarnya di GitHub (Raw File)
-const YAMETE_AUDIO_URL = 'https://raw.githubusercontent.com/YourUsername/YourRepo/main/yamete.mp3';
+// MENGGUNAKAN NAMA FILE LOKAL karena sudah satu folder
+const YAMETE_AUDIO_URL = 'yamete.mp3'; 
 
 // Membuat objek Audio satu kali
 const yameteAudio = new Audio(YAMETE_AUDIO_URL);
@@ -16,7 +16,7 @@ yameteAudio.volume = 0.5; // Atur volume (opsional, 0.0 hingga 1.0)
 
 
 // =======================================================
-// FUNGSI SETTER
+// FUNGSI SETTER (Bagian ini tidak berubah dari kode Anda, kecuali setSeatbelts)
 // =======================================================
 
 function setEngine(state) {
@@ -155,18 +155,20 @@ function setRightIndicator(state) {
     elements.indicators.innerText = `${indicators & 0b01 ? 'On' : 'Off'} / ${indicators & 0b10 ? 'On' : 'Off'}`;
 }
 
-/** Fungsi Seatbelts yang menyala saat terpasang (state = true) */
+/** * Fungsi Seatbelts.
+ * Memutar yamete.mp3 ketika state = true (sabuk terpasang).
+ */
 function setSeatbelts(state) {
     const seatbeltIcon = document.getElementById('abs-icon');
     
-    // LOGIKA TAMBAHAN: Memutar audio ketika sabuk PENGAMAN DIPAKAI (state = true)
+    // LOGIKA AUDIO
     if (state === true) {
-        // Pastikan audio berhenti jika sedang memutar, lalu putar ulang dari awal
+        // Putar audio dari awal
         yameteAudio.pause();
         yameteAudio.currentTime = 0; 
         yameteAudio.play().catch(e => console.error("Error playing audio:", e));
     } else {
-        // OPSIONAL: Jika ingin audio berhenti saat sabuk dilepas, tambahkan:
+        // OPSIONAL: Jika ingin audio berhenti saat sabuk dilepas, uncomment baris ini:
         // yameteAudio.pause(); 
     }
 
@@ -217,7 +219,7 @@ const updateUI = (data) => {
     if (data.health !== undefined) setHealth(data.health);
     if (data.gear !== undefined) setGear(data.gear);
     if (data.headlights !== undefined) setHeadlights(data.headlights);
-    // PANGGIL setSeatbelts DI AKHIR UNTUK MEMASTIKAN ICON DAN AUDIO TERPISAH
+    // setSeatbelts harus dipanggil
     if (data.seatbelts !== undefined) setSeatbelts(data.seatbelts); 
     if (data.speedMode !== undefined) setSpeedMode(data.speedMode);
 
@@ -268,7 +270,7 @@ document.addEventListener('DOMContentLoaded', () => {
         gear: 'R', 
         headlights: 0,
         engine: false,
-        seatbelts: true, 
+        seatbelts: false, // Set default ke false, agar audio tidak langsung main
         leftIndicator: false, 
         rightIndicator: false,
         speedMode: 1, 
