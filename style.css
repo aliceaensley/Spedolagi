@@ -173,7 +173,7 @@ body {
 .power-bar-dots {
     display: flex;
     gap: 5px;
-    **margin-top: 15px;** /* PERUBAHAN DI SINI: Dinaikkan 10px */
+    **margin-top: 20px;** /* PERUBAHAN DI SINI: Dinaikkan 10px */
     flex-shrink: 0;
 }
 
