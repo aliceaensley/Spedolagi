@@ -174,7 +174,7 @@ body {
 .power-bar-dots {
     display: flex;
     gap: 5px;
-    margin-top: 15px; /* PERUBAHAN DI SINI: Naikkan margin untuk dorongan yang lebih jelas */
+    margin-top: 20px; /* DINAikkan 5px lagi untuk turun lebih jauh */
     flex-shrink: 0;
 }
 
