@@ -118,7 +118,7 @@ function setFuel(fuel_01) {
                 // KONDISI PENGHENTIAN: Hentikan perulangan jika sudah di bawah atau sama dengan 10%
                 if (fuel_01 * 100 <= 10) { 
                     isBensinAlertActive = false;
-                    bensinAlertTimer = null; // Pastikan timer juga diset null
+                    bensinAlertTimer = null; 
                     return; 
                 }
                 
@@ -362,8 +362,18 @@ document.addEventListener('DOMContentLoaded', () => {
         'fuel-percent': document.getElementById('fuel-percent'),
         'turn-left-icon': document.getElementById('turn-left-icon'),
         'turn-right-icon': document.getElementById('turn-right-icon'),
+
+        // WELCOME OVERLAY
+        'welcome-overlay': document.getElementById('welcome-overlay'), 
     };
     
+    // LOGIKA WELCOME OVERLAY (Hanya tampil 2 detik)
+    if (elements['welcome-overlay']) {
+        setTimeout(() => {
+            elements['welcome-overlay'].classList.add('hidden');
+        }, 2000); // 2000 milidetik = 2 detik
+    }
+
     // Menerima pesan dari game client
     window.addEventListener('message', (event) => {
         const data = event.data;
