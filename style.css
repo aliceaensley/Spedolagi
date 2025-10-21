@@ -131,7 +131,7 @@ body {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: center; /* Memastikan semua elemen (termasuk dots) terpusat */
     justify-content: flex-start;
     padding-top: 5px; 
 }
@@ -172,18 +172,18 @@ body {
 
 .power-bar-dots {
     display: flex;
-    gap: 5px; /* DIKEMBALIKAN: Gap standar 5px */
+    gap: 5px; 
     margin-top: 10px; /* MODIFIKASI: Menurunkan dari unit-text */
     flex-shrink: 0;
-    /* DIHAPUS: width: 100%; dan justify-content: space-between */
+    /* Dihapus: width: 100%; dan justify-content: space-between */
 }
 
 .dot {
-    width: 15px; /* DIKEMBALIKAN: Lebar dot standar 15px */
+    width: 15px; /* DIKEMBALIKAN: Lebar standar */
     height: 5px;
     background-color: #444; 
     border-radius: 1px;
-    /* DIHAPUS: flex-grow: 1; */
+    /* Dihapus: flex-grow: 1; */
 }
 
 .dot.active {
