@@ -165,30 +165,32 @@ body {
 .unit-text {
     font-size: 0.7em;
     color: #ccc;
-    margin-top: 15px; /* Tetap di 15px (posisi MPH turun) */
+    margin-top: 15px; /* Posisi MPH tetap turun */
     font-weight: bold;
     flex-shrink: 0;
 }
 
 .power-bar-dots {
     display: flex;
-    gap: 3px; /* DIUBAH: Dibuat lebih rapat agar 8 dot terlihat penuh */
-    margin-top: 10px; /* Tetap di 10px (posisi dot turun) */
+    gap: 3px; /* Jarak rapat */
+    margin-top: 10px; /* Posisi dot tetap turun */
     flex-shrink: 0;
     
-    /* ✅ MODIFIKASI INTI: Membuat kontainer mengisi lebar penuh dan mendistribusikannya */
+    /* ✅ Kunci 1: Membuat kontainer mengisi lebar penuh */
     width: 100%; 
+    
+    /* ✅ Kunci 2: Mendistribusikan dot secara merata, menjangkau pinggir */
     justify-content: space-between; 
 }
 
 .dot {
-    width: 10px; /* DIUBAH: Diberi lebar awal yang kecil */
+    /* ✅ Kunci 3: Berikan lebar tetap yang kecil agar tidak melebihi batas kontainer */
+    width: 8px; 
     height: 5px;
     background-color: #444; 
     border-radius: 1px;
     
-    /* ✅ MODIFIKASI INTI: Membuat dot memanjang sedikit secara proporsional */
-    flex-grow: 1; /* Biarkan dot memanjang mengisi ruang sisa */
+    /* Hapus flex-grow: 1; agar dot tidak memanjang berlebihan dan menghilang */
 }
 
 .dot.active {
