@@ -163,11 +163,12 @@ body {
 }
 
 .unit-text {
-    font-size: 0.7em;
-    color: #ccc;
-    margin-top: -5px; 
-    font-weight: bold;
-    flex-shrink: 0;
+    font-size: 0.7em;
+    color: #ccc;
+    /* PENGATURAN BARU: Menurunkan MPH lebih jauh */
+    margin-top: 15px; 
+    font-weight: bold;
+    flex-shrink: 0;
 }
 
 .power-bar-dots {
