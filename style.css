@@ -166,7 +166,7 @@ body {
     font-size: 0.7em;
     color: #ccc;
     margin-top: -5px; 
-    **padding-top: 30px;** /* PERUBAHAN DI SINI: Dorongan paling kuat */
+    **padding-top: 40px;** /* PERUBAHAN DI SINI: Dorongan lebih signifikan */
     font-weight: bold;
     flex-shrink: 0;
 }
