@@ -166,7 +166,12 @@ body {
     font-size: 0.7em;
     color: #ccc;
     margin-top: -5px; 
-    **padding-top: 100px;** /* PERUBAHAN DI SINI */
+    /* padding-top: 100px; DIHAPUS karena tidak efektif */
+    
+    /* Tambahan Kritis untuk memindahkan MPH */
+    **position: relative;**
+    **top: 20px;** /* Geser ke bawah 20px. Sesuaikan jika kurang. */
+
     font-weight: bold;
     flex-shrink: 0;
 }
