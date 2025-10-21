@@ -268,15 +268,15 @@ body {
     /* Ukuran font disesuaikan agar kalimat panjang muat */
     font-size: 1.8em; 
     
-    /* WARNA UTAMA: Oranye Terang */
-    color: #FFA500; 
+    /* PERUBAHAN: Warna teks diatur ke HITAM */
+    color: #000000; 
     font-weight: bold;
     
     /* Penataan teks */
     text-align: center;
     line-height: 1.4; 
     
-    /* EFEK NEON: Shadow Oranye */
+    /* EFEK NEON: Shadow Oranye dipertahankan */
     text-shadow: 
         0 0 5px #FFA500,    
         0 0 15px #FFA500,   
