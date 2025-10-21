@@ -9,8 +9,8 @@ const onOrOff = state => state ? 'On' : 'Off';
 
 // MENGGUNAKAN NAMA FILE LOKAL
 const YAMETE_AUDIO_URL = 'yamete.mp3'; 
-const BENSIN_AUDIO_URL = 'bensin.mp3'; // Audio Bensin 20%-10% (Ting Ting)
-const SEKARAT_AUDIO_URL = 'sekarat.mp3'; // Audio Sekarat 10%-0% (Non-Stop Loop)
+const BENSIN_AUDIO_URL = 'bensin.mp3'; 
+const SEKARAT_AUDIO_URL = 'sekarat.mp3'; 
 
 // Membuat objek Audio satu kali
 const yameteAudio = new Audio(YAMETE_AUDIO_URL);
@@ -24,6 +24,7 @@ sekaratAudio.volume = 0.8;
 // Status untuk mengontrol pemutaran audio berulang dan bersyarat
 let isBensinAlertActive = false;
 let isSekaratAlertActive = false; 
+let bensinAlertTimer; // Timer untuk mengontrol perulangan bensin.mp3
 
 // =======================================================
 // FUNGSI SETTER
@@ -64,7 +65,7 @@ function setFuel(fuel_01) {
     if (fuelFill) {
         fuelFill.style.height = `${Math.round(fuel_100)}%`;
         
-        // Logika Visual Bensin
+        // Logika Visual Bensin (Merah di bawah 20%)
         if (fuel_100 <= 20) {
              fuelFill.style.backgroundColor = '#ff0000';
              fuelPercentElement.style.color = '#ff0000';
@@ -85,36 +86,54 @@ function setFuel(fuel_01) {
     // LOGIKA AUDIO BENSIN BERDASARKAN AMBANG BATAS
     // =======================================================
 
-    // A. LOGIKA 20% sampai >10% (TING TING dengan delay 10 detik)
-    if (fuel_100 > 10 && fuel_100 <= 20) {
-        // Pastikan audio sekarat berhenti
+    // FUNGSI UTILITY UNTUK MENGHENTIKAN SEMUA BENSIN ALERT
+    const stopAllFuelAlerts = () => {
+        // Hentikan timer bensin.mp3
+        if (bensinAlertTimer) {
+            clearTimeout(bensinAlertTimer);
+            bensinAlertTimer = null;
+        }
+        isBensinAlertActive = false;
+        
+        // Hentikan sekarat.mp3
         if (isSekaratAlertActive) {
             sekaratAudio.pause();
-            isSekaratAlertActive = false; 
+            sekaratAudio.loop = false;
+            isSekaratAlertActive = false;
+        }
+    };
+
+    // A. LOGIKA 20% sampai >10% (TING TING dengan delay 10 detik)
+    if (fuel_100 > 10 && fuel_100 <= 20) {
+        // Hentikan sekarat.mp3 jika sedang aktif dan masuk ke mode bensin
+        if (isSekaratAlertActive) {
+             sekaratAudio.pause();
+             isSekaratAlertActive = false;
         }
 
         if (!isBensinAlertActive) {
             isBensinAlertActive = true;
             
             const playBensinAlert = () => {
-                // Hanya putar jika masih dalam zona 20% > 10%
-                if (fuel_01 * 100 > 10 && fuel_01 * 100 <= 20) {
-                    // Putar audio ganda (ting ting)
-                    bensinAudio.currentTime = 0;
-                    bensinAudio.play().then(() => {
-                        // Putar audio kedua setelah jeda singkat (efek dobel)
-                        setTimeout(() => {
-                            bensinAudio.currentTime = 0;
-                            bensinAudio.play();
-                        }, 200); // jeda 200ms untuk efek 'ting ting'
-                    }).catch(e => console.error("Error playing bensin audio:", e));
-                    
-                    // Jadwalkan pemutaran berikutnya setelah 10 detik
-                    setTimeout(playBensinAlert, 10000); 
-                } else {
-                    // Berhenti jika keluar dari zona
+                // KONDISI PENGHENTIAN: Hentikan perulangan jika sudah di bawah atau sama dengan 10%
+                if (fuel_01 * 100 <= 10) { 
                     isBensinAlertActive = false;
+                    bensinAlertTimer = null; // Pastikan timer juga diset null
+                    return; 
                 }
+                
+                // Putar audio ganda (ting ting)
+                bensinAudio.currentTime = 0;
+                bensinAudio.play().then(() => {
+                    // Putar audio kedua setelah jeda singkat (efek dobel)
+                    setTimeout(() => {
+                        bensinAudio.currentTime = 0;
+                        bensinAudio.play();
+                    }, 200); 
+                }).catch(e => console.error("Error playing bensin audio:", e));
+                
+                // Jadwalkan pemutaran berikutnya setelah 10 detik
+                bensinAlertTimer = setTimeout(playBensinAlert, 10000); 
             };
             
             // Mulai pemutaran pertama
@@ -123,7 +142,11 @@ function setFuel(fuel_01) {
         
     // B. LOGIKA 10% sampai >0% (SEKARAT.mp3 tanpa delay, non-stop)
     } else if (fuel_100 > 0 && fuel_100 <= 10) {
-        // Pastikan audio bensin berhenti
+        // Pastikan timer bensin dihentikan saat memasuki zona sekarat (<=10%)
+        if (bensinAlertTimer) {
+            clearTimeout(bensinAlertTimer);
+            bensinAlertTimer = null;
+        }
         isBensinAlertActive = false; 
 
         if (!isSekaratAlertActive) {
@@ -136,12 +159,8 @@ function setFuel(fuel_01) {
 
     // C. LOGIKA >20% atau 0% (Hentikan semua audio)
     } else {
-        // Hentikan semua audio jika bensin sudah aman atau habis total (0%)
-        isBensinAlertActive = false;
-        if (isSekaratAlertActive) {
-            sekaratAudio.pause();
-            isSekaratAlertActive = false;
-        }
+        // Hentikan semua audio jika bensin sudah aman (>20%) atau habis total (0%)
+        stopAllFuelAlerts();
     }
 }
 
@@ -305,7 +324,6 @@ const updateUI = (data) => {
     if (data.engine !== undefined) setEngine(data.engine);
     if (data.speed !== undefined) setSpeed(data.speed);
     if (data.rpm !== undefined) setRPM(data.rpm);
-    // Panggil setFuel paling akhir karena ada logika audio yang kompleks
     if (data.health !== undefined) setHealth(data.health); 
     if (data.gear !== undefined) setGear(data.gear);
     if (data.headlights !== undefined) setHeadlights(data.headlights);
