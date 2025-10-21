@@ -241,9 +241,12 @@ body {
     height: 100%;
     /* Background polos gelap agar tidak mengganggu tata letak dashboard */
     background-color: rgba(0, 0, 0, 1); 
+    
+    /* FIX: Pengaturan Flexbox untuk sentralisasi konten */
     display: flex;
-    justify-content: center;
-    align-items: center;
+    justify-content: center; /* Sentralisasi Horizontal */
+    align-items: center; /* Sentralisasi Vertikal */
+    
     z-index: 99999; /* Pastikan di paling atas */
     
     opacity: 1;
