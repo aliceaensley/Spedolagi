@@ -165,8 +165,8 @@ body {
 .unit-text {
     font-size: 0.7em;
     color: #ccc;
-    margin-top: -5px; /* DIKEMBALIKAN KE ASLINYA */
-    /* padding-top: 5px; DIHAPUS */
+    margin-top: -5px; 
+    /* padding-top: 5px; DIHAPUS, seperti perubahan terakhir yang disepakati */
     font-weight: bold;
     flex-shrink: 0;
 }
