@@ -12,7 +12,7 @@ const YAMETE_AUDIO_URL = 'yamete.mp3'; 
 const BENSIN_AUDIO_URL = 'bensin.mp3'; 
 const SEKARAT_AUDIO_URL = 'sekarat.mp3'; 
 const PAKAI_SEATBELT_AUDIO_URL = 'pakaiseatbelt.mp3'; 
-const LEPAS_SEATBELT_AUDIO_URL = 'lepasseatbelt.mp3'; // AUDIO BARU
+// AUDIO LEPAS SEATBELT DIHAPUS
 
 // Membuat objek Audio satu kali
 const yameteAudio = new Audio(YAMETE_AUDIO_URL);
@@ -24,8 +24,7 @@ const sekaratAudio = new Audio(SEKARAT_AUDIO_URL);
 sekaratAudio.volume = 0.8; 
 const pakaiSeatbeltAudio = new Audio(PAKAI_SEATBELT_AUDIO_URL);
 pakaiSeatbeltAudio.volume = 0.9; 
-const lepasSeatbeltAudio = new Audio(LEPAS_SEATBELT_AUDIO_URL); // AUDIO BARU
-lepasSeatbeltAudio.volume = 0.9; 
+// OBJEK AUDIO LEPAS SEATBELT DIHAPUS
 
 // Status untuk mengontrol pemutaran audio berulang dan bersyarat
 let isBensinAlertActive = false;
@@ -51,7 +50,7 @@ function setSpeed(speed_ms) {
     }
     elements.speed.innerText = speedDisplay; 
     
-    const maxDots = 8; // Diperbarui untuk 8 dots (berdasarkan HTML terakhir)
+    const maxDots = 8; 
     let scaleMax = speedMode === 1 ? 120 : 180; 
     let powerLevel = Math.min(maxDots, Math.ceil(speedDisplay / (scaleMax / maxDots))); 
     const powerDots = document.querySelectorAll('.power-bar-dots .dot');
@@ -271,7 +270,7 @@ function setRightIndicator(state) {
 }
 
 /** * Fungsi Seatbelts.
- * Diperbarui untuk mengontrol audio pakaiseatbelt.mp3 dan lepasseatbelt.mp3.
+ * Sekarang hanya mengontrol pakaiseatbelt.mp3 (loop saat off) dan yamete.mp3 (sekali saat terpasang).
  */
 function setSeatbelts(state) {
     const seatbeltIcon = document.getElementById('abs-icon');
@@ -279,26 +278,16 @@ function setSeatbelts(state) {
     // =======================================================
     // LOGIKA AUDIO (Diperbarui)
     // =======================================================
-    if (state === false) { // Sabuk TIDAK terpasang (BARU SAJA DILEPAS)
+    if (state === false) { // Sabuk TIDAK terpasang
         // 1. Hentikan yamete.mp3
         yameteAudio.pause(); 
         
         if (!isSeatbeltAlertActive) {
-            // 2. Mainkan lepasseatbelt.mp3 SATU KALI
-            lepasSeatbeltAudio.pause();
-            lepasSeatbeltAudio.currentTime = 0;
-            lepasSeatbeltAudio.loop = false;
-            lepasSeatbeltAudio.play().catch(e => console.error("Error playing lepas seatbelt audio:", e));
-            
-            // 3. Mulai loop pakaiseatbelt.mp3 SETELAH jeda singkat
+            // 2. Mulai loop pakaiseatbelt.mp3 non-stop
             isSeatbeltAlertActive = true;
-            // Gunakan setTimeout agar lepasSeatbeltAudio punya waktu untuk mulai
-            setTimeout(() => {
-                pakaiSeatbeltAudio.loop = true; // Atur loop agar berbunyi non-stop
-                pakaiSeatbeltAudio.currentTime = 0;
-                pakaiSeatbeltAudio.play().catch(e => console.error("Error playing pakai seatbelt audio:", e));
-            }, 500); // Jeda 0.5 detik (dapat disesuaikan)
-
+            pakaiSeatbeltAudio.loop = true; 
+            pakaiSeatbeltAudio.currentTime = 0;
+            pakaiSeatbeltAudio.play().catch(e => console.error("Error playing pakai seatbelt audio:", e));
         }
     } else { // state === true (Sabuk TERPASANG)
         // 1. Hentikan pakaiseatbelt.mp3
@@ -350,7 +339,7 @@ const updateUI = (data) => {
             lastIndicatorState = 0;
             // Hentikan semua audio jika HUD disembunyikan
             if (isSekaratAlertActive) sekaratAudio.pause();
-            if (isSeatbeltAlertActive) pakaiSeatbeltAudio.pause(); // Hentikan loop seatbelt
+            if (isSeatbeltAlertActive) pakaiSeatbeltAudio.pause(); 
             isBensinAlertActive = false;
             isSekaratAlertActive = false;
             isSeatbeltAlertActive = false;
