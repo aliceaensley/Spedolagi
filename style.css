@@ -165,13 +165,7 @@ body {
 .unit-text {
     font-size: 0.7em;
     color: #ccc;
-    margin-top: -5px; 
-    /* padding-top: 100px; DIHAPUS karena tidak efektif */
-    
-    /* Tambahan Kritis untuk memindahkan MPH */
-    **position: relative;**
-    **top: 20px;** /* Geser ke bawah 20px. Sesuaikan jika kurang. */
-
+    **margin-top: 5px;** /* PERUBAHAN DI SINI */
     font-weight: bold;
     flex-shrink: 0;
 }
