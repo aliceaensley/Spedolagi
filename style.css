@@ -116,7 +116,7 @@ body {
 
 .bar-fill {
     width: 100%;
-    transition: height 0.3s ease-out, background-color 0.3s;
+    transition: height 0.3s ease-out, background-color 0.3s, box-shadow 0.3s; /* Ditambahkan box-shadow */
 }
 .health-fill { background-color: #00ff00; }
 .fuel-fill { background-color: #ffaa00; }
@@ -218,7 +218,7 @@ body {
 #turn-right-icon::before { content: '→'; }
 #engine-icon::before { content: '⚡'; } 
 #headlights-icon::before { content: '💡'; } 
-#abs-icon::before { content: '\1F4BA'; }
+#abs-icon::before { content: '\1F4BA'; } /* Menggunakan simbol ABS/TCS */
 
 /* Status Aktif */
 .icon.active { 
