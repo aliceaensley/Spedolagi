@@ -125,49 +125,50 @@ body {
 
 
 /* =======================================
-    DISPLAY KECEPATAN & INDIKATOR TENGAH
-    ======================================= */
+    DISPLAY KECEPATAN & INDIKATOR TENGAH
+    ======================================= */
 .center-display-section {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    padding-top: 5px; 
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 5px; 
 }
 
 .speed-readout {
-    display: flex;
-    align-items: baseline; 
-    position: relative;
-    height: 50px; 
+    display: flex;
+    align-items: baseline; 
+    position: relative;
+    height: 50px; 
 }
 
 .speed-value {
-    font-size: 4em; 
-    font-weight: 900;
-    color: white;
-    line-height: 1;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    font-size: 4em; 
+    font-weight: 900;
+    color: white;
+    line-height: 1;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
 .gear-letter {
-    position: absolute;
-    right: -10px; 
-    top: 0;
-    font-size: 1.5em; 
-    font-weight: bold;
-    color: #ff0000; 
-    line-height: 1;
-    text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+    position: absolute;
+    right: -10px; 
+    top: 0;
+    font-size: 1.5em; 
+    font-weight: bold;
+    color: #ff0000; 
+    line-height: 1;
+    text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
 }
 
 .unit-text {
-    font-size: 0.7em;
-    color: #ccc;
-    **margin-top: 0px;** /* PERUBAHAN DI SINI */
-    font-weight: bold;
-    flex-shrink: 0;
+    font-size: 0.7em;
+    color: #ccc;
+    **margin-top: -5px;** /* DIKEMBALIKAN KE ASLINYA */
+    **padding-top: 5px;** /* TAMBAHAN PADDING */
+    font-weight: bold;
+    flex-shrink: 0;
 }
 
 .power-bar-dots {
@@ -278,7 +279,7 @@ body {
     
     /* EFEK NEON: Shadow Oranye dipertahankan */
     text-shadow: 
-        0 0 5px #FFA500,    
+        0 0 5px #FFA500,   
         0 0 15px #FFA500,   
         0 0 30px #FF4500,   
         0 0 45px #FF4500;   
