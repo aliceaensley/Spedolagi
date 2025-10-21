@@ -116,7 +116,7 @@ body {
 
 .bar-fill {
     width: 100%;
-    transition: height 0.3s ease-out, background-color 0.3s, box-shadow 0.3s; /* Ditambahkan box-shadow */
+    transition: height 0.3s ease-out, background-color 0.3s, box-shadow 0.3s;
 }
 .health-fill { background-color: #00ff00; }
 .fuel-fill { background-color: #ffaa00; }
@@ -218,7 +218,7 @@ body {
 #turn-right-icon::before { content: '→'; }
 #engine-icon::before { content: '⚡'; } 
 #headlights-icon::before { content: '💡'; } 
-#abs-icon::before { content: '\1F4BA'; } /* Menggunakan simbol ABS/TCS */
+#abs-icon::before { content: '\1F4BA'; }
 
 /* Status Aktif */
 .icon.active { 
@@ -228,4 +228,38 @@ body {
 
 #turn-left-icon.active, #turn-right-icon.active {
     color: #00ffff;
+}
+
+/* =======================================
+    GAYA WELCOME OVERLAY BARU (2 Detik)
+    ======================================= */
+.welcome-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Background polos gelap agar tidak mengganggu tata letak dashboard */
+    background-color: rgba(0, 0, 0, 1); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 99999; /* Pastikan di paling atas */
+    
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.5s ease-out, visibility 0s 0.5s;
+}
+
+.welcome-overlay.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.welcome-text {
+    font-family: 'Consolas', monospace;
+    font-size: 3em;
+    color: #00ff00; /* Warna hijau khas HUD */
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(0, 255, 0, 0.7);
 }
