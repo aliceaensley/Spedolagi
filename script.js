@@ -295,14 +295,13 @@ function setSeatbelts(state) {
 
         // 2. JAGA URUTAN: Jika alarm awal masih diputar, JANGAN LAKUKAN APAPUN
         if (isInitialAlarmPlaying) {
-            // Abaikan permintaan seatbelt.mp3 sampai alarm.mp3 selesai (isInitialAlarmPlaying = false)
+            // Abaikan panggilan ini. Pengecekan akan dilakukan di alarmAudio.onended
             return; 
         }
 
         // 3. Jika alarm sudah selesai dan alarm seatbelt belum aktif, putar segera
         if (!isSeatbeltAlertActive) {
             isSeatbeltAlertActive = true;
-            // Hapus timer delay yang sebelumnya ada
             clearTimeout(seatbeltDelayTimer); 
             seatbeltDelayTimer = null; 
 
@@ -313,7 +312,6 @@ function setSeatbelts(state) {
 
     // Sabuk terpasang (state === true)
     } else { 
-        // 1. Hentikan timer delay (walaupun seharusnya sudah di-null-kan)
         clearTimeout(seatbeltDelayTimer); 
         seatbeltDelayTimer = null; 
 
@@ -369,7 +367,7 @@ const updateUI = (data) => {
             if (isSekaratAlertActive) sekaratAudio.pause();
             if (isSeatbeltAlertActive) pakaiSeatbeltAudio.pause(); 
             
-            // Hentikan alarm jika HUD ditutup (meskipun alarm sedang berjalan penuh)
+            // Hentikan alarm jika HUD ditutup 
             if (isInitialAlarmPlaying) alarmAudio.pause();
             isInitialAlarmPlaying = false; 
 
@@ -448,17 +446,25 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
         
-        // Listener: Ketika alarm.mp3 SELESAI diputar, izinkan audio lain untuk berbunyi
+        // Listener Kunci: Ketika alarm.mp3 SELESAI diputar
         alarmAudio.onended = () => {
             isInitialAlarmPlaying = false; 
             console.log("alarm.mp3 Selesai. Seatbelt audio diizinkan.");
+            
+            // 🔥 PERBAIKAN: Cek kondisi sabuk pengaman saat ini secara manual.
+            // Jika sabuk masih dalam kondisi 'Off' setelah alarm selesai,
+            // dan pakaiseatbelt.mp3 belum aktif, segera mulai pemutaran.
+            if (elements.seatbelts.innerText === 'Off' && !isSeatbeltAlertActive) {
+                isSeatbeltAlertActive = true;
+                pakaiSeatbeltAudio.loop = true; 
+                pakaiSeatbeltAudio.currentTime = 0;
+                pakaiSeatbeltAudio.play().catch(e => console.error("Error playing queued seatbelt audio:", e));
+            }
         };
 
         // Timer untuk menyembunyikan overlay (VISUAL)
         setTimeout(() => {
             elements['welcome-overlay'].classList.add('hidden');
-            // Catatan: alarmAudio TIDAK di-pause di sini. Ia akan selesai sendiri
-            // dan memicu alarmAudio.onended.
         }, WELCOME_OVERLAY_DURATION_MS); 
     }
 
