@@ -37,17 +37,14 @@ let bensinAlertTimer;
 let isSeatbeltAlertActive = false; 
 let seatbeltDelayTimer; 
 
-// BARU: Flag untuk memastikan alarm awal selesai
+// FLAG: Diatur true di awal, akan menjadi false setelah alarm.mp3 selesai diputar.
 let isInitialAlarmPlaying = true; 
-const INITIAL_ALARM_DURATION_MS = 3000; // 3 detik durasi Welcome Overlay/Alarm
+const WELCOME_OVERLAY_DURATION_MS = 3000; // Tetap 3 detik untuk durasi visual overlay
 
 
 // =======================================================
 // FUNGSI SETTER
 // =======================================================
-// (Fungsi setEngine, setSpeed, setRPM, setFuel, setHealth, setGear, setHeadlights, 
-// controlIndicators, setLeftIndicator, setRightIndicator, setSpeedMode tidak diubah)
-
 function setEngine(state) {
     document.getElementById('engine-icon').classList.toggle('active', state);
     elements.engine.innerText = onOrOff(state); 
@@ -282,13 +279,13 @@ function setRightIndicator(state) {
 }
 
 /** * Fungsi Seatbelts.
- * Sekarang memiliki grace period 5 detik SETELAH initial alarm (3 detik) selesai.
+ * Menjamin alarm.mp3 selesai dulu, lalu pakaiseatbelt.mp3 berbunyi tanpa delay.
  */
 function setSeatbelts(state) {
     const seatbeltIcon = document.getElementById('abs-icon');
     
     // =======================================================
-    // LOGIKA AUDIO PAKAUSEATBELT.MP3 (Delay 5 Detik + Jaga Urutan)
+    // LOGIKA AUDIO PAKAUSEATBELT.MP3 (Tanpa Delay, Hanya Jaga Urutan)
     // =======================================================
 
     // Sabuk dilepas (state === false)
@@ -298,31 +295,27 @@ function setSeatbelts(state) {
 
         // 2. JAGA URUTAN: Jika alarm awal masih diputar, JANGAN LAKUKAN APAPUN
         if (isInitialAlarmPlaying) {
-            // Kita biarkan saja. Logika delay 5 detik akan dimulai setelah isInitialAlarmPlaying menjadi false.
+            // Abaikan permintaan seatbelt.mp3 sampai alarm.mp3 selesai (isInitialAlarmPlaying = false)
             return; 
         }
 
-        // 3. Jika alarm sudah selesai dan alarm seatbelt belum aktif & timer delay belum berjalan, mulai timer baru
-        if (!isSeatbeltAlertActive && !seatbeltDelayTimer) {
-            
-            // Mulai timer grace period 5 detik
-            seatbeltDelayTimer = setTimeout(() => {
-                // Pengecekan ulang setelah 5 detik: pastikan sabuk masih dilepas
-                if (elements.seatbelts.innerText === 'Off') {
-                    isSeatbeltAlertActive = true;
-                    pakaiSeatbeltAudio.loop = true; 
-                    pakaiSeatbeltAudio.currentTime = 0;
-                    pakaiSeatbeltAudio.play().catch(e => console.error("Error playing delayed seatbelt audio:", e));
-                }
-                seatbeltDelayTimer = null; // Reset timer ID setelah selesai
-            }, 5000); // Delay 5 detik
+        // 3. Jika alarm sudah selesai dan alarm seatbelt belum aktif, putar segera
+        if (!isSeatbeltAlertActive) {
+            isSeatbeltAlertActive = true;
+            // Hapus timer delay yang sebelumnya ada
+            clearTimeout(seatbeltDelayTimer); 
+            seatbeltDelayTimer = null; 
+
+            pakaiSeatbeltAudio.loop = true; 
+            pakaiSeatbeltAudio.currentTime = 0;
+            pakaiSeatbeltAudio.play().catch(e => console.error("Error playing seatbelt audio:", e));
         }
 
     // Sabuk terpasang (state === true)
     } else { 
-        // 1. Hentikan timer delay jika sabuk dipasang sebelum 5 detik
+        // 1. Hentikan timer delay (walaupun seharusnya sudah di-null-kan)
         clearTimeout(seatbeltDelayTimer); 
-        seatbeltDelayTimer = null; // Penting: reset timer ID
+        seatbeltDelayTimer = null; 
 
         // 2. Hentikan pakaiseatbelt.mp3
         if (isSeatbeltAlertActive) {
@@ -371,11 +364,12 @@ const updateUI = (data) => {
         if (!isVisible) {
             clearInterval(blinkInterval);
             lastIndicatorState = 0;
-            clearTimeout(seatbeltDelayTimer); // Pastikan delay timer dibersihkan
+            clearTimeout(seatbeltDelayTimer); 
             // Hentikan semua audio jika HUD disembunyikan
             if (isSekaratAlertActive) sekaratAudio.pause();
             if (isSeatbeltAlertActive) pakaiSeatbeltAudio.pause(); 
-            // BARU: Hentikan alarm jika HUD ditutup sebelum 3 detik
+            
+            // Hentikan alarm jika HUD ditutup (meskipun alarm sedang berjalan penuh)
             if (isInitialAlarmPlaying) alarmAudio.pause();
             isInitialAlarmPlaying = false; 
 
@@ -454,12 +448,18 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
         
-        // Timer untuk menyembunyikan overlay (3000ms) DAN MEMATIKAN FLAG ALARM AWAL
+        // Listener: Ketika alarm.mp3 SELESAI diputar, izinkan audio lain untuk berbunyi
+        alarmAudio.onended = () => {
+            isInitialAlarmPlaying = false; 
+            console.log("alarm.mp3 Selesai. Seatbelt audio diizinkan.");
+        };
+
+        // Timer untuk menyembunyikan overlay (VISUAL)
         setTimeout(() => {
             elements['welcome-overlay'].classList.add('hidden');
-            alarmAudio.pause(); // Pastikan alarm berhenti setelah durasi overlay
-            isInitialAlarmPlaying = false; // Izinkan pemutaran audio lain (termasuk seatbelt)
-        }, INITIAL_ALARM_DURATION_MS); 
+            // Catatan: alarmAudio TIDAK di-pause di sini. Ia akan selesai sendiri
+            // dan memicu alarmAudio.onended.
+        }, WELCOME_OVERLAY_DURATION_MS); 
     }
 
     // Menerima pesan dari game client
@@ -478,7 +478,7 @@ document.addEventListener('DOMContentLoaded', () => {
         gear: 'R', 
         headlights: 0,
         engine: false,
-        // Inisialisasi awal sabuk pengaman dilepas agar delay 5 detik dapat berlaku saat startup.
+        // Inisialisasi awal sabuk pengaman dilepas agar logikanya tetap bekerja.
         seatbelts: false, 
         leftIndicator: false, 
         rightIndicator: false,
