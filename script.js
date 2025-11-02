@@ -11,9 +11,9 @@ const onOrOff = state => state ? 'On' : 'Off';
 const YAMETE_AUDIO_URL = 'yamete.mp3'; 
 const BENSIN_AUDIO_URL = 'bensin.mp3'; 
 const SEKARAT_AUDIO_URL = 'sekarat.mp3'; 
+// PERBAIKAN: Pastikan kapitalisasi file cocok dengan nama file (asumsi 'pakaiseatbelt.mp3')
 const PAKAI_SEATBELT_AUDIO_URL = 'pakaiseatbelt.mp3'; 
-const ALARM_AUDIO_URL = 'alarm.mp3'; // BARU: Tambahkan URL untuk alarm.mp3
-// AUDIO LEPAS SEATBELT DIHAPUS
+const ALARM_AUDIO_URL = 'alarm.mp3'; 
 
 // Membuat objek Audio satu kali
 const yameteAudio = new Audio(YAMETE_AUDIO_URL);
@@ -33,11 +33,13 @@ alarmAudio.volume = 1.0;
 // Status untuk mengontrol pemutaran audio berulang dan bersyarat
 let isBensinAlertActive = false;
 let isSekaratAlertActive = false; 
-let bensinAlertTimer; // Timer untuk mengontrol perulangan bensin.mp3
-let isSeatbeltAlertActive = false; // Status baru untuk kontrol audio seatbelt
+let bensinAlertTimer; 
+let isSeatbeltAlertActive = false; 
+
 
 // =======================================================
 // FUNGSI SETTER
+// (Fungsi setter lainnya tidak diubah, dilewati untuk ringkasan)
 // =======================================================
 
 function setEngine(state) {
@@ -291,6 +293,7 @@ function setSeatbelts(state) {
             isSeatbeltAlertActive = true;
             pakaiSeatbeltAudio.loop = true; 
             pakaiSeatbeltAudio.currentTime = 0;
+            // Penanganan Promise untuk Autoplay
             pakaiSeatbeltAudio.play().catch(e => console.error("Error playing pakai seatbelt audio:", e));
         }
     } else { // state === true (Sabuk TERPASANG)
@@ -304,6 +307,7 @@ function setSeatbelts(state) {
         // 2. Putar yamete.mp3 (Logika asli saat sabuk dipasang, putar sekali)
         yameteAudio.pause();
         yameteAudio.currentTime = 0; 
+        // Penanganan Promise untuk Autoplay
         yameteAudio.play().catch(e => console.error("Error playing yamete audio:", e));
     } 
 
@@ -398,15 +402,31 @@ document.addEventListener('DOMContentLoaded', () => {
         // WELCOME OVERLAY
         'welcome-overlay': document.getElementById('welcome-overlay'), 
     };
-    
-    // LOGIKA WELCOME OVERLAY (Hanya tampil 2 detik)
-    if (elements['welcome-overlay']) {
-        // BARU: Putar alarm.mp3 bersamaan dengan munculnya overlay
-        alarmAudio.play().catch(e => console.error("Error playing alarm audio:", e)); 
+
+    // =======================================================
+    // LOGIKA PEMUTARAN AUDIO ALARM SAAT WELCOME OVERLAY MUNCUL
+    // =======================================================
+    if (elements['welcome-overlay']) {
+        // Coba putar audio. Jika gagal (karena Autoplay Policy), ini akan ditangani oleh .catch()
+        const playPromise = alarmAudio.play();
+
+        if (playPromise !== undefined) {
+            playPromise.then(() => {
+                // Audio berhasil diputar
+            }).catch(error => {
+                // Audio diblokir oleh browser.
+                console.warn("Autoplay was prevented. User interaction required to play audio.", error);
+                // Tambahkan event listener global yang akan mencoba memutar alarm saat ada klik
+                document.body.addEventListener('click', () => {
+                    alarmAudio.play().catch(e => console.error("Error playing alarm after click:", e));
+                }, { once: true }); // Hanya perlu sekali
+            });
+        }
         
+        // Timer untuk menyembunyikan overlay, Disesuaikan menjadi 3000ms (3 detik)
         setTimeout(() => {
             elements['welcome-overlay'].classList.add('hidden');
-        }, 3000); // Diubah menjadi 3000ms (3 detik) agar sesuai dengan audio alarm
+        }, 3000); 
     }
 
     // Menerima pesan dari game client
