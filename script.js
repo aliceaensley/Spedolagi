@@ -12,6 +12,7 @@ const YAMETE_AUDIO_URL = 'yamete.mp3'; 
 const BENSIN_AUDIO_URL = 'bensin.mp3'; 
 const SEKARAT_AUDIO_URL = 'sekarat.mp3'; 
 const PAKAI_SEATBELT_AUDIO_URL = 'pakaiseatbelt.mp3'; 
+const ALARM_AUDIO_URL = 'alarm.mp3'; // BARU: Tambahkan URL untuk alarm.mp3
 // AUDIO LEPAS SEATBELT DIHAPUS
 
 // Membuat objek Audio satu kali
@@ -24,7 +25,10 @@ const sekaratAudio = new Audio(SEKARAT_AUDIO_URL);
 sekaratAudio.volume = 0.8; 
 const pakaiSeatbeltAudio = new Audio(PAKAI_SEATBELT_AUDIO_URL);
 pakaiSeatbeltAudio.volume = 0.9; 
-// OBJEK AUDIO LEPAS SEATBELT DIHAPUS
+
+// BARU: Objek Audio untuk alarm.mp3
+const alarmAudio = new Audio(ALARM_AUDIO_URL);
+alarmAudio.volume = 1.0; 
 
 // Status untuk mengontrol pemutaran audio berulang dan bersyarat
 let isBensinAlertActive = false;
@@ -397,9 +401,12 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // LOGIKA WELCOME OVERLAY (Hanya tampil 2 detik)
     if (elements['welcome-overlay']) {
+        // BARU: Putar alarm.mp3 bersamaan dengan munculnya overlay
+        alarmAudio.play().catch(e => console.error("Error playing alarm audio:", e)); 
+        
         setTimeout(() => {
             elements['welcome-overlay'].classList.add('hidden');
-        }, 2000); // 2000 milidetik = 2 detik
+        }, 3000); // Diubah menjadi 3000ms (3 detik) agar sesuai dengan audio alarm
     }
 
     // Menerima pesan dari game client
