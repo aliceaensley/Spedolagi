@@ -33,7 +33,11 @@ alarmAudio.volume = 1.0;
 let isBensinAlertActive = false;
 let isSekaratAlertActive = false; 
 let bensinAlertTimer; 
+
 let isSeatbeltAlertActive = false; 
+// BARU: Status untuk menunda pemutaran pakaiseatbelt.mp3 di awal
+let hasSeatbeltsBeenChecked = false;
+let seatbeltDelayTimer; 
 
 
 // =======================================================
@@ -274,27 +278,52 @@ function setRightIndicator(state) {
 }
 
 /** * Fungsi Seatbelts.
- * Mengontrol pakaiseatbelt.mp3 (loop saat off) dan yamete.mp3 (sekali saat terpasang).
- * Logika ini dipicu HANYA ketika data NUI baru diterima (bukan saat startup).
+ * Menambahkan delay 5 detik untuk pakaiseatbelt.mp3 hanya pada saat pertama kali dilepas.
  */
 function setSeatbelts(state) {
     const seatbeltIcon = document.getElementById('abs-icon');
     
     // =======================================================
-    // LOGIKA AUDIO PAKAUSEATBELT.MP3 (Tidak diputar saat startup)
+    // LOGIKA AUDIO PAKAUSEATBELT.MP3
     // =======================================================
-    if (state === false) { // Sabuk TIDAK terpasang
-        // 1. Hentikan yamete.mp3
+    
+    // Sabuk dilepas (state === false)
+    if (state === false) { 
+        // 1. Hentikan yamete.mp3
         yameteAudio.pause(); 
         
         if (!isSeatbeltAlertActive) {
-            // 2. Mulai loop pakaiseatbelt.mp3 non-stop
-            isSeatbeltAlertActive = true;
-            pakaiSeatbeltAudio.loop = true; 
-            pakaiSeatbeltAudio.currentTime = 0;
-            pakaiSeatbeltAudio.play().catch(e => console.error("Error playing pakai seatbelt audio:", e));
+            // Jika ini adalah pengecekan pertama (saat NUI dimuat) dan sabuk dilepas, beri delay 5 detik
+            if (!hasSeatbeltsBeenChecked) {
+                console.log("Sabuk dilepas saat startup. Mulai timer 5 detik.");
+                // Jika timer sebelumnya ada (misal dari cek cepat), bersihkan
+                clearTimeout(seatbeltDelayTimer); 
+                
+                seatbeltDelayTimer = setTimeout(() => {
+                    // Pengecekan ulang sebelum memutar
+                    if (!isSeatbeltAlertActive && elements.seatbelts.innerText === 'Off') {
+                        isSeatbeltAlertActive = true;
+                        pakaiSeatbeltAudio.loop = true; 
+                        pakaiSeatbeltAudio.currentTime = 0;
+                        pakaiSeatbeltAudio.play().catch(e => console.error("Error playing delayed seatbelt audio:", e));
+                    }
+                }, 5000); // Delay 5 detik
+            
+            } else {
+                // Jika bukan pengecekan pertama, putar segera
+                console.log("Sabuk dilepas. Putar audio segera.");
+                isSeatbeltAlertActive = true;
+                pakaiSeatbeltAudio.loop = true; 
+                pakaiSeatbeltAudio.currentTime = 0;
+                pakaiSeatbeltAudio.play().catch(e => console.error("Error playing direct seatbelt audio:", e));
+            }
         }
-    } else { // state === true (Sabuk TERPASANG)
+
+    // Sabuk terpasang (state === true)
+    } else { 
+        // Hentikan timer delay jika sabuk dipasang sebelum 5 detik
+        clearTimeout(seatbeltDelayTimer); 
+
         // 1. Hentikan pakaiseatbelt.mp3
         if (isSeatbeltAlertActive) {
             pakaiSeatbeltAudio.pause();
@@ -302,11 +331,14 @@ function setSeatbelts(state) {
             isSeatbeltAlertActive = false;
         }
         
-        // 2. Putar yamete.mp3 (Logika asli saat sabuk dipasang, putar sekali)
+        // 2. Putar yamete.mp3
         yameteAudio.pause();
         yameteAudio.currentTime = 0; 
         yameteAudio.play().catch(e => console.error("Error playing yamete audio:", e));
     } 
+    
+    // Status sudah dicek (untuk mematikan logika delay 5 detik berikutnya)
+    hasSeatbeltsBeenChecked = true;
 
     // LOGIKA VISUAL
     if (seatbeltIcon) {
@@ -342,6 +374,7 @@ const updateUI = (data) => {
         if (!isVisible) {
             clearInterval(blinkInterval);
             lastIndicatorState = 0;
+            clearTimeout(seatbeltDelayTimer); // Pastikan delay timer dibersihkan
             // Hentikan semua audio jika HUD disembunyikan
             if (isSekaratAlertActive) sekaratAudio.pause();
             if (isSeatbeltAlertActive) pakaiSeatbeltAudio.pause(); 
@@ -360,6 +393,7 @@ const updateUI = (data) => {
     if (data.health !== undefined) setHealth(data.health); 
     if (data.gear !== undefined) setGear(data.gear);
     if (data.headlights !== undefined) setHeadlights(data.headlights);
+    // HANYA PANGGIL setSeatbelts jika ada data seatbelts
     if (data.seatbelts !== undefined) setSeatbelts(data.seatbelts); 
     if (data.speedMode !== undefined) setSpeedMode(data.speedMode);
 
@@ -441,8 +475,9 @@ document.addEventListener('DOMContentLoaded', () => {
         gear: 'R', 
         headlights: 0,
         engine: false,
-        // Penting: Setel nilai awal seatbelts agar pakaiseatbelt.mp3 tidak berbunyi di awal.
-        seatbelts: true, // Dianggap terpasang saat inisialisasi HUD
+        // Penting: Setel nilai awal seatbelts ke false (dilepas) agar logika delay 5 detik aktif.
+        // Jika disetel ke true, delay tidak akan bekerja.
+        seatbelts: false, 
         leftIndicator: false, 
         rightIndicator: false,
         speedMode: 1, 
