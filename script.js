@@ -11,7 +11,6 @@ const onOrOff = state => state ? 'On' : 'Off';
 const YAMETE_AUDIO_URL = 'yamete.mp3'; 
 const BENSIN_AUDIO_URL = 'bensin.mp3'; 
 const SEKARAT_AUDIO_URL = 'sekarat.mp3'; 
-// PERBAIKAN: Pastikan kapitalisasi file cocok dengan nama file (asumsi 'pakaiseatbelt.mp3')
 const PAKAI_SEATBELT_AUDIO_URL = 'pakaiseatbelt.mp3'; 
 const ALARM_AUDIO_URL = 'alarm.mp3'; 
 
@@ -39,7 +38,6 @@ let isSeatbeltAlertActive = false;
 
 // =======================================================
 // FUNGSI SETTER
-// (Fungsi setter lainnya tidak diubah, dilewati untuk ringkasan)
 // =======================================================
 
 function setEngine(state) {
@@ -276,13 +274,14 @@ function setRightIndicator(state) {
 }
 
 /** * Fungsi Seatbelts.
- * Sekarang hanya mengontrol pakaiseatbelt.mp3 (loop saat off) dan yamete.mp3 (sekali saat terpasang).
+ * Mengontrol pakaiseatbelt.mp3 (loop saat off) dan yamete.mp3 (sekali saat terpasang).
+ * Logika ini dipicu HANYA ketika data NUI baru diterima (bukan saat startup).
  */
 function setSeatbelts(state) {
     const seatbeltIcon = document.getElementById('abs-icon');
     
     // =======================================================
-    // LOGIKA AUDIO (Diperbarui)
+    // LOGIKA AUDIO PAKAUSEATBELT.MP3 (Tidak diputar saat startup)
     // =======================================================
     if (state === false) { // Sabuk TIDAK terpasang
         // 1. Hentikan yamete.mp3
@@ -293,7 +292,6 @@ function setSeatbelts(state) {
             isSeatbeltAlertActive = true;
             pakaiSeatbeltAudio.loop = true; 
             pakaiSeatbeltAudio.currentTime = 0;
-            // Penanganan Promise untuk Autoplay
             pakaiSeatbeltAudio.play().catch(e => console.error("Error playing pakai seatbelt audio:", e));
         }
     } else { // state === true (Sabuk TERPASANG)
@@ -307,7 +305,6 @@ function setSeatbelts(state) {
         // 2. Putar yamete.mp3 (Logika asli saat sabuk dipasang, putar sekali)
         yameteAudio.pause();
         yameteAudio.currentTime = 0; 
-        // Penanganan Promise untuk Autoplay
         yameteAudio.play().catch(e => console.error("Error playing yamete audio:", e));
     } 
 
@@ -407,23 +404,22 @@ document.addEventListener('DOMContentLoaded', () => {
     // LOGIKA PEMUTARAN AUDIO ALARM SAAT WELCOME OVERLAY MUNCUL
     // =======================================================
     if (elements['welcome-overlay']) {
-        // Coba putar audio. Jika gagal (karena Autoplay Policy), ini akan ditangani oleh .catch()
+        // Coba putar alarm.mp3. Gunakan penanganan promise untuk Autoplay Policy.
         const playPromise = alarmAudio.play();
 
         if (playPromise !== undefined) {
             playPromise.then(() => {
                 // Audio berhasil diputar
             }).catch(error => {
-                // Audio diblokir oleh browser.
-                console.warn("Autoplay was prevented. User interaction required to play audio.", error);
-                // Tambahkan event listener global yang akan mencoba memutar alarm saat ada klik
+                // Autoplay diblokir. Tambahkan listener click untuk memicu pemutaran.
+                console.warn("Autoplay alarm.mp3 was prevented. User interaction required.", error);
                 document.body.addEventListener('click', () => {
                     alarmAudio.play().catch(e => console.error("Error playing alarm after click:", e));
-                }, { once: true }); // Hanya perlu sekali
+                }, { once: true }); 
             });
         }
         
-        // Timer untuk menyembunyikan overlay, Disesuaikan menjadi 3000ms (3 detik)
+        // Timer untuk menyembunyikan overlay (3000ms)
         setTimeout(() => {
             elements['welcome-overlay'].classList.add('hidden');
         }, 3000); 
@@ -441,11 +437,12 @@ document.addEventListener('DOMContentLoaded', () => {
     updateUI({ 
         speed: 0, 
         health: 1, 
-        fuel: 0.87, // Nilai awal 87%
+        fuel: 0.87, 
         gear: 'R', 
         headlights: 0,
         engine: false,
-        seatbelts: false,
+        // Penting: Setel nilai awal seatbelts agar pakaiseatbelt.mp3 tidak berbunyi di awal.
+        seatbelts: true, // Dianggap terpasang saat inisialisasi HUD
         leftIndicator: false, 
         rightIndicator: false,
         speedMode: 1, 
